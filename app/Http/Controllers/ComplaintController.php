@@ -5,17 +5,14 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\Party;
 use App\Helpers\Helper;
-use App\Models\Product;
-use App\Models\Witness;
+// use App\Models\Product;
 use App\Models\Complaint;
-use App\Models\Respondent;
-use App\Models\Complainant;
+use App\Models\Attachment;
+use App\Models\Prosecutor;
 use App\Models\ViolatedLaw;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\StoreDataRequest;
-use App\Models\Attachment;
-use Illuminate\Support\Facades\Validator;
 
 class ComplaintController extends Controller
 {
@@ -35,12 +32,21 @@ class ComplaintController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        $year = Carbon::now()->format('y');
-        $NPSDOCKETNO = Helper::NPSDOCKETNO(new Product, 'name', 5, 'XI-02-FType-' . $year);
+        $prosecutors = Prosecutor::all();
 
-        return view('complaints.create', compact('NPSDOCKETNO'));
+        $FType = $request->input('formType');
+        $alphabet = range('A', 'L');
+        $monthNumber = Carbon::now()->month;
+        $monthLetter = $alphabet[(int)$monthNumber - 1];
+        $year = Carbon::now()->format('y');
+        $NPSDOCKETNO = "";
+        if ($FType != "") {
+            $NPSDOCKETNO = Helper::NPSDOCKETNO(new Complaint, 'NPSDNumber', 5, 'XI-02-' . $FType . '-' . $year . '-' . $monthLetter);
+        }
+
+        return view('complaints.create', compact('NPSDOCKETNO', 'FType', 'prosecutors'));
     }
 
     /**
@@ -53,12 +59,12 @@ class ComplaintController extends Controller
     {
         request()->validate([
             // 'NPSDNumber' => 'required',
-            'formtype' => 'required',
+            // 'formtype' => 'required',
             'assignedto' => 'required',
             'placeofcommission' => 'required',
-            'similar' => 'required',
-            'counterchargedetails' => 'required',
-            'relateddetails' => 'required',
+            // 'similar' => 'required',
+            // 'counterchargedetails' => 'required',
+            // 'relateddetails' => 'required',
             'files.*' => 'mimes:pdf|max:2000',
 
             // 'addMoreComplainant.*.name' => 'required',
@@ -102,9 +108,9 @@ class ComplaintController extends Controller
             'placeofCommission' => $request->placeofcommission,
             'counterCharge' => 'static',
             'similar' => $request->similar,
-            'counterChargeDetails' => $request->counterchargedetails,
+            'counterChargeDetails' => ($request->counterchargedetails != "") ? $request->counterchargedetails : $request->chargeNo,
             'relatedComplaint' => 'static',
-            'relatedDetails' => $request->relateddetails,
+            'relatedDetails' => ($request->relateddetails != "") ? $request->relateddetails : $request->complaintNo,
             'NPSDNumber' => $request->NPSDNumber
         ]);
 
@@ -194,7 +200,24 @@ class ComplaintController extends Controller
      */
     public function edit($id)
     {
-        //
+        $complaint = Complaint::find($id);
+        // $prosecutors = Prosecutor::pluck('firstname', 'id');
+
+        $prosecutors = Prosecutor::select(
+            DB::raw("CONCAT(firstname,' ',middlename,'. ',lastname) AS name"),
+            'id')
+            ->pluck('name', 'id');
+        $prosecutorId = Complaint::where('id',$id)->first()->assignedTo;
+
+        $respondents = DB::table('parties')->where(['belongsTo' => 'respondent', 'complaint_id' => $id])->get();
+        $complainants = DB::table('parties')->where(['belongsTo' => 'complainant', 'complaint_id' => $id])->get();
+        $witnesses = DB::table('parties')->where(['belongsTo' => 'witness', 'complaint_id' => $id])->get();
+        $lawviolated = DB::table('violated_laws')->where(['complaint_id' => $id])->get();
+        $attachments = DB::table('attachments')
+            ->select('filename', 'id', 'path', DB::raw("date_format(created_at, '%Y-%m-%d %r') AS created_at"))
+            ->where('complaint_id', $id)
+            ->get();
+        return view('complaints.edit', compact('complaint', 'complainants', 'respondents', 'witnesses', 'lawviolated', 'attachments', 'prosecutors', 'prosecutorId'));
     }
 
     /**
@@ -217,6 +240,11 @@ class ComplaintController extends Controller
      */
     public function destroy($id)
     {
-        //
+        DB::table("complaints")->where("id", $id)->delete();
+        DB::table("parties")->where("complaint_id", $id)->delete();
+        DB::table("attachments")->where("complaint_id", $id)->delete();
+        DB::table("violated_laws")->where("complaint_id", $id)->delete();
+
+        return redirect()->route('complaints.index')->with('success', 'Deleted successfully!');
     }
 }

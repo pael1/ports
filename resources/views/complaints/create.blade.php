@@ -1,6 +1,4 @@
 @extends('layouts.appLTE')
-
-
 @section('content')
     <div class="content-wrapper">
         <div class="card">
@@ -10,7 +8,7 @@
             <div class="row">
                 <div class="col-lg-12 margin-tb">
                     <div class="float-end p-2 mr-5">
-                        <a class="btn btn-secondary btn-sm" href="{{ route('products.index') }}"> Back</a>
+                        <a class="btn btn-secondary btn-sm" href="{{ route('complaints.index') }}"> Back</a>
                     </div>
                 </div>
             </div>
@@ -37,84 +35,122 @@
                                     <div class="form-group">
                                         <div class="form-floating">
                                             <input type="text" name="NPSDNumber" class="form-control"
-                                                placeholder="NPS DOCKET NO" value="{{ $NPSDOCKETNO }}">
+                                                placeholder="NPS DOCKET NO" value="{{ $NPSDOCKETNO }}"
+                                                readonly="readonly">
                                             <label for="floatingNPSDNumber">NPS DOCKET NO</label>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="row pr-2 pl-2">
-                                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+                                {{-- <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
                                     <div class="form-group">
                                         <div class="form-floating">
                                             <select class="form-select" name="formtype" id="floatingSelect"
                                                 aria-label="Floating label select example">
                                                 <option value="" disabled selected>Select</option>
-                                                <option value="Reviewer">Reviewer</option>
-                                                <option value="Online">Online</option>
-                                                <option value="Manual">Manual</option>
-                                                <option value="Chief">Chief</option>
+                                                <option value="INQ">INQ</option>
+                                                <option value="INV">INV</option>
                                             </select>
                                             <label for="floatingSelect">Form Type</label>
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
                                 <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
                                     <div class="form-group">
                                         <div class="form-floating">
                                             <select class="form-select" name="assignedto" id="floatingSelect"
                                                 aria-label="Floating label select example">
                                                 <option value="" disabled selected>Select</option>
-                                                <option value="Reviewer">Reviewer</option>
-                                                <option value="Online">Online</option>
-                                                <option value="Manual">Manual</option>
-                                                <option value="Chief">Chief</option>
+                                                @foreach ($prosecutors as $prosecutor)
+                                                    <option value="{{ $prosecutor->id }}">{{ $prosecutor->firstname .' '. $prosecutor->middlename .'. '.$prosecutor->lastname }}</option>
+                                                @endforeach
                                             </select>
                                             <label for="floatingSelect">Assigned To</label>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+                                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-5">
                                     <div class="form-group">
                                         <div class="form-floating">
                                             <input type="text" name="placeofcommission" class="form-control"
                                                 placeholder="Place Of Commission" value="{{ old('placeofcommission') }}">
                                             <label for="floatingplaceofCommissionr">Place Of Commission</label>
                                             @error('placeofcommission')
-                                            <span class="text-danger" role="alert">
-                                                {{ $message }}
-                                            </span>
-                                        @enderror
+                                                <span class="text-danger" role="alert">
+                                                    {{ $message }}
+                                                </span>
+                                            @enderror
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
-                                    <div class="form-group">
+                                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+
+                                    <P>1. Has a Similar complaint been filed before any other office?</P>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" name="similar" type="checkbox" id="yesCheckedBox"
+                                            value="Yes" onchange="similarYesCheckBox()">
+                                        <label class="form-check-label" for="inlineCheckbox1">Yes</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" name="similar" type="checkbox" id="noCheckedBox"
+                                            value="No" onchange="similarNoCheckBox()">
+                                        <label class="form-check-label" for="inlineCheckbox2">No</label>
+                                    </div>
+
+                                    {{-- <div class="form-group">
                                         <div class="form-floating">
                                             <input type="text" name="similar" class="form-control" placeholder="Similar"
                                                 value="{{ old('similar') }}">
                                             <label for="floatingplaceofCommissionr">Similar</label>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
                             <div class="row pr-2 pl-2 pt-2">
                                 <div class="col-xs-12 col-sm-6 col-md-4 col-lg-6">
-                                    <div class="form-group">
+
+                                    <P>2. Is this complaint in the nature of a counter-charge? If yes, indicate details
+                                        below.</P>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" name="chargeYes" type="checkbox"
+                                            id="yesCheckedBoxCC" value="Yes" onchange="checkedCheckBoxCC()">
+                                        <label class="form-check-label" for="inlineCheckbox1">Yes</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" name="chargeNo" type="checkbox" id="noCheckedBoxCC"
+                                            value="No" onchange="noCheckBoxCC()">
+                                        <label class="form-check-label" for="inlineCheckbox2">No</label>
+                                    </div>
+
+                                    <div class="form-group" id="counter-charge">
                                         <div class="form-floating">
-                                            <input type="text" name="counterchargedetails" class="form-control"
-                                                placeholder="Counter Charge Details"
-                                                value="{{ old('counterchargedetails') }}">
-                                            <label for="floatingNPSDNumber">Counter Charge Details</label>
+                                            <input type="text" name="counterchargedetails" id="counterChargeDetails" class="form-control"
+                                                placeholder="Details Here" value="{{ old('counterchargedetails') }}">
+                                            <label for="floatingNPSDNumber">Details Here</label>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-xs-12 col-sm-6 col-md-4 col-lg-6">
-                                    <div class="form-group">
+
+                                    <P>3. Is this complaint related to another case before this office? If yes, indicate
+                                        details below.</P>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" name="complaintYes" type="checkbox"
+                                            id="yesCheckBoxRC" value="Yes" onchange="checkedCheckBoxRC()">
+                                        <label class="form-check-label" for="inlineCheckbox1">Yes</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" name="complaintNo" type="checkbox" id="noCheckBoxRC"
+                                            value="No" onchange="nocheckedCheckBoxRC()">
+                                        <label class="form-check-label" for="inlineCheckbox2">No</label>
+                                    </div>
+
+                                    <div class="form-group" id="related-complaint">
                                         <div class="form-floating">
-                                            <input type="text" name="relateddetails" class="form-control"
-                                                placeholder="Related Details" value="{{ old('relateddetails') }}">
-                                            <label for="floatingNPSDNumber">Related Details</label>
+                                            <input type="text" name="relateddetails" id="relatedComplaintDetails" class="form-control"
+                                                placeholder="Details Here" value="{{ old('relateddetails') }}">
+                                            <label for="floatingNPSDNumber">Details Here</label>
                                         </div>
                                     </div>
                                 </div>
@@ -365,9 +401,10 @@
                             <div id="attachment" class="accordion-collapse collapse"
                                 aria-labelledby="panelsStayOpen-headingTwo">
                                 <div class="accordion-body">
-                                    <input type="file" class="form-control" name="files[]" id="customFile" accept=".pdf" multiple />
+                                    <input type="file" class="form-control" name="files[]" id="customFile" accept=".pdf"
+                                        multiple />
                                     @error('files')
-                                    <div class="alert alert-danger mt-1 mb-1">{{ $message }}</div>
+                                        <div class="alert alert-danger mt-1 mb-1">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>

@@ -2,12 +2,6 @@
 
 
 @section('content')
-    <style>
-        .modal-body {
-            height: 80vh;
-            overflow-y: auto;
-        }
-    </style>
     <div class="content-wrapper">
         <div class="card">
             <div class="card-header">

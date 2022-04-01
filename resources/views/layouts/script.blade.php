@@ -22,7 +22,7 @@
             timer: 2000
         })
     </script>
-{{-- @elseif(session('errorForm'))
+    {{-- @elseif(session('errorForm'))
     <script>
         Swal.fire({
             icon: 'error',
@@ -32,9 +32,32 @@
         })
     </script> --}}
 @endif
+@if (Request::is('complaints/create'))
+    @if ($FType == '')
+        <script>
+            Swal.fire({
+                html: '<b style="font-size:17px;">WHAT TYPE OF FORM DO YOU WANT TO CREATE?</b>',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: 'rgb(99 151 64)',
+                confirmButtonText: 'INVESTIGATION',
+                cancelButtonText: 'INQUEST'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.location.href = "{{ route('complaints.create', ['formType' => 'INV']) }}";
+                } else {
+                    document.location.href = "{{ route('complaints.create', ['formType' => 'INQ']) }}";
+                }
+            })
+        </script>
+    @endif
+@endif
 <script>
     $(function() {
-        $('#example1').DataTable();
+        $('#generalTable').DataTable({
+            responsive: true
+        });
 
         $('.showModal').click(function() {
             var path = $(this).data('path');
@@ -43,13 +66,83 @@
             $('#filePreviewLabel').html(filename);
             $('#iframe_file').attr('src', path);
             $('#iframe_file').attr('class', 'w-100 h-100');
-
-            // $('#filePreview').modal('show');
         });
 
-        // $('.closeFileModal').click(function() {
-        //     $('#filePreview').modal('hide');
-        // });
+        $("#formId .form-control").prop("disabled", true);
+        $("#formId .form-select").prop("disabled", true);
+        $("#btnUpdate").hide();
+        $("#disabledUpdateBtn").hide();
+
+        $("#counter-charge").hide();
+        $("#related-complaint").hide();
+
+    });
+
+    //similar checkbox
+    function similarYesCheckBox() {
+        if ($('#yesCheckedBox').is(":checked")) {
+            $('#noCheckedBox').prop('checked', false); // Unchecks it
+        }
+    }
+
+    function similarNoCheckBox() {
+        if ($('#noCheckedBox').is(":checked")) {
+            $('#yesCheckedBox').prop('checked', false); // Unchecks it
+        }
+    }
+
+    //counter charge complaint
+    function checkedCheckBoxCC() {
+        if ($('#yesCheckedBoxCC').is(":checked")) {
+            $("#counter-charge").show();
+            $('#noCheckedBoxCC').prop('checked', false); // Unchecks it
+        } else {
+            $("#counter-charge").hide();
+            $('#counterChargeDetails').val('');
+        }
+    }
+
+    function noCheckBoxCC() {
+        if ($('#noCheckedBoxCC').is(":checked")) {
+            $("#counter-charge").hide();
+            $('#yesCheckedBoxCC').prop('checked', false); // Unchecks it
+            $('#counterChargeDetails').val('');
+        }
+    }
+
+    //related complaint
+    function checkedCheckBoxRC() {
+        if ($('#yesCheckBoxRC').is(":checked")) {
+            $("#related-complaint").show();
+            $('#noCheckBoxRC').prop('checked', false); // Unchecks it
+        } else {
+            $("#related-complaint").hide();
+            $('#relatedComplaintDetails').val('');
+        }
+    }
+
+    function nocheckedCheckBoxRC() {
+        if ($('#noCheckBoxRC').is(":checked")) {
+            $("#related-complaint").hide();
+            $('#yesCheckBoxRC').prop('checked', false); // Unchecks it
+            $('#relatedComplaintDetails').val('');
+        }
+    }
+
+    $("#enabledUpdateBtn").click(function() {
+        $("#enabledUpdateBtn").hide();
+        $("#disabledUpdateBtn").show();
+        $("#formId .form-control").prop("disabled", false);
+        $("#formId .form-select").prop("disabled", false);
+        $("#btnUpdate").show();
+    });
+
+    $("#disabledUpdateBtn").click(function() {
+        $("#enabledUpdateBtn").show();
+        $("#formId .form-control").prop("disabled", true);
+        $("#formId .form-select").prop("disabled", true);
+        $("#btnUpdate").hide();
+        $("#disabledUpdateBtn").hide();
     });
 
     //add new fields for complainants
@@ -70,7 +163,7 @@
             'class="form-control" placeholder="Middle Name">' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">' +
-            '<select class="form-select" name="addMoreComplainant[' + complainantIndex + 
+            '<select class="form-select" name="addMoreComplainant[' + complainantIndex +
             '][sex]" id="floatingSelect"' +
             'aria-label="Floating label select example" style="width:101px;">' +
             '<option value="" selected hidden>Sex</option>' +
@@ -189,43 +282,6 @@
             '</div>' +
             '</div>');
     });
-
-    // $("#add").click(function() {
-    //     ++i;
-    //     $("#dynamicTableComplainant").append('<tr>' +
-    //         '<td>' +
-    //         '<input type="text" name="addMoreComplainant[' + i + '][firstname]" class="form-control" placeholder="First Name">' +
-    //         '</td>' +
-    //         '<td>' +
-    //         '<input type="text" name="addMoreComplainant[' + i + '][lastname]" class="form-control" placeholder="Last Name">' +
-    //         '</td>' +
-    //         '<td>' +
-    //         '<input type="text" name="addMoreComplainant[' + i + '][middlename]" class="form-control" placeholder="Middle Name">' +
-    //         '</td>' +
-    //         '<td style="width:125px;">' +
-    //         '<select class="form-select" name="addMoreComplainant[' + i + '][sex]" id="floatingSelect" aria-label="Floating label select example">' +
-    //         '<option value="" disabled selected>Sex</option>' +
-    //         '<option value="Male">Male</option>' +
-    //         '<option value="Female">Female</option>' +
-    //         '</select>' +
-    //         '</td>' +
-    //         '<td>' +
-    //         '<input type="text" name="addMoreComplainant[' + i + '][age]" class="form-control" placeholder="Age">' +
-    //         '</td>' +
-    //         '<td>' +
-    //         '<input type="text" name="addMoreComplainant[' + i + '][address]" class="form-control" placeholder="Address">' +
-    //         '</td>' +
-    //         '<td><button type="button" class="btn btn-danger remove-tr">-</button></td>'+
-    //         '</tr>');
-    // });
-
-    // '<td><input type="text" name="addMoreComplainant[' + i + '][name]" placeholder="Enter your Name" class="form-control" /></td>' +
-    //     '<td><input type="text" name="addMoreComplainant[' + i + '][qty]" placeholder="Enter your Qty" class="form-control" /></td>' +
-    //     '<td><input type="text" name="addMoreComplainant[' + i + '][price]" placeholder="Enter your Price" class="form-control" /></td>' +
-
-    // $(document).on('click', '.remove-tr', function() {
-    //     $(this).parents('tr').remove();
-    // });
 
     $(document).on('click', '.remove-data', function() {
         $(this).closest("div.row").remove();

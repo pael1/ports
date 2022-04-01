@@ -17,8 +17,8 @@
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
-     <!-- Styles -->
-     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <!-- Styles -->
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
@@ -35,10 +35,20 @@
     <link rel="stylesheet" href="../../plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
     <link rel="stylesheet" href="../../plugins/datatables-buttons/css/buttons.bootstrap4.min.css"> --}}
 
-   
+
 </head>
 
 <body class="hold-transition sidebar-mini">
+
+    {{-- customize style --}}
+    <style>
+        .modal-body {
+            height: 80vh;
+            overflow-y: auto;
+        }
+
+    </style>
+
     <div class="wrapper">
         @include('layouts.header')
         @include('layouts.sidebar')
@@ -47,4 +57,5 @@
     </div>
     @include('layouts.script')
 </body>
+
 </html>

@@ -3,7 +3,7 @@
 
     class Helper{
 
-        public static function NPSDOCKETNO($model, $trow, $length = 5, $prefix){
+        public static function NPSDOCKETNO($model, $trow, $length, $prefix){
             $data = $model::orderBy('id', 'desc')->first();
             if(!$data){
                 $og_length = $length;

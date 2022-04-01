@@ -22,7 +22,7 @@
                 <div class="col-lg-12 margin-tb">
                     <div class="float-end p-2 mr-5">
                         @can('product-create')
-                            <a class="btn btn-success btn-sm" href="{{ route('complaints.create') }}"> Create New Product</a>
+                            <a class="btn btn-success btn-sm" href="{{ route('complaints.create') }}"> Create New Complaint</a>
                         @endcan
                     </div>
                 </div>
@@ -36,28 +36,30 @@
                 @endif --}}
 
 
-                <table id="example1" class="table">
+                <table id="generalTable" class="table">
                     <thead>
                         <tr>
-                            <th>No1</th>
-                            <th>Nam1e</th>
-                            <th>Details</th>
-                            <th width="280px">Act1ion</th>
+                            <th >NPS DOCKET NO.</th>
+                            <th class="text-center">RECEIVED BY</th>
+                            <th class="text-center">ASSIGNED TO</th>
+                            <th class="text-center">DATE FILED</th>
+                            <th class="text-center">ACTION</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($complaints as $complaint)
                             <tr>
                                 <td>{{ $complaint->NPSDNumber }}</td>
-                                <td>{{ $complaint->formType }}</td>
-                                <td>{{ $complaint->placeofCommission }}</td>
+                                <td class="text-center">{{ $complaint->receivedBy }}</td>
+                                <td class="text-center">{{ $complaint->assignedTo }}</td>
+                                <td class="text-center">{{ $complaint->created_at->format('d-M-y') }}</td>
                                 <td class="text-center">
                                     <form action="{{ route('complaints.destroy', $complaint->id) }}" method="POST">
-                                        <a class="btn btn-info btn-sm"
-                                            href="{{ route('complaints.show', $complaint->id) }}">Show</a>
+                                        {{-- <a class="btn btn-info btn-sm"
+                                            href="{{ route('complaints.show', $complaint->id) }}">Show</a> --}}
                                         @can('product-edit')
-                                            <a class="btn btn-primary btn-sm"
-                                                href="{{ route('complaints.edit', $complaint->id) }}">Edit</a>
+                                            <a class="btn btn-info btn-sm"
+                                                href="{{ route('complaints.edit', $complaint->id) }}">Show</a>
                                         @endcan
 
 
