@@ -5,7 +5,7 @@
 <div class="content-wrapper">
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">Add Commited 1 100 20001</h3>
+            <h3 class="card-title">Add Commited 1 100 20002</h3>
         </div>
         <div class="row">
             <div class="col-lg-12 margin-tb">
