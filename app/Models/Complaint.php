@@ -37,4 +37,9 @@ class Complaint extends Model
     {
         return $this->hasMany(Attachment::class);
     }
+
+    public function prosecutor()
+    {
+        return $this->hasOne(Prosecutor::class);
+    }
 }

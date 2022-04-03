@@ -10,6 +10,7 @@ use App\Models\Complaint;
 use App\Models\Attachment;
 use App\Models\Prosecutor;
 use App\Models\ViolatedLaw;
+use Illuminate\Console\Command;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -23,7 +24,12 @@ class ComplaintController extends Controller
      */
     public function index()
     {
-        $complaints = Complaint::all();
+        // $complaints = Complaint::all();
+        $complaints = DB::table('complaints')
+        ->join('prosecutors', 'complaints.assignedTo', '=', 'prosecutors.id')
+        ->select('complaints.*', 
+        DB::raw("CONCAT(prosecutors.ext, ' ', prosecutors.firstname, ' ', prosecutors.middlename, ' ', prosecutors.lastname) as name"))->get();
+        // dd($complaints);
         return view('complaints.index', compact('complaints'));
     }
 
@@ -230,6 +236,7 @@ class ComplaintController extends Controller
     public function update(Request $request, $id)
     {
         //
+        dd($request->all());
     }
 
     /**

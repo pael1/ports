@@ -51,22 +51,22 @@
                             <tr>
                                 <td>{{ $complaint->NPSDNumber }}</td>
                                 <td class="text-center">{{ $complaint->receivedBy }}</td>
-                                <td class="text-center">{{ $complaint->assignedTo }}</td>
-                                <td class="text-center">{{ $complaint->created_at->format('d-M-y') }}</td>
+                                <td class="text-center">{{ $complaint->name }}</td>
+                                <td class="text-center">{{ Carbon\Carbon::parse($complaint->created_at)->format('d-M-y') }}</td>
                                 <td class="text-center">
                                     <form action="{{ route('complaints.destroy', $complaint->id) }}" method="POST">
                                         {{-- <a class="btn btn-info btn-sm"
                                             href="{{ route('complaints.show', $complaint->id) }}">Show</a> --}}
                                         @can('product-edit')
                                             <a class="btn btn-info btn-sm"
-                                                href="{{ route('complaints.edit', $complaint->id) }}">Show</a>
+                                                href="{{ route('complaints.edit', $complaint->id) }}" data-bs-toggle="tooltip" title="Show complaint"><i class="fas fa-eye"></i></a>
                                         @endcan
 
 
                                         @csrf
                                         @method('DELETE')
                                         @can('product-delete')
-                                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                            <button type="submit" class="btn btn-danger btn-sm" data-bs-toggle="tooltip" title="Delete complaint"><i class="far fa-trash-alt"></i></button>
                                         @endcan
                                     </form>
                                 </td>

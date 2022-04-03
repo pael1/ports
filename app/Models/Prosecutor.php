@@ -18,4 +18,9 @@ class Prosecutor extends Model
         'schedule',
         'court',
     ];
+
+    public function complaint()
+    {
+        return $this->belongsTo(Complaint::class);
+    }
 }

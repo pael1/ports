@@ -33,32 +33,38 @@
     </script> --}}
 @endif
 @if (Request::is('complaints/create'))
-    @if ($FType == '')
-        <script>
-            Swal.fire({
-                html: '<b style="font-size:17px;">WHAT TYPE OF FORM DO YOU WANT TO CREATE?</b>',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: 'rgb(99 151 64)',
-                confirmButtonText: 'INVESTIGATION',
-                cancelButtonText: 'INQUEST'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.location.href = "{{ route('complaints.create', ['formType' => 'INV']) }}";
-                } else {
-                    document.location.href = "{{ route('complaints.create', ['formType' => 'INQ']) }}";
-                }
-            })
-        </script>
-    @endif
+@if ($FType == '')
+<script>
+    Swal.fire({
+        html: '<b style="font-size:17px;">WHAT TYPE OF FORM DO YOU WANT TO CREATE?</b>',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: 'rgb(99 151 64)',
+        confirmButtonText: 'INVESTIGATION',
+        cancelButtonText: 'INQUEST'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.location.href = "{{ route('complaints.create', ['formType' => 'INV']) }}";
+        } else {
+            document.location.href = "{{ route('complaints.create', ['formType' => 'INQ']) }}";
+        }
+    })
+</script>
+@endif
 @endif
 <script>
     $(function() {
+
+        //datatables
         $('#generalTable').DataTable({
             responsive: true
         });
 
+        //tooltips
+        $('[data-bs-toggle="tooltip"]').tooltip();
+
+        //open modal
         $('.showModal').click(function() {
             var path = $(this).data('path');
             var filename = $(this).data('filename');
@@ -68,13 +74,34 @@
             $('#iframe_file').attr('class', 'w-100 h-100');
         });
 
-        $("#formId .form-control").prop("disabled", true);
-        $("#formId .form-select").prop("disabled", true);
+        //disabled all form
+        $("#formId input").prop("disabled", true);
+        $("#formId .add").hide();
+        // $("#formId .form-control").prop("disabled", true);
+        // $("#formId .form-select").prop("disabled", true);
         $("#btnUpdate").hide();
         $("#disabledUpdateBtn").hide();
 
         $("#counter-charge").hide();
         $("#related-complaint").hide();
+
+        //counter charge checkbox
+        if ($('#yesCheckedBoxCC').is(":checked")) {
+            $("#counter-charge").show();
+            $('#noCheckedBoxCC').prop('checked', false); // Unchecks it
+        } else {
+            $("#counter-charge").hide();
+            $('#counterChargeDetails').val('');
+        }
+
+        //related checkbox
+        if ($('#yesCheckBoxRC').is(":checked")) {
+            $("#related-complaint").show();
+            $('#noCheckBoxRC').prop('checked', false); // Unchecks it
+        } else {
+            $("#related-complaint").hide();
+            $('#relatedComplaintDetails').val('');
+        }
 
     });
 
@@ -110,7 +137,7 @@
         }
     }
 
-    //related complaint
+    //yes related complaint
     function checkedCheckBoxRC() {
         if ($('#yesCheckBoxRC').is(":checked")) {
             $("#related-complaint").show();
@@ -121,6 +148,7 @@
         }
     }
 
+    //no related complaint
     function nocheckedCheckBoxRC() {
         if ($('#noCheckBoxRC').is(":checked")) {
             $("#related-complaint").hide();
@@ -129,18 +157,24 @@
         }
     }
 
+    //enable update
     $("#enabledUpdateBtn").click(function() {
         $("#enabledUpdateBtn").hide();
         $("#disabledUpdateBtn").show();
-        $("#formId .form-control").prop("disabled", false);
-        $("#formId .form-select").prop("disabled", false);
+        // $("#formId .form-control").prop("disabled", false);
+        // $("#formId .form-select").prop("disabled", false);
+        $("#formId input").prop("disabled", false);
+        $("#formId .add").show();
         $("#btnUpdate").show();
     });
 
+    //disable update
     $("#disabledUpdateBtn").click(function() {
         $("#enabledUpdateBtn").show();
-        $("#formId .form-control").prop("disabled", true);
-        $("#formId .form-select").prop("disabled", true);
+        // $("#formId .form-control").prop("disabled", true);
+        // $("#formId .form-select").prop("disabled", true);
+        $("#formId input").prop("disabled", true);
+        $("#formId .add").hide();
         $("#btnUpdate").hide();
         $("#disabledUpdateBtn").hide();
     });
@@ -180,12 +214,13 @@
             'placeholder="Address">' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">' +
-            '<button type="button" class="btn btn-danger remove-data">-</button>' +
+            '<button type="button" data-bs-toggle="tooltip" title="Remove" class="btn btn-danger btn-sm remove-data">-</button>' +
             '</div>' +
             '</div>');
+        $('[data-bs-toggle="tooltip"]').tooltip();
     });
 
-    //law violated
+    //add new field for law violated
     var lawViolatedIndex = 0;
     $("#addLawViolated").click(function() {
         ++lawViolatedIndex;
@@ -198,12 +233,13 @@
             '</div>' +
             '</div>' +
             '<div class="col-1 col-sm-1 col-md-1 col-lg-1">' +
-            '<button type="button" class="btn btn-danger remove-data">-</button>' +
+            '<button type="button" data-bs-toggle="tooltip" title="Remove" class="btn btn-danger btn-sm remove-data">-</button>' +
             '</div>' +
             '</div>');
+        $('[data-bs-toggle="tooltip"]').tooltip();
     });
 
-    //respondents
+    //add new field for respondents
     var respondentIndex = 0;
     $("#addRespondent").click(function() {
         ++respondentIndex;
@@ -238,12 +274,13 @@
             'placeholder="Address">' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">' +
-            '<button type="button" class="btn btn-danger remove-data">-</button>' +
+            '<button type="button" data-bs-toggle="tooltip" title="Remove" class="btn btn-danger btn-sm remove-data">-</button>' +
             '</div>' +
             '</div>');
+        $('[data-bs-toggle="tooltip"]').tooltip();
     });
 
-    //witness
+    //add new field for witness
     var witnessIndex = 0;
     $("#addWitness").click(function() {
         ++witnessIndex;
@@ -278,11 +315,13 @@
             'placeholder="Address">' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">' +
-            '<button type="button" class="btn btn-danger remove-data">-</button>' +
+            '<button type="button" data-bs-toggle="tooltip" title="Remove" class="btn btn-danger btn-sm remove-data">-</button>' +
             '</div>' +
             '</div>');
+        $('[data-bs-toggle="tooltip"]').tooltip();
     });
 
+    //remove added field //general remove function
     $(document).on('click', '.remove-data', function() {
         $(this).closest("div.row").remove();
     });
