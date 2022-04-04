@@ -226,16 +226,16 @@
                                     @foreach ($respondents as $value)
                                     <div class="row mt-3">
                                         <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
-                                            <input type="text" name="addMoreComplainant[0][firstname]" class="form-control" placeholder="First Name" value="{{ $value->firstName }}">
+                                            <input type="text" name="addMoreRespondent[0][firstname]" class="form-control" placeholder="First Name" value="{{ $value->firstName }}">
                                         </div>
                                         <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
-                                            <input type="text" name="addMoreComplainant[0][lastname]" class="form-control" placeholder="Last Name" value="{{ $value->lastName }}">
+                                            <input type="text" name="addMoreRespondent[0][lastname]" class="form-control" placeholder="Last Name" value="{{ $value->lastName }}">
                                         </div>
                                         <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
-                                            <input type="text" name="addMoreComplainant[0][middlename]" class="form-control" placeholder="Middle Name" value="{{ $value->middleName }}">
+                                            <input type="text" name="addMoreRespondent[0][middlename]" class="form-control" placeholder="Middle Name" value="{{ $value->middleName }}">
                                         </div>
                                         <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">
-                                            <select class="form-select" name="addMoreComplainant[0][sex]" id="floatingSelect" aria-label="Floating label select example" style="width:101px;">
+                                            <select class="form-select" name="addMoreRespondent[0][sex]" id="floatingSelect" aria-label="Floating label select example" style="width:101px;">
                                                 <option value="" selected hidden>Sex</option>
                                                 <option value="Male" {{ $value->sex == 'Male' ? 'selected' : '' }}>Male
                                                 </option>
@@ -243,9 +243,9 @@
                                                 </option>
                                             </select>
                                         </div>
-                                        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1"> <input type="text" name="addMoreComplainant[0][age]" class="form-control ml-3" placeholder="Age" style="width:72px;" value="{{ $value->age }}">
+                                        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1"> <input type="text" name="addMoreRespondent[0][age]" class="form-control ml-3" placeholder="Age" style="width:72px;" value="{{ $value->age }}">
                                         </div>
-                                        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3"> <input type="text" name="addMoreComplainant[0][address]" class="form-control" placeholder="Address" value="{{ $value->address }}">
+                                        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3"> <input type="text" name="addMoreRespondent[0][address]" class="form-control" placeholder="Address" value="{{ $value->address }}">
                                         </div>
                                         <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">
                                             <button type="button" name="addRespondent" id="addRespondent" data-bs-toggle="tooltip" title="Add respondent" class="btn btn-success btn-sm add">+</button>
@@ -274,16 +274,16 @@
                                     @foreach ($witnesses as $value)
                                     <div class="row mt-3">
                                         <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
-                                            <input type="text" name="addMoreComplainant[0][firstname]" class="form-control" placeholder="First Name" value="{{ $value->firstName }}">
+                                            <input type="text" name="addMoreWitness[0][firstname]" class="form-control" placeholder="First Name" value="{{ $value->firstName }}">
                                         </div>
                                         <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
-                                            <input type="text" name="addMoreComplainant[0][lastname]" class="form-control" placeholder="Last Name" value="{{ $value->lastName }}">
+                                            <input type="text" name="addMoreWitness[0][lastname]" class="form-control" placeholder="Last Name" value="{{ $value->lastName }}">
                                         </div>
                                         <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
-                                            <input type="text" name="addMoreComplainant[0][middlename]" class="form-control" placeholder="Middle Name" value="{{ $value->middleName }}">
+                                            <input type="text" name="addMoreWitness[0][middlename]" class="form-control" placeholder="Middle Name" value="{{ $value->middleName }}">
                                         </div>
                                         <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">
-                                            <select class="form-select" name="addMoreComplainant[0][sex]" id="floatingSelect" aria-label="Floating label select example" style="width:101px;">
+                                            <select class="form-select" name="addMoreWitness[0][sex]" id="floatingSelect" aria-label="Floating label select example" style="width:101px;">
                                                 <option value="" selected hidden>Sex</option>
                                                 <option value="Male" {{ $value->sex == 'Male' ? 'selected' : '' }}>Male
                                                 </option>
@@ -291,9 +291,9 @@
                                                 </option>
                                             </select>
                                         </div>
-                                        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1"> <input type="text" name="addMoreComplainant[0][age]" class="form-control ml-3" placeholder="Age" style="width:72px;" value="{{ $value->age }}">
+                                        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1"> <input type="text" name="addMoreWitness[0][age]" class="form-control ml-3" placeholder="Age" style="width:72px;" value="{{ $value->age }}">
                                         </div>
-                                        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3"> <input type="text" name="addMoreComplainant[0][address]" class="form-control" placeholder="Address" value="{{ $value->address }}">
+                                        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3"> <input type="text" name="addMoreWitness[0][address]" class="form-control" placeholder="Address" value="{{ $value->address }}">
                                         </div>
                                         <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">
                                             <button type="button" name="addWitness" id="addWitness" data-bs-toggle="tooltip" title="Add witness" class="btn btn-success btn-sm add">+</button>
