@@ -33,33 +33,51 @@
     </script> --}}
 @endif
 @if (Request::is('complaints/create'))
-@if ($FType == '')
-<script>
-    Swal.fire({
-        html: '<b style="font-size:17px;">WHAT TYPE OF FORM DO YOU WANT TO CREATE?</b>',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: 'rgb(99 151 64)',
-        confirmButtonText: 'INVESTIGATION',
-        cancelButtonText: 'INQUEST'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            document.location.href = "{{ route('complaints.create', ['formType' => 'INV']) }}";
-        } else {
-            document.location.href = "{{ route('complaints.create', ['formType' => 'INQ']) }}";
-        }
-    })
-</script>
-@endif
+    @if ($FType == '')
+        <script>
+            Swal.fire({
+                html: '<b style="font-size:17px;">WHAT TYPE OF FORM DO YOU WANT TO CREATE?</b>',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: 'rgb(99 151 64)',
+                confirmButtonText: 'INVESTIGATION',
+                cancelButtonText: 'INQUEST'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.location.href = "{{ route('complaints.create', ['formType' => 'INV']) }}";
+                } else {
+                    document.location.href = "{{ route('complaints.create', ['formType' => 'INQ']) }}";
+                }
+            })
+        </script>
+    @endif
 @endif
 <script>
     $(function() {
 
-        //datatables
-        $('#generalTable').DataTable({
-            responsive: true
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN' :$('meta[name="csrf-token"]').attr('content')
+            }
         });
+        var table = $("#generalTable").DataTable({
+            serverSide:true,
+            processing:true,
+            ajax:"{{ route('complaints.index') }}",
+            columns:[
+                {data: 'NPSDNumber', name, :'NPSDNumber'},
+                {data: 'receivedBy', name, :'receivedBy'},
+                {data: 'assignedTo', name, :'assignedTo'},
+                {data: 'created_at', name, :'created_at'},
+                {data: 'action', name, :'action'},
+            ]
+        });
+
+        //datatables
+        // $('#generalTable').DataTable({
+        //     responsive: true
+        // });
 
         //tooltips
         $('[data-bs-toggle="tooltip"]').tooltip();
@@ -103,6 +121,76 @@
             $('#relatedComplaintDetails').val('');
         }
 
+    });
+
+    $(".deleteParty").click(function() {
+        var id = $(this).data("id");
+        var token = $("meta[name='csrf-token']").attr("content");
+        console.log(id);
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "/party/" + id,
+                    type: 'DELETE',
+                    data: {
+                        "id": id,
+                        "_token": token,
+                    },
+                    success: function() {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Successfully deleted',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        // $( ".accordion-collapse" ).load(window.location.href + " .accordion-collapse" );
+                    }
+                });
+            }
+        })
+    });
+
+    $(".deleteAttachment").click(function() {
+        var id = $(this).data("id");
+        var token = $("meta[name='csrf-token']").attr("content");
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "/attachments/" + id,
+                    type: 'DELETE',
+                    data: {
+                        "id": id,
+                        "_token": token,
+                    },
+                    success: function() {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Successfully deleted',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        $( "#attachmentsTable" ).load(window.location.href + " #attachmentsTable" );
+                    }
+                });
+            }
+        })
     });
 
     //similar checkbox

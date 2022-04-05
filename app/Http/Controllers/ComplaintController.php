@@ -14,6 +14,8 @@ use Illuminate\Console\Command;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Mockery\Generator\StringManipulation\Pass\Pass;
+use DataTables;
 
 class ComplaintController extends Controller
 {
@@ -22,14 +24,36 @@ class ComplaintController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    // public function index()
+    public function index(Request $request)
     {
         // $complaints = Complaint::all();
-        $complaints = DB::table('complaints')
-        ->join('prosecutors', 'complaints.assignedTo', '=', 'prosecutors.id')
-        ->select('complaints.*', 
-        DB::raw("CONCAT(prosecutors.ext, ' ', prosecutors.firstname, ' ', prosecutors.middlename, ' ', prosecutors.lastname) as name"))->get();
-        // dd($complaints);
+
+
+        // $complaints = DB::table('complaints')
+        //     ->join('prosecutors', 'complaints.assignedTo', '=', 'prosecutors.id')
+        //     ->select(
+        //         'complaints.*',
+        //         DB::raw("CONCAT(prosecutors.ext, ' ', prosecutors.firstname, ' ', prosecutors.middlename, ' ', prosecutors.lastname) as name")
+        //     )->get();
+        // return view('complaints.index', compact('complaints'));
+
+        $complaints = Complaint::get();
+        if($request->ajax()){
+            $allData = DataTables::of($complaints)
+            ->addIndexColumn()
+            ->addColumn('action', function ($row){
+                $btn = '<a href="javascript:void(0)" data-id="'.$row->id.'" class="edit btn btn-primary btn-sm
+                 editComplaint">Edit</a>';
+                 $btn.='<a href="javascript:void(0)" data-id="'.$row->id.'" class="edit btn btn-danger btn-sm
+                 deleteComplaint">Delete</a>';
+                 return $btn;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+            return $allData;
+        }
+
         return view('complaints.index', compact('complaints'));
     }
 
@@ -85,26 +109,6 @@ class ComplaintController extends Controller
             // 'addMorewitness.*.qty' => 'required',
             // 'addMorewitness.*.price' => 'required',
         ]);
-
-        // $validator = Validator::make($request->all(), [
-        //     'formtype' => 'required',
-        //     'assignedto' => 'required',
-        //     'placeofcommission' => 'required',
-        //     'similar' => 'required',
-        //     'counterchargedetails' => 'required',
-        //     'relateddetails' => 'required',
-        //     'files.*' => 'required|mimes:pdf|max:2000',
-
-        //     // 'addMoreComplainant.*.firstname' => 'required',
-        //     // 'addMoreComplainant.*.qty' => 'required',
-        //     // 'addMoreComplainant.*.price' => 'required',
-        // ]);
-
-        // if ($validator->fails()) {
-        //     return redirect()->back()
-        //         ->with('errorForm', $validator->errors()->getMessages())
-        //         ->withInput();
-        // }
 
         $complaints = Complaint::create([
             'formType' => $request->formtype,
@@ -211,9 +215,10 @@ class ComplaintController extends Controller
 
         $prosecutors = Prosecutor::select(
             DB::raw("CONCAT(firstname,' ',middlename,'. ',lastname) AS name"),
-            'id')
+            'id'
+        )
             ->pluck('name', 'id');
-        $prosecutorId = Complaint::where('id',$id)->first()->assignedTo;
+        $prosecutorId = Complaint::where('id', $id)->first()->assignedTo;
 
         $respondents = DB::table('parties')->where(['belongsTo' => 'respondent', 'complaint_id' => $id])->get();
         $complainants = DB::table('parties')->where(['belongsTo' => 'complainant', 'complaint_id' => $id])->get();
@@ -235,8 +240,63 @@ class ComplaintController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
-        dd($request->all());
+        $complaints = Complaint::updateOrCreate(
+            [
+                'id'   => $id,
+            ],
+            [
+                'formType' => $request->formtype,
+                'receivedBy' => Auth::user()->username,
+                'assignedTo' => $request->assignedto,
+                'violation' => 'Static',
+                'placeofCommission' => $request->placeofcommission,
+                'counterCharge' => 'static',
+                'similar' => $request->similar,
+                'counterChargeDetails' => ($request->counterchargedetails != "") ? $request->counterchargedetails : $request->chargeNo,
+                'relatedComplaint' => 'static',
+                'relatedDetails' => ($request->relateddetails != "") ? $request->relateddetails : $request->complaintNo,
+                'NPSDNumber' => $request->NPSDNumber
+            ]
+        );
+
+        // foreach ($request->addMoreWitness as $witness) {
+        //     $witnesses = new Party(
+        //         [
+        //             'complaint_id' => $id,
+        //             'belongsTo' => 'witness',
+        //         ],
+        //         [
+        //             'lastName' => $witness['lastname'],
+        //             'firstName' => $witness['firstname'],
+        //             'middleName' => $witness['middlename'],
+        //             'sex' => $witness['sex'],
+        //             'age' => $witness['age'],
+        //             'address' => $witness['address'],
+        //             'belongsTo' => 'witness'
+        //         ]
+        //     );
+
+        //     $complaints->party()->updateOrCreate($witnesses);
+        // }
+
+        // $witnesses = Party::where(['belongsTo' => 'witness', 'complaint_id' => $id])->get();
+
+        // foreach ($witnesses as $witness) {
+        //     Company::updateOrCreate(
+        //         [
+        //             'complaint_id' => $id,
+        //             'belongsTo' => 'witness'
+        //         ],
+        //         [
+        //             'name' => $witness->name,
+        //             'email' => $witness->email,
+        //             'address' => $witness->address
+        //         ]
+        //     );
+        //     $complaints->party()->save($witnesses);
+        // }
+
+        // dd($witnesses);
     }
 
     /**
@@ -253,5 +313,15 @@ class ComplaintController extends Controller
         DB::table("violated_laws")->where("complaint_id", $id)->delete();
 
         return redirect()->route('complaints.index')->with('success', 'Deleted successfully!');
+    }
+
+    //delete specific id 
+    public function deleteParty($id){
+   
+        Party::find($id)->delete();
+      
+        return response()->json([
+            'success' => 'Record deleted successfully!'
+        ]);
     }
 }
