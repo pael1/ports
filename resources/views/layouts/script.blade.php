@@ -14,63 +14,69 @@
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 {{-- sweet alert success --}}
 @if (session('success'))
-    <script>
-        Swal.fire({
-            icon: 'success',
-            title: ' {{ session('success') }}',
-            showConfirmButton: false,
-            timer: 2000
-        })
-    </script>
-    {{-- @elseif(session('errorForm'))
-    <script>
-        Swal.fire({
-            icon: 'error',
-            title: ' {{ session('console.errorForm;') }}',
-            showConfirmButton: false,
-            timer: 2000
-        })
-    </script> --}}
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: ' {{ session('
+        success ') }}',
+        showConfirmButton: false,
+        timer: 2000
+    })
+</script>
 @endif
 @if (Request::is('complaints/create'))
-    @if ($FType == '')
-        <script>
-            Swal.fire({
-                html: '<b style="font-size:17px;">WHAT TYPE OF FORM DO YOU WANT TO CREATE?</b>',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: 'rgb(99 151 64)',
-                confirmButtonText: 'INVESTIGATION',
-                cancelButtonText: 'INQUEST'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.location.href = "{{ route('complaints.create', ['formType' => 'INV']) }}";
-                } else {
-                    document.location.href = "{{ route('complaints.create', ['formType' => 'INQ']) }}";
-                }
-            })
-        </script>
-    @endif
+@if ($FType == '')
+<script>
+    Swal.fire({
+        html: '<b style="font-size:17px;">WHAT TYPE OF FORM DO YOU WANT TO CREATE?</b>',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: 'rgb(99 151 64)',
+        confirmButtonText: 'INVESTIGATION',
+        cancelButtonText: 'INQUEST'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.location.href = "{{ route('complaints.create', ['formType' => 'INV']) }}";
+        } else {
+            document.location.href = "{{ route('complaints.create', ['formType' => 'INQ']) }}";
+        }
+    })
+</script>
+@endif
 @endif
 <script>
     $(function() {
 
         $.ajaxSetup({
             headers: {
-                'X-CSRF-TOKEN' :$('meta[name="csrf-token"]').attr('content')
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
         var table = $("#generalTable").DataTable({
-            serverSide:true,
-            processing:true,
-            ajax:"{{ route('complaints.index') }}",
-            columns:[
-                {data: 'NPSDNumber', name, :'NPSDNumber'},
-                {data: 'receivedBy', name, :'receivedBy'},
-                {data: 'assignedTo', name, :'assignedTo'},
-                {data: 'created_at', name, :'created_at'},
-                {data: 'action', name, :'action'},
+            serverSide: true,
+            processing: true,
+            ajax: "{{ route('complaints.index') }}",
+            columns: [{
+                    data: 'NPSDNumber',
+                    name: 'NPSDNumber'
+                },
+                {
+                    data: 'receivedBy',
+                    name: 'receivedBy'
+                },
+                {
+                    data: 'name',
+                    name: 'assignedTo'
+                },
+                {
+                    data: 'created_at',
+                    name: 'created_at'
+                },
+                {
+                    data: 'action',
+                    name: 'action'
+                },
             ]
         });
 
@@ -120,6 +126,49 @@
             $("#related-complaint").hide();
             $('#relatedComplaintDetails').val('');
         }
+
+        //show complaint
+        $("body").on('click', '.editComplaint', function() {
+            var id = $(this).data("id");
+            let url = "{{ route('complaints.edit', ':id') }}";
+            url = url.replace(':id', id);
+            document.location.href = url;
+        });
+        //delete complaint
+        $("body").on('click', '.deleteComplaint', function() {
+            var id = $(this).data("id");
+            var token = $("meta[name='csrf-token']").attr("content");
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "/deleteComplaint/" + id,
+                        type: 'DELETE',
+                        data: {
+                            "id": id,
+                            "_token": token,
+                        },
+                        success: function() {
+                            table.draw();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Successfully deleted',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+
+                        }
+                    });
+                }
+            })
+        });
 
     });
 
@@ -186,7 +235,7 @@
                             showConfirmButton: false,
                             timer: 1500
                         })
-                        $( "#attachmentsTable" ).load(window.location.href + " #attachmentsTable" );
+                        $("#attachmentsTable").load(window.location.href + " #attachmentsTable");
                     }
                 });
             }

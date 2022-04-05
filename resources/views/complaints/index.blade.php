@@ -40,14 +40,14 @@
                     <thead>
                         <tr>
                             <th >NPS DOCKET NO.</th>
-                            <th class="text-center">RECEIVED BY</th>
-                            <th class="text-center">ASSIGNED TO</th>
-                            <th class="text-center">DATE FILED</th>
-                            <th class="text-center">ACTION</th>
+                            <th>Recieved By</th>
+                            <th>Assigned TO</th>
+                            <th>Date Filed</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($complaints as $complaint)
+                        <!-- @foreach ($complaints as $complaint)
                             <tr>
                                 <td>{{ $complaint->NPSDNumber }}</td>
                                 <td class="text-center">{{ $complaint->receivedBy }}</td>
@@ -71,7 +71,7 @@
                                     </form>
                                 </td>
                             </tr>
-                        @endforeach
+                        @endforeach -->
                     </tbody>
                 </table>
             </div>

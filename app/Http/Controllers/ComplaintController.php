@@ -5,17 +5,15 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\Party;
 use App\Helpers\Helper;
-// use App\Models\Product;
 use App\Models\Complaint;
 use App\Models\Attachment;
 use App\Models\Prosecutor;
 use App\Models\ViolatedLaw;
-use Illuminate\Console\Command;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Mockery\Generator\StringManipulation\Pass\Pass;
-use DataTables;
+// use DataTables;
 
 class ComplaintController extends Controller
 {
@@ -30,23 +28,21 @@ class ComplaintController extends Controller
         // $complaints = Complaint::all();
 
 
-        // $complaints = DB::table('complaints')
-        //     ->join('prosecutors', 'complaints.assignedTo', '=', 'prosecutors.id')
-        //     ->select(
-        //         'complaints.*',
-        //         DB::raw("CONCAT(prosecutors.ext, ' ', prosecutors.firstname, ' ', prosecutors.middlename, ' ', prosecutors.lastname) as name")
-        //     )->get();
+        $complaints = DB::table('complaints')
+            ->join('prosecutors', 'complaints.assignedTo', '=', 'prosecutors.id')
+            ->select(
+                'complaints.*',
+                DB::raw("CONCAT(prosecutors.ext, ' ', prosecutors.firstname, ' ', prosecutors.middlename, ' ', prosecutors.lastname) as name")
+            )->get();
         // return view('complaints.index', compact('complaints'));
 
-        $complaints = Complaint::get();
+        // $complaints = Complaint::get();
         if($request->ajax()){
             $allData = DataTables::of($complaints)
             ->addIndexColumn()
             ->addColumn('action', function ($row){
-                $btn = '<a href="javascript:void(0)" data-id="'.$row->id.'" class="edit btn btn-primary btn-sm
-                 editComplaint">Edit</a>';
-                 $btn.='<a href="javascript:void(0)" data-id="'.$row->id.'" class="edit btn btn-danger btn-sm
-                 deleteComplaint">Delete</a>';
+                $btn = '<a href="javascript:void(0)" data-bs-toggle="tooltip" data-id="'.$row->id.'" title="Show complaint" class="btn btn-primary btn-sm editComplaint">View</a> ';
+                 $btn.='<a href="javascript:void(0)" data-bs-toggle="tooltip" data-id="'.$row->id.'" title="Show complaint" class="btn btn-danger btn-sm deleteComplaint">Delete</a>';
                  return $btn;
             })
             ->rawColumns(['action'])
@@ -313,6 +309,19 @@ class ComplaintController extends Controller
         DB::table("violated_laws")->where("complaint_id", $id)->delete();
 
         return redirect()->route('complaints.index')->with('success', 'Deleted successfully!');
+    }
+
+    //delete complaint
+    public function deleteComplaint($id)
+    {
+        DB::table("complaints")->where("id", $id)->delete();
+        DB::table("parties")->where("complaint_id", $id)->delete();
+        DB::table("attachments")->where("complaint_id", $id)->delete();
+        DB::table("violated_laws")->where("complaint_id", $id)->delete();
+
+        return response()->json([
+            'success' => 'Record deleted successfully!'
+        ]);
     }
 
     //delete specific id 
