@@ -14,36 +14,36 @@
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 {{-- sweet alert success --}}
 @if (session('success'))
-<script>
-    Swal.fire({
-        icon: 'success',
-        title: ' {{ session('
-        success ') }}',
-        showConfirmButton: false,
-        timer: 2000
-    })
-</script>
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: ' {{ session('
+                    success ') }}',
+            showConfirmButton: false,
+            timer: 2000
+        })
+    </script>
 @endif
 @if (Request::is('complaints/create'))
-@if ($FType == '')
-<script>
-    Swal.fire({
-        html: '<b style="font-size:17px;">WHAT TYPE OF FORM DO YOU WANT TO CREATE?</b>',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: 'rgb(99 151 64)',
-        confirmButtonText: 'INVESTIGATION',
-        cancelButtonText: 'INQUEST'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            document.location.href = "{{ route('complaints.create', ['formType' => 'INV']) }}";
-        } else {
-            document.location.href = "{{ route('complaints.create', ['formType' => 'INQ']) }}";
-        }
-    })
-</script>
-@endif
+    @if ($FType == '')
+        <script>
+            Swal.fire({
+                html: '<b style="font-size:17px;">WHAT TYPE OF FORM DO YOU WANT TO CREATE?</b>',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: 'rgb(99 151 64)',
+                confirmButtonText: 'INVESTIGATION',
+                cancelButtonText: 'INQUEST'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.location.href = "{{ route('complaints.create', ['formType' => 'INV']) }}";
+                } else {
+                    document.location.href = "{{ route('complaints.create', ['formType' => 'INQ']) }}";
+                }
+            })
+        </script>
+    @endif
 @endif
 <script>
     $(function() {
@@ -53,7 +53,7 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-        var table = $("#generalTable").DataTable({
+        var complaintTable = $("#generalTable").DataTable({
             serverSide: true,
             processing: true,
             ajax: "{{ route('complaints.index') }}",
@@ -79,6 +79,34 @@
                 },
             ]
         });
+
+        //show complaint
+        var id = "";
+        $("body").on('click', '.editComplaint', function() {
+            var id = $(this).data("id");
+            let url = "{{ route('complaints.edit', ':id') }}";
+            url = url.replace(':id', id);
+            document.location.href = url;
+        });
+
+        //edit tables
+        @if (Request::is('complaints/create'))
+            var partiesTable = $("#attachmentsTable").DataTable({
+            serverSide: true,
+            processing: true,
+            ajax: "{{ route('complaints.edit') }}" +"/"+ id,
+            columns: [{
+            data: 'filename',
+            name: 'filename'
+            },
+            {
+            data: 'action',
+            name: 'action'
+            },
+            ]
+            });
+        @endif
+
 
         //datatables
         // $('#generalTable').DataTable({
@@ -127,13 +155,7 @@
             $('#relatedComplaintDetails').val('');
         }
 
-        //show complaint
-        $("body").on('click', '.editComplaint', function() {
-            var id = $(this).data("id");
-            let url = "{{ route('complaints.edit', ':id') }}";
-            url = url.replace(':id', id);
-            document.location.href = url;
-        });
+
         //delete complaint
         $("body").on('click', '.deleteComplaint', function() {
             var id = $(this).data("id");
@@ -156,7 +178,7 @@
                             "_token": token,
                         },
                         success: function() {
-                            table.draw();
+                            complaintTable.draw();
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Successfully deleted',
@@ -235,7 +257,8 @@
                             showConfirmButton: false,
                             timer: 1500
                         })
-                        $("#attachmentsTable").load(window.location.href + " #attachmentsTable");
+                        $("#attachmentsTable").load(window.location.href +
+                            " #attachmentsTable");
                     }
                 });
             }
