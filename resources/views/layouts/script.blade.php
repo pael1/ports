@@ -17,8 +17,7 @@
     <script>
         Swal.fire({
             icon: 'success',
-            title: ' {{ session('
-                    success ') }}',
+            title: ' {{ session(' success ') }}',
             showConfirmButton: false,
             timer: 2000
         })
@@ -90,22 +89,7 @@
         });
 
         //edit tables
-        @if (Request::is('complaints/create'))
-            var partiesTable = $("#attachmentsTable").DataTable({
-            serverSide: true,
-            processing: true,
-            ajax: "{{ route('complaints.edit') }}" +"/"+ id,
-            columns: [{
-            data: 'filename',
-            name: 'filename'
-            },
-            {
-            data: 'action',
-            name: 'action'
-            },
-            ]
-            });
-        @endif
+        
 
 
         //datatables
