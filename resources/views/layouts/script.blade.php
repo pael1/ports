@@ -69,8 +69,8 @@
                     name: 'assignedTo'
                 },
                 {
-                    data: 'created_at',
-                    name: 'created_at'
+                    data: 'dateFiled',
+                    name: 'dateFiled'
                 },
                 {
                     data: 'action',
@@ -79,7 +79,7 @@
             ]
         });
 
-        //show complaint
+        //show complaint/redirect to edit page of the complaint
         var id = "";
         $("body").on('click', '.editComplaint', function() {
             var id = $(this).data("id");
@@ -200,6 +200,41 @@
                         "_token": token,
                     },
                     success: function() {
+                        $( "#"+id+"" ).remove();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Successfully deleted',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                });
+            }
+        })
+    });
+    $(".deleteViolation").click(function() {
+        var id = $(this).data("id");
+        var token = $("meta[name='csrf-token']").attr("content");
+        console.log(id);
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "/violation/" + id,
+                    type: 'DELETE',
+                    data: {
+                        "id": id,
+                        "_token": token,
+                    },
+                    success: function() {
+                        $( "#"+id+"" ).remove();
                         Swal.fire({
                             icon: 'success',
                             title: 'Successfully deleted',
@@ -235,14 +270,15 @@
                         "_token": token,
                     },
                     success: function() {
+                        $( "#"+id+"" ).remove();
                         Swal.fire({
                             icon: 'success',
                             title: 'Successfully deleted',
                             showConfirmButton: false,
                             timer: 1500
                         })
-                        $("#attachmentsTable").load(window.location.href +
-                            " #attachmentsTable");
+                        // $("#attachmentsTable").load(window.location.href +
+                        //     " #attachmentsTable");
                     }
                 });
             }
@@ -326,8 +362,8 @@
     //add new fields for complainants
     var complainantIndex = 0;
     $("#addComplainant").click(function() {
-        ++complainantIndex;
-        $("#dynamicComplainant").append('<div class="row mt-3">' +
+        --complainantIndex;
+        $("#dynamicComplainant").append('<div class="row mt-2">' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">' +
             '<input type="text" name="addMoreComplainant[' + complainantIndex + '][firstname]"' +
             'class="form-control" placeholder="First Name">' +
@@ -356,9 +392,12 @@
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3"> <input type="text"' +
             'name="addMoreComplainant[' + complainantIndex + '][address]" class="form-control"' +
             'placeholder="Address">' +
+            '<input type="text"' +
+            'name="addMoreComplainant[' + complainantIndex + '][belongsTo]"  value="complainant" class="form-control"' +
+            'placeholder="Address" hidden>' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">' +
-            '<button type="button" data-bs-toggle="tooltip" title="Remove" class="btn btn-danger btn-sm remove-data">-</button>' +
+            '<button type="button" title="Remove" class="btn btn-danger btn-sm remove-data">-</button>' +
             '</div>' +
             '</div>');
         $('[data-bs-toggle="tooltip"]').tooltip();
@@ -368,7 +407,7 @@
     var lawViolatedIndex = 0;
     $("#addLawViolated").click(function() {
         ++lawViolatedIndex;
-        $("#dynamicLawViolated").append('<div class="row mt-3">' +
+        $("#dynamicLawViolated").append('<div class="row mt-2">' +
             '<div class="col-11 col-sm-11 col-md-11 col-lg-11">' +
             '<div class="form-group">' +
             '<input type="text" name="addMoreLawViolated[' + lawViolatedIndex +
@@ -386,8 +425,8 @@
     //add new field for respondents
     var respondentIndex = 0;
     $("#addRespondent").click(function() {
-        ++respondentIndex;
-        $("#dynamicRespondent").append('<div class="row mt-3">' +
+        --respondentIndex;
+        $("#dynamicRespondent").append('<div class="row mt-2">' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">' +
             '<input type="text" name="addMoreRespondent[' + respondentIndex + '][firstname]"' +
             'class="form-control" placeholder="First Name">' +
@@ -416,6 +455,9 @@
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3"> <input type="text"' +
             'name="addMoreRespondent[' + respondentIndex + '][address]" class="form-control"' +
             'placeholder="Address">' +
+            '<input type="text"' +
+            'name="addMoreRespondent[' + respondentIndex + '][belongsTo]"  value="respondent" class="form-control"' +
+            'placeholder="Address" hidden>' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">' +
             '<button type="button" data-bs-toggle="tooltip" title="Remove" class="btn btn-danger btn-sm remove-data">-</button>' +
@@ -427,8 +469,8 @@
     //add new field for witness
     var witnessIndex = 0;
     $("#addWitness").click(function() {
-        ++witnessIndex;
-        $("#dynamicWitness").append('<div class="row mt-3">' +
+        --witnessIndex;
+        $("#dynamicWitness").append('<div class="row mt-2">' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">' +
             '<input type="text" name="addMoreWitness[' + witnessIndex + '][firstname]"' +
             'class="form-control" placeholder="First Name">' +
@@ -457,6 +499,9 @@
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3"> <input type="text"' +
             'name="addMoreWitness[' + witnessIndex + '][address]" class="form-control"' +
             'placeholder="Address">' +
+            '<input type="text"' +
+            'name="addMoreWitness[' + witnessIndex + '][belongsTo]"  value="witness" class="form-control"' +
+            'placeholder="Address" hidden>' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">' +
             '<button type="button" data-bs-toggle="tooltip" title="Remove" class="btn btn-danger btn-sm remove-data">-</button>' +

@@ -41,7 +41,7 @@
                         <tr>
                             <th >NPS DOCKET NO.</th>
                             <th>Recieved By</th>
-                            <th>Assigned TO</th>
+                            <th>Assigned To</th>
                             <th>Date Filed</th>
                             <th>Action</th>
                         </tr>

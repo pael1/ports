@@ -33,5 +33,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('complaints', ComplaintController::class);
     Route::delete('attachments/{id}', [File::class, 'destroy']);
     Route::delete('party/{id}', [ComplaintController::class, 'deleteParty']);
+    Route::delete('violation/{id}', [ComplaintController::class, 'deleteViolation']);
     Route::delete('deleteComplaint/{id}', [ComplaintController::class, 'deleteComplaint']);
 });
