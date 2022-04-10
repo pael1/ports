@@ -371,6 +371,21 @@ class ComplaintController extends Controller
                 $complaints->party()->save($witnesses);
             }
         }
+
+        if ($request->exists('files')) {
+            $images = $request->file('files');
+            foreach ($images as $image) {
+                $fileName = time() . '_' . $image->getClientOriginalName();
+                $filePath = $image->storeAs('uploads', $fileName, 'public');
+
+                $fm = new Attachment([
+                    'filename' => $fileName,
+                    'path' => '/storage/' . $filePath
+                ]);
+                $complaints->attachment()->save($fm);
+            }
+        }
+
         return redirect()->route('complaints.edit', $id)->with('success', 'Updated successfully!');
     }
 

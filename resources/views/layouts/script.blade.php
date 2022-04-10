@@ -30,6 +30,7 @@
                 html: '<b style="font-size:17px;">WHAT TYPE OF FORM DO YOU WANT TO CREATE?</b>',
                 icon: 'question',
                 showCancelButton: true,
+                allowOutsideClick: false,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: 'rgb(99 151 64)',
                 confirmButtonText: 'INVESTIGATION',
@@ -407,7 +408,7 @@
     var lawViolatedIndex = 0;
     $("#addLawViolated").click(function() {
         ++lawViolatedIndex;
-        $("#dynamicLawViolated").append('<div class="row mt-2">' +
+        $("#dynamicLawViolated").append('<div class="row">' +
             '<div class="col-11 col-sm-11 col-md-11 col-lg-11">' +
             '<div class="form-group">' +
             '<input type="text" name="addMoreLawViolated[' + lawViolatedIndex +

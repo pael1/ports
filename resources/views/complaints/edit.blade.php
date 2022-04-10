@@ -615,9 +615,9 @@
                                                 <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
                                                     <button type="button" data-path="{{ URL::asset($file->path) }}"
                                                         data-filename="{{ $file->filename }}" data-toggle="modal"
-                                                        data-target="#filePreview"
+                                                        data-target="#filePreview" data-bs-toggle="tooltip" title="View"
                                                         class="btn btn-primary showModal btn-sm">
-                                                        View
+                                                        <i class="fas fa-eye"></i>
                                                     </button>
                                                     <meta name="csrf-token" content="{{ csrf_token() }}">
                                                     <button type="button" data-id="{{ $file->id }}"
@@ -633,6 +633,8 @@
                                             <p><i class="bi bi-file-earmark-x"></i> No files uploaded.</p>
                                         </div>
                                     @endif
+                                    <input type="file" class="form-control add" name="files[]" id="customFile" accept=".pdf"
+                                        multiple />
                                 </div>
                             </div>
                         </div>

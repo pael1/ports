@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\File;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
@@ -19,7 +20,7 @@ use App\Http\Controllers\ComplaintController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 
 Auth::routes();

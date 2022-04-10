@@ -22,7 +22,7 @@
                 <div class="col-lg-12 margin-tb">
                     <div class="float-end p-2 mr-5">
                         @can('product-create')
-                            <a class="btn btn-success btn-sm" href="{{ route('complaints.create') }}"> Create New Complaint</a>
+                            <a class="btn btn-success btn-sm" href="{{ route('complaints.create') }}">Create New Complaint</a>
                         @endcan
                     </div>
                 </div>
