@@ -164,9 +164,9 @@ class ComplaintController extends Controller
             $complaints->party()->save($witnesses);
         }
 
-        foreach ($request->addMoreLawViolated as $violatedLaw) {
+        foreach ($request->states as $violatedLaw) {
             $violatedLaws = new ViolatedLaw([
-                'details' => $violatedLaw['lawviolated'],
+                'details' => $violatedLaw,
             ]);
 
             $complaints->violatedlaw()->save($violatedLaws);
@@ -290,11 +290,11 @@ class ComplaintController extends Controller
             }
         }
         //violation
-        foreach ($request->addMoreLawViolated as $violation) {
+        foreach ($request->states as $violation) {
             if (isset($violation["id"])) {
                 $violations =
                     [
-                        'details' => $violation['lawviolated']
+                        'details' => $violation
                     ];
                 ViolatedLaw::where([
                     ['id', '=', $violation["id"]],
@@ -304,7 +304,7 @@ class ComplaintController extends Controller
 
             else {
                 $violations = new ViolatedLaw([
-                    'details' => $violation['lawviolated']
+                    'details' => $violation
                 ]);
                 $complaints->violatedlaw()->save($violations);
             }

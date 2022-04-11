@@ -6,44 +6,47 @@
 {{-- <script src="{{ asset('plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script> --}}
 <!-- AdminLTE App -->
 <script src="{{ asset('dist/js/adminlte.min.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.js"></script>
+
 
 <!-- DataTables  & Plugins -->
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<!-- <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script> -->
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 {{-- sweet alert success --}}
 @if (session('success'))
-    <script>
-        Swal.fire({
-            icon: 'success',
-            title: ' {{ session(' success ') }}',
-            showConfirmButton: false,
-            timer: 2000
-        })
-    </script>
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: ' {{ session('
+        success ') }}',
+        showConfirmButton: false,
+        timer: 2000
+    })
+</script>
 @endif
 @if (Request::is('complaints/create'))
-    @if ($FType == '')
-        <script>
-            Swal.fire({
-                html: '<b style="font-size:17px;">WHAT TYPE OF FORM DO YOU WANT TO CREATE?</b>',
-                icon: 'question',
-                showCancelButton: true,
-                allowOutsideClick: false,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: 'rgb(99 151 64)',
-                confirmButtonText: 'INVESTIGATION',
-                cancelButtonText: 'INQUEST'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.location.href = "{{ route('complaints.create', ['formType' => 'INV']) }}";
-                } else {
-                    document.location.href = "{{ route('complaints.create', ['formType' => 'INQ']) }}";
-                }
-            })
-        </script>
-    @endif
+@if ($FType == '')
+<script>
+    Swal.fire({
+        html: '<b style="font-size:17px;">WHAT TYPE OF FORM DO YOU WANT TO CREATE?</b>',
+        icon: 'question',
+        showCancelButton: true,
+        allowOutsideClick: false,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: 'rgb(99 151 64)',
+        confirmButtonText: 'INVESTIGATION',
+        cancelButtonText: 'INQUEST'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.location.href = "{{ route('complaints.create', ['formType' => 'INV']) }}";
+        } else {
+            document.location.href = "{{ route('complaints.create', ['formType' => 'INQ']) }}";
+        }
+    })
+</script>
+@endif
 @endif
 <script>
     $(function() {
@@ -90,7 +93,7 @@
         });
 
         //edit tables
-        
+
 
 
         //datatables
@@ -178,6 +181,11 @@
             })
         });
 
+        // $(".selectMultiple").select2();
+        $('.selectMultiple').select2({
+            width: '100%',
+        });
+
     });
 
     $(".deleteParty").click(function() {
@@ -203,7 +211,7 @@
                         "_token": token,
                     },
                     success: function() {
-                        $( "#"+id+"" ).remove();
+                        $("#" + id + "").remove();
                         Swal.fire({
                             icon: 'success',
                             title: 'Successfully deleted',
@@ -238,7 +246,7 @@
                         "_token": token,
                     },
                     success: function() {
-                        $( "#"+id+"" ).remove();
+                        $("#" + id + "").remove();
                         Swal.fire({
                             icon: 'success',
                             title: 'Successfully deleted',
@@ -275,7 +283,7 @@
                         "_token": token,
                     },
                     success: function() {
-                        $( "#"+id+"" ).remove();
+                        $("#" + id + "").remove();
                         Swal.fire({
                             icon: 'success',
                             title: 'Successfully deleted',
@@ -409,23 +417,23 @@
     });
 
     //add new field for law violated
-    var lawViolatedIndex = 0;
-    $("#addLawViolated").click(function() {
-        ++lawViolatedIndex;
-        $("#dynamicLawViolated").append('<div class="row">' +
-            '<div class="col-11 col-sm-11 col-md-11 col-lg-11">' +
-            '<div class="form-group">' +
-            '<input type="text" name="addMoreLawViolated[' + lawViolatedIndex +
-            '][lawviolated]" class="form-control"' +
-            'placeholder="Law Violated">' +
-            '</div>' +
-            '</div>' +
-            '<div class="col-1 col-sm-1 col-md-1 col-lg-1">' +
-            '<button type="button" data-bs-toggle="tooltip" title="Remove" class="btn btn-danger btn-sm remove-data">-</button>' +
-            '</div>' +
-            '</div>');
-        $('[data-bs-toggle="tooltip"]').tooltip();
-    });
+    // var lawViolatedIndex = 0;
+    // $("#addLawViolated").click(function() {
+    //     ++lawViolatedIndex;
+    //     $("#dynamicLawViolated").append('<div class="row">' +
+    //         '<div class="col-11 col-sm-11 col-md-11 col-lg-11">' +
+    //         '<div class="form-group">' +
+    //         '<input type="text" name="addMoreLawViolated[' + lawViolatedIndex +
+    //         '][lawviolated]" class="form-control"' +
+    //         'placeholder="Law Violated">' +
+    //         '</div>' +
+    //         '</div>' +
+    //         '<div class="col-1 col-sm-1 col-md-1 col-lg-1">' +
+    //         '<button type="button" data-bs-toggle="tooltip" title="Remove" class="btn btn-danger btn-sm remove-data">-</button>' +
+    //         '</div>' +
+    //         '</div>');
+    //     $('[data-bs-toggle="tooltip"]').tooltip();
+    // });
 
     //add new field for respondents
     var respondentIndex = 0;

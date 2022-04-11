@@ -1,6 +1,19 @@
-.newbgcolorSidebar{
+.newbgcolorSidebar {
     background-color: #0f2d5a !important;
 }
-.newbgcolorHeader{
+
+.newbgcolorHeader {
     background-color: #134b9d !important;
+}
+
+.selectMultiple {
+    width: 100% !important;
+}
+
+/* Input field */
+/* .select2-selection__rendered {
+    color: red !important;
+} */
+.select2-container--default .select2-selection--multiple .select2-selection__choice{
+    color: black !important;
 }
