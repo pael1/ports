@@ -8,7 +8,8 @@
             <div class="row">
                 <div class="col-lg-12 margin-tb">
                     <div class="float-end p-2 mr-5">
-                        <a class="btn btn-secondary btn-sm" data-bs-toggle="tooltip" title="Back" href="{{ route('complaints.index') }}"> <i class="fas fa-backward"></i></a>
+                        <a class="btn btn-secondary btn-sm" data-bs-toggle="tooltip" title="Back"
+                            href="{{ route('complaints.index') }}"> <i class="fas fa-backward"></i></a>
                     </div>
                 </div>
             </div>
@@ -63,7 +64,9 @@
                                                 aria-label="Floating label select example">
                                                 <option value="" disabled selected>Select</option>
                                                 @foreach ($prosecutors as $prosecutor)
-                                                    <option value="{{ $prosecutor->id }}">{{ $prosecutor->firstname .' '. $prosecutor->middlename .'. '.$prosecutor->lastname }}</option>
+                                                    <option value="{{ $prosecutor->id }}">
+                                                        {{ $prosecutor->firstname . ' ' . $prosecutor->middlename . '. ' . $prosecutor->lastname }}
+                                                    </option>
                                                 @endforeach
                                             </select>
                                             <label for="floatingSelect">Assigned To</label>
@@ -99,12 +102,12 @@
                                     </div>
 
                                     <!-- <div class="form-group">
-                                        <div class="form-floating">
-                                            <input type="text" name="similar" class="form-control" placeholder="Similar"
-                                                value="{{ old('similar') }}">
-                                            <label for="floatingplaceofCommissionr">Similar</label>
-                                        </div>
-                                    </div> -->
+                                            <div class="form-floating">
+                                                <input type="text" name="similar" class="form-control" placeholder="Similar"
+                                                    value="{{ old('similar') }}">
+                                                <label for="floatingplaceofCommissionr">Similar</label>
+                                            </div>
+                                        </div> -->
                                 </div>
                             </div>
                             <div class="row pr-2 pl-2 pt-2">
@@ -125,8 +128,9 @@
 
                                     <div class="form-group" id="counter-charge">
                                         <div class="form-floating">
-                                            <input type="text" name="counterchargedetails" id="counterChargeDetails" class="form-control"
-                                                placeholder="Details Here" value="{{ old('counterchargedetails') }}">
+                                            <input type="text" name="counterchargedetails" id="counterChargeDetails"
+                                                class="form-control" placeholder="Details Here"
+                                                value="{{ old('counterchargedetails') }}">
                                             <label for="floatingNPSDNumber">Details Here</label>
                                         </div>
                                     </div>
@@ -148,8 +152,9 @@
 
                                     <div class="form-group" id="related-complaint">
                                         <div class="form-floating">
-                                            <input type="text" name="relateddetails" id="relatedComplaintDetails" class="form-control"
-                                                placeholder="Details Here" value="{{ old('relateddetails') }}">
+                                            <input type="text" name="relateddetails" id="relatedComplaintDetails"
+                                                class="form-control" placeholder="Details Here"
+                                                value="{{ old('relateddetails') }}">
                                             <label for="floatingNPSDNumber">Details Here</label>
                                         </div>
                                     </div>
@@ -178,12 +183,12 @@
                                                     class="form-control" placeholder="First Name">
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
-                                                <input type="text" name="addMoreComplainant[0][lastname]"
-                                                    class="form-control" placeholder="Last Name">
-                                            </div>
-                                            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
                                                 <input type="text" name="addMoreComplainant[0][middlename]"
                                                     class="form-control" placeholder="Middle Name">
+                                            </div>
+                                            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
+                                                <input type="text" name="addMoreComplainant[0][lastname]"
+                                                    class="form-control" placeholder="Last Name">
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">
                                                 <select class="form-select" name="addMoreComplainant[0][sex]"
@@ -204,7 +209,8 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">
                                                 <button type="button" name="addRespondent" id="addComplainant"
-                                                    class="btn btn-success btn-sm" data-bs-toggle="tooltip" title="Add complainant">+</button>
+                                                    class="btn btn-success btn-sm" data-bs-toggle="tooltip"
+                                                    title="Add complainant">+</button>
                                             </div>
                                         </div>
                                     </div>
@@ -280,7 +286,8 @@
                                             </div>
                                             <div class="col-1 col-sm-1 col-md-1 col-lg-1">
                                                 <button type="button" name="addLawViolated" id="addLawViolated"
-                                                    class="btn btn-success btn-sm" data-bs-toggle="tooltip" title="Add violation">+</button>
+                                                    class="btn btn-success btn-sm" data-bs-toggle="tooltip"
+                                                    title="Add violation">+</button>
                                             </div>
                                         </div>
                                     </div>
@@ -305,12 +312,12 @@
                                                     class="form-control" placeholder="First Name">
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
-                                                <input type="text" name="addMoreRespondent[0][lastname]"
-                                                    class="form-control" placeholder="Last Name">
-                                            </div>
-                                            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
                                                 <input type="text" name="addMoreRespondent[0][middlename]"
                                                     class="form-control" placeholder="Middle Name">
+                                            </div>
+                                            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
+                                                <input type="text" name="addMoreRespondent[0][lastname]"
+                                                    class="form-control" placeholder="Last Name">
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">
                                                 <select class="form-select" name="addMoreRespondent[0][sex]"
@@ -331,7 +338,8 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">
                                                 <button type="button" name="addRespondent" id="addRespondent"
-                                                    class="btn btn-success btn-sm" data-bs-toggle="tooltip" title="Add respondent">+</button>
+                                                    class="btn btn-success btn-sm" data-bs-toggle="tooltip"
+                                                    title="Add respondent">+</button>
                                             </div>
                                         </div>
                                     </div>
@@ -356,12 +364,12 @@
                                                     class="form-control" placeholder="First Name">
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
-                                                <input type="text" name="addMoreWitness[0][lastname]"
-                                                    class="form-control" placeholder="Last Name">
-                                            </div>
-                                            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
                                                 <input type="text" name="addMoreWitness[0][middlename]"
                                                     class="form-control" placeholder="Middle Name">
+                                            </div>
+                                            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
+                                                <input type="text" name="addMoreWitness[0][lastname]"
+                                                    class="form-control" placeholder="Last Name">
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">
                                                 <select class="form-select" name="addMoreWitness[0][sex]"
@@ -382,7 +390,8 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">
                                                 <button type="button" name="addWitness" id="addWitness"
-                                                    class="btn btn-success btn-sm" data-bs-toggle="tooltip" title="Add witness">+</button>
+                                                    class="btn btn-success btn-sm" data-bs-toggle="tooltip"
+                                                    title="Add witness">+</button>
                                             </div>
                                         </div>
                                     </div>

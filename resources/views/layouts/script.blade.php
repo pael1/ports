@@ -156,7 +156,8 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: "/deleteComplaint/" + id,
+                        // url: "/deleteComplaint/" + id,
+                        url: "{{ url('deleteComplaint')}}" + '/' + id,
                         type: 'DELETE',
                         data: {
                             "id": id,
@@ -194,7 +195,8 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "/party/" + id,
+                    // url: "/party/" + id,
+                    url: "{{ url('party')}}" + '/' + id,
                     type: 'DELETE',
                     data: {
                         "id": id,
@@ -228,7 +230,8 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "/violation/" + id,
+                    // url: "/violation/" + id,
+                    url: "{{ url('violation')}}" + '/' + id,
                     type: 'DELETE',
                     data: {
                         "id": id,
@@ -264,7 +267,8 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "/attachments/" + id,
+                    // url: "/attachments/" + id,
+                    url: "{{ url('attachments')}}" + '/' + id,
                     type: 'DELETE',
                     data: {
                         "id": id,

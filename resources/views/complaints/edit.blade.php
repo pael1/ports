@@ -177,10 +177,10 @@
                                                 <b>FIRST NAME</b>
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2 d-flex justify-content-center">
-                                                <b>LAST NAME</b>
+                                                <b>MIDDLE NAME</b>
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2 d-flex justify-content-center">
-                                                <b>MIDDLE NAME</b>
+                                                <b>LAST NAME</b>
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1 d-flex justify-content-center">
                                                 <b>SEX</b>
@@ -217,15 +217,15 @@
                                                     </div>
                                                     <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
                                                         <input type="text"
-                                                            name="addMoreComplainant[{{ $value->id }}][lastname]"
-                                                            class="form-control" placeholder="Last Name"
-                                                            value="{{ $value->lastName }}">
-                                                    </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
-                                                        <input type="text"
                                                             name="addMoreComplainant[{{ $value->id }}][middlename]"
                                                             class="form-control" placeholder="Middle Name"
                                                             value="{{ $value->middleName }}">
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
+                                                        <input type="text"
+                                                            name="addMoreComplainant[{{ $value->id }}][lastname]"
+                                                            class="form-control" placeholder="Last Name"
+                                                            value="{{ $value->lastName }}">
                                                     </div>
                                                     <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">
                                                         <select class="form-select"
@@ -345,11 +345,11 @@
                                             </div>
                                             <div
                                                 class="col-xs-12 col-sm-6 col-md-4 col-lg-2 d-flex justify-content-center">
-                                                <b>LAST NAME</b>
+                                                <b>MIDDLE NAME</b>
                                             </div>
                                             <div
                                                 class="col-xs-12 col-sm-6 col-md-4 col-lg-2 d-flex justify-content-center">
-                                                <b>MIDDLE NAME</b>
+                                                <b>LAST NAME</b>
                                             </div>
                                             <div
                                                 class="col-xs-12 col-sm-6 col-md-4 col-lg-1 d-flex justify-content-center">
@@ -390,15 +390,15 @@
                                                     </div>
                                                     <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
                                                         <input type="text"
-                                                            name="addMoreRespondent[{{ $value->id }}][lastname]"
-                                                            class="form-control" placeholder="Last Name"
-                                                            value="{{ $value->lastName }}">
-                                                    </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
-                                                        <input type="text"
                                                             name="addMoreRespondent[{{ $value->id }}][middlename]"
                                                             class="form-control" placeholder="Middle Name"
                                                             value="{{ $value->middleName }}">
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
+                                                        <input type="text"
+                                                            name="addMoreRespondent[{{ $value->id }}][lastname]"
+                                                            class="form-control" placeholder="Last Name"
+                                                            value="{{ $value->lastName }}">
                                                     </div>
                                                     <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">
                                                         <select class="form-select"
@@ -460,11 +460,11 @@
                                             </div>
                                             <div
                                                 class="col-xs-12 col-sm-6 col-md-4 col-lg-2 d-flex justify-content-center">
-                                                <b>LAST NAME</b>
+                                                <b>MIDDLE NAME</b>
                                             </div>
                                             <div
                                                 class="col-xs-12 col-sm-6 col-md-4 col-lg-2 d-flex justify-content-center">
-                                                <b>MIDDLE NAME</b>
+                                                <b>LAST NAME</b>
                                             </div>
                                             <div
                                                 class="col-xs-12 col-sm-6 col-md-4 col-lg-1 d-flex justify-content-center">
@@ -504,15 +504,15 @@
                                                     </div>
                                                     <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
                                                         <input type="text"
-                                                            name="addMoreWitness[{{ $value->id }}][lastname]"
-                                                            class="form-control" placeholder="Last Name"
-                                                            value="{{ $value->lastName }}">
-                                                    </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
-                                                        <input type="text"
                                                             name="addMoreWitness[{{ $value->id }}][middlename]"
                                                             class="form-control" placeholder="Middle Name"
                                                             value="{{ $value->middleName }}">
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
+                                                        <input type="text"
+                                                            name="addMoreWitness[{{ $value->id }}][lastname]"
+                                                            class="form-control" placeholder="Last Name"
+                                                            value="{{ $value->lastName }}">
                                                     </div>
                                                     <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">
                                                         <select class="form-select"
@@ -608,7 +608,7 @@
                                     </div> --}}
                                     @if ($attachments->count())
                                         @foreach ($attachments as $file)
-                                            <div class="row mt-2" id="{{$file->id}}">
+                                            <div class="row mt-2" id="{{ $file->id }}">
                                                 <div class="col-xs-12 col-sm-6 col-md-4 col-lg-8 text-center">
                                                     {{ $file->filename }}
                                                 </div>
@@ -633,8 +633,8 @@
                                             <p><i class="bi bi-file-earmark-x"></i> No files uploaded.</p>
                                         </div>
                                     @endif
-                                    <input type="file" class="form-control add" name="files[]" id="customFile" accept=".pdf"
-                                        multiple />
+                                    <input type="file" class="form-control add" name="files[]" id="customFile"
+                                        accept=".pdf" multiple />
                                 </div>
                             </div>
                         </div>

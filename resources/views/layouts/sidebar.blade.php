@@ -2,7 +2,7 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4 newbgcolorSidebar">
     <!-- Brand Logo -->
     <a href="{{ route('home') }}" class="brand-link">
-      <img src="dist/img/logo.png" class="brand-image img-circle elevation-3">
+      <img src="{{ asset('dist/img/logo.png') }}" class="brand-image img-circle elevation-3">
       <span class="brand-text font-weight-light"><b>PORTS</b></span>
     </a>
 
