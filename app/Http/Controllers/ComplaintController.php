@@ -447,4 +447,29 @@ class ComplaintController extends Controller
             'success' => 'Record deleted successfully!'
         ]);
     }
+
+    public function autosearch(Request $request)
+    {
+        if ($request->ajax()) {
+            $data = Party::where([
+
+                ['lastName', '=', $request->lastname],
+                ['firstName', '=', $request->firstname],
+                ['middleName', '=', $request->middlename]
+
+            ])->get();
+            // $output = '';
+            // if (count($data)>0) {
+            //     $output = '<ul class="list-group" style="display: block; position: relative; z-index: 1">';
+            //     foreach ($data as $row) {
+            //         $output .= '<li class="list-group-item">'.$row->name.'</li>';
+            //     }
+            //     $output .= '</ul>';
+            // }else {
+            //     $output .= '<li class="list-group-item">'.'No Data Found'.'</li>';
+            // }
+            return $data;
+        }
+        return view('autosearch');  
+    }
 }
