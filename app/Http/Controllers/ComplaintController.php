@@ -9,6 +9,7 @@ use App\Models\Complaint;
 use App\Models\Attachment;
 use App\Models\Prosecutor;
 use App\Models\ViolatedLaw;
+use App\Models\Violation;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
@@ -62,6 +63,8 @@ class ComplaintController extends Controller
     public function create(Request $request)
     {
         $prosecutors = Prosecutor::all();
+        $violations = Violation::all();
+
 
         $FType = $request->input('formType');
         $alphabet = range('A', 'L');
@@ -73,7 +76,7 @@ class ComplaintController extends Controller
             $NPSDOCKETNO = Helper::NPSDOCKETNO(new Complaint, 'NPSDNumber', 5, 'XI-02-' . $FType . '-' . $year . '-' . $monthLetter);
         }
 
-        return view('complaints.create', compact('NPSDOCKETNO', 'FType', 'prosecutors'));
+        return view('complaints.create', compact('NPSDOCKETNO', 'FType', 'prosecutors', 'violations'));
     }
 
     /**
@@ -121,55 +124,67 @@ class ComplaintController extends Controller
             'NPSDNumber' => $request->NPSDNumber
         ]);
 
-        foreach ($request->addMoreComplainant as $complainant) {
-            if($complainant['lastname'] != ""){
-                $complainants = new Party([
-                    'lastName' => $complainant['lastname'],
-                    'firstName' => $complainant['firstname'],
-                    'middleName' => $complainant['middlename'],
-                    'sex' => $complainant['sex'],
-                    'age' => $complainant['age'],
-                    'address' => $complainant['address'],
-                    'belongsTo' => 'complainant'
-                ]);
-                $complaints->party()->save($complainants);
+        if ($request->addMoreComplainant != "") {
+            foreach ($request->addMoreComplainant as $complainant) {
+                if ($complainant['lastname'] != "") {
+                    $complainants = new Party([
+                        'lastName' => $complainant['lastname'],
+                        'firstName' => $complainant['firstname'],
+                        'middleName' => $complainant['middlename'],
+                        'sex' => $complainant['sex'],
+                        'age' => $complainant['age'],
+                        'address' => $complainant['address'],
+                        'belongsTo' => 'complainant'
+                    ]);
+                    $complaints->party()->save($complainants);
+                }
             }
         }
-
-        foreach ($request->addMoreRespondent as $respondent) {
-            $respondents = new Party([
-                'lastName' => $respondent['lastname'],
-                'firstName' => $respondent['firstname'],
-                'middleName' => $respondent['middlename'],
-                'sex' => $respondent['sex'],
-                'age' => $respondent['age'],
-                'address' => $respondent['address'],
-                'belongsTo' => 'respondent'
-            ]);
-
-            $complaints->party()->save($respondents);
+        
+        if ($request->addMoreRespondent != "") {
+            foreach ($request->addMoreRespondent as $respondent) {
+                if ($respondent['lastname'] != "") {
+                    $respondents = new Party([
+                        'lastName' => $respondent['lastname'],
+                        'firstName' => $respondent['firstname'],
+                        'middleName' => $respondent['middlename'],
+                        'sex' => $respondent['sex'],
+                        'age' => $respondent['age'],
+                        'address' => $respondent['address'],
+                        'belongsTo' => 'respondent'
+                    ]);
+        
+                    $complaints->party()->save($respondents);
+                }
+            }
         }
+        
 
-        foreach ($request->addMoreWitness as $witness) {
-            $witnesses = new Party([
-                'lastName' => $witness['lastname'],
-                'firstName' => $witness['firstname'],
-                'middleName' => $witness['middlename'],
-                'sex' => $witness['sex'],
-                'age' => $witness['age'],
-                'address' => $witness['address'],
-                'belongsTo' => 'witness'
-            ]);
-
-            $complaints->party()->save($witnesses);
+        if ($request->addMoreWitness != "") {
+            foreach ($request->addMoreWitness as $witness) {
+                if ($witness['lastname'] != "") {
+                    $witnesses = new Party([
+                        'lastName' => $witness['lastname'],
+                        'firstName' => $witness['firstname'],
+                        'middleName' => $witness['middlename'],
+                        'sex' => $witness['sex'],
+                        'age' => $witness['age'],
+                        'address' => $witness['address'],
+                        'belongsTo' => 'witness'
+                    ]);
+        
+                    $complaints->party()->save($witnesses);
+                }
+            }
         }
-
-        foreach ($request->states as $violatedLaw) {
-            $violatedLaws = new ViolatedLaw([
-                'details' => $violatedLaw,
-            ]);
-
-            $complaints->violatedlaw()->save($violatedLaws);
+        if ($request->violations != "") {
+            foreach ($request->violations as $violatedLaw) {
+                $violatedLaws = new ViolatedLaw([
+                    'details' => $violatedLaw,
+                ]);
+    
+                $complaints->violatedlaw()->save($violatedLaws);
+            }
         }
 
         if ($request->exists('files')) {
@@ -214,8 +229,8 @@ class ComplaintController extends Controller
         $prosecutors = Prosecutor::select(
             DB::raw("CONCAT(firstname,' ',middlename,'. ',lastname) AS name"),
             'id'
-        )
-            ->pluck('name', 'id');
+        )->pluck('name', 'id');
+        $violations = Violation::all();
         $prosecutorId = Complaint::where('id', $id)->first()->assignedTo;
 
         $respondents = DB::table('parties')->where(['belongsTo' => 'respondent', 'complaint_id' => $id])->get();
@@ -226,7 +241,7 @@ class ComplaintController extends Controller
             ->select('filename', 'id', 'path', DB::raw("date_format(created_at, '%Y-%m-%d %r') AS created_at"))
             ->where('complaint_id', $id)
             ->get();
-        return view('complaints.edit', compact('complaint', 'complainants', 'respondents', 'witnesses', 'lawviolated', 'attachments', 'prosecutors', 'prosecutorId'));
+        return view('complaints.edit', compact('complaint', 'complainants', 'respondents', 'witnesses', 'lawviolated', 'attachments', 'prosecutors', 'prosecutorId', 'violations'));
     }
 
     /**
@@ -259,118 +274,111 @@ class ComplaintController extends Controller
             ]
         );
         //complainant
-        foreach ($request->addMoreComplainant as $complainant) {
-            if (isset($complainant["id"])) {
-                $complainants =
-                    [
+        if ($request->addMoreComplainant != "") {
+            foreach ($request->addMoreComplainant as $complainant) {
+                if (isset($complainant["id"])) {
+                    $complainants =
+                        [
+                            'lastName' => $complainant['lastname'],
+                            'firstName' => $complainant['firstname'],
+                            'middleName' => $complainant['middlename'],
+                            'sex' => $complainant['sex'],
+                            'age' => $complainant['age'],
+                            'address' => $complainant['address'],
+                        ];
+                    Party::where([
+                        ['id', '=', $complainant["id"]],
+                        ['complaint_id', '=', $id]
+                    ])->update($complainants);
+                } else {
+                    $complainants = new Party([
                         'lastName' => $complainant['lastname'],
                         'firstName' => $complainant['firstname'],
                         'middleName' => $complainant['middlename'],
                         'sex' => $complainant['sex'],
                         'age' => $complainant['age'],
                         'address' => $complainant['address'],
-                    ];
-                Party::where([
-                    ['id', '=', $complainant["id"]],
-                    ['complaint_id', '=', $id]
-                ])->update($complainants);
-            } 
-            
-            else {
-                $complainants = new Party([
-                    'lastName' => $complainant['lastname'],
-                    'firstName' => $complainant['firstname'],
-                    'middleName' => $complainant['middlename'],
-                    'sex' => $complainant['sex'],
-                    'age' => $complainant['age'],
-                    'address' => $complainant['address'],
-                    'belongsTo' => $complainant['belongsTo']
-                ]);
-                $complaints->party()->save($complainants);
+                        'belongsTo' => $complainant['belongsTo']
+                    ]);
+                    $complaints->party()->save($complainants);
+                }
             }
         }
+        
         //violation
-        foreach ($request->states as $violation) {
-            if (isset($violation["id"])) {
-                $violations =
-                    [
-                        'details' => $violation
-                    ];
-                ViolatedLaw::where([
-                    ['id', '=', $violation["id"]],
-                    ['complaint_id', '=', $id]
-                ])->update($violations);
-            } 
-
-            else {
+        if ($request->violations != "") {
+            foreach ($request->violations as $violation) {
                 $violations = new ViolatedLaw([
                     'details' => $violation
                 ]);
                 $complaints->violatedlaw()->save($violations);
             }
         }
+
         //respondent
-        foreach ($request->addMoreRespondent as $respondent) {
-            if (isset($respondent["id"])) {
-                $respondents =
-                    [
+        if ($request->addMoreRespondent != "") {
+            foreach ($request->addMoreRespondent as $respondent) {
+                if (isset($respondent["id"])) {
+                    $respondents =
+                        [
+                            'lastName' => $respondent['lastname'],
+                            'firstName' => $respondent['firstname'],
+                            'middleName' => $respondent['middlename'],
+                            'sex' => $respondent['sex'],
+                            'age' => $respondent['age'],
+                            'address' => $respondent['address'],
+                        ];
+                    Party::where([
+                        ['id', '=', $respondent["id"]],
+                        ['complaint_id', '=', $id]
+                    ])->update($respondents);
+                } else {
+                    $respondents = new Party([
                         'lastName' => $respondent['lastname'],
                         'firstName' => $respondent['firstname'],
                         'middleName' => $respondent['middlename'],
                         'sex' => $respondent['sex'],
                         'age' => $respondent['age'],
                         'address' => $respondent['address'],
-                    ];
-                Party::where([
-                    ['id', '=', $respondent["id"]],
-                    ['complaint_id', '=', $id]
-                ])->update($respondents);
-            } 
-            
-            else {
-                $respondents = new Party([
-                    'lastName' => $respondent['lastname'],
-                    'firstName' => $respondent['firstname'],
-                    'middleName' => $respondent['middlename'],
-                    'sex' => $respondent['sex'],
-                    'age' => $respondent['age'],
-                    'address' => $respondent['address'],
-                    'belongsTo' => $respondent['belongsTo']
-                ]);
-                $complaints->party()->save($respondents);
+                        'belongsTo' => $respondent['belongsTo']
+                    ]);
+                    $complaints->party()->save($respondents);
+                }
             }
         }
+        
         //witness
-        foreach ($request->addMoreWitness as $witness) {
-            if (isset($witness["id"])) {
-                $witnesses =
-                    [
+        if ($request->addMoreWitness != "") {
+            foreach ($request->addMoreWitness as $witness) {
+                if (isset($witness["id"])) {
+                    $witnesses =
+                        [
+                            'lastName' => $witness['lastname'],
+                            'firstName' => $witness['firstname'],
+                            'middleName' => $witness['middlename'],
+                            'sex' => $witness['sex'],
+                            'age' => $witness['age'],
+                            'address' => $witness['address'],
+                        ];
+                    Party::where([
+                        ['id', '=', $witness["id"]],
+                        ['complaint_id', '=', $id]
+                    ])->update($witnesses);
+                } else {
+                    $witnesses = new Party([
                         'lastName' => $witness['lastname'],
                         'firstName' => $witness['firstname'],
                         'middleName' => $witness['middlename'],
                         'sex' => $witness['sex'],
                         'age' => $witness['age'],
                         'address' => $witness['address'],
-                    ];
-                Party::where([
-                    ['id', '=', $witness["id"]],
-                    ['complaint_id', '=', $id]
-                ])->update($witnesses);
-            }
-            
-            else {
-                $witnesses = new Party([
-                    'lastName' => $witness['lastname'],
-                    'firstName' => $witness['firstname'],
-                    'middleName' => $witness['middlename'],
-                    'sex' => $witness['sex'],
-                    'age' => $witness['age'],
-                    'address' => $witness['address'],
-                    'belongsTo' => $witness['belongsTo']
-                ]);
-                $complaints->party()->save($witnesses);
+                        'belongsTo' => $witness['belongsTo']
+                    ]);
+                    $complaints->party()->save($witnesses);
+                }
             }
         }
+        
 
         if ($request->exists('files')) {
             $images = $request->file('files');

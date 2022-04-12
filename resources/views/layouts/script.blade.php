@@ -116,14 +116,19 @@
 
         //disabled all form
         $("#formId input").prop("disabled", true);
+        // $("#floatingSelect").prop("disabled", true);
         $("#formId .add").hide();
         // $("#formId .form-control").prop("disabled", true);
-        // $("#formId .form-select").prop("disabled", true);
+        $("#formId .form-select").prop("disabled", true);
         $("#btnUpdate").hide();
         $("#disabledUpdateBtn").hide();
 
         $("#counter-charge").hide();
         $("#related-complaint").hide();
+
+        //if naa ra sa edit disabled
+        $("#select2multiple").prop("disabled", true);
+
 
         //counter charge checkbox
         if ($('#yesCheckedBoxCC').is(":checked")) {
@@ -183,6 +188,7 @@
 
         // $(".selectMultiple").select2();
         $('.selectMultiple').select2({
+            placeholder: "Select violation/s",
             width: '100%',
         });
 
@@ -355,8 +361,9 @@
         $("#enabledUpdateBtn").hide();
         $("#disabledUpdateBtn").show();
         // $("#formId .form-control").prop("disabled", false);
-        // $("#formId .form-select").prop("disabled", false);
+        $("#formId .form-select").prop("disabled", false);
         $("#formId input").prop("disabled", false);
+        $("#select2multiple").prop("disabled", false);
         $("#formId .add").show();
         $("#btnUpdate").show();
     });
@@ -365,8 +372,9 @@
     $("#disabledUpdateBtn").click(function() {
         $("#enabledUpdateBtn").show();
         // $("#formId .form-control").prop("disabled", true);
-        // $("#formId .form-select").prop("disabled", true);
+        $("#formId .form-select").prop("disabled", true);
         $("#formId input").prop("disabled", true);
+        $("#select2multiple").prop("disabled", true);
         $("#formId .add").hide();
         $("#btnUpdate").hide();
         $("#disabledUpdateBtn").hide();
@@ -382,12 +390,12 @@
             'class="form-control" placeholder="First Name">' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">' +
-            '<input type="text" name="addMoreComplainant[' + complainantIndex + '][lastname]"' +
-            'class="form-control" placeholder="Last Name">' +
-            '</div>' +
-            '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">' +
             '<input type="text" name="addMoreComplainant[' + complainantIndex + '][middlename]"' +
             'class="form-control" placeholder="Middle Name">' +
+            '</div>' +
+            '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">' +
+            '<input type="text" name="addMoreComplainant[' + complainantIndex + '][lastname]"' +
+            'class="form-control" placeholder="Last Name">' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">' +
             '<select class="form-select" name="addMoreComplainant[' + complainantIndex +
@@ -445,12 +453,12 @@
             'class="form-control" placeholder="First Name">' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">' +
-            '<input type="text" name="addMoreRespondent[' + respondentIndex + '][lastname]"' +
-            'class="form-control" placeholder="Last Name">' +
-            '</div>' +
-            '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">' +
             '<input type="text" name="addMoreRespondent[' + respondentIndex + '][middlename]"' +
             'class="form-control" placeholder="Middle Name">' +
+            '</div>' +
+            '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">' +
+            '<input type="text" name="addMoreRespondent[' + respondentIndex + '][lastname]"' +
+            'class="form-control" placeholder="Last Name">' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">' +
             '<select class="form-select" name="addMoreRespondent[' + respondentIndex +
@@ -489,12 +497,12 @@
             'class="form-control" placeholder="First Name">' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">' +
-            '<input type="text" name="addMoreWitness[' + witnessIndex + '][lastname]"' +
-            'class="form-control" placeholder="Last Name">' +
-            '</div>' +
-            '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">' +
             '<input type="text" name="addMoreWitness[' + witnessIndex + '][middlename]"' +
             'class="form-control" placeholder="Middle Name">' +
+            '</div>' +
+            '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">' +
+            '<input type="text" name="addMoreWitness[' + witnessIndex + '][lastname]"' +
+            'class="form-control" placeholder="Last Name">' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">' +
             '<select class="form-select" name="addMoreWitness[' + witnessIndex +
