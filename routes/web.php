@@ -7,6 +7,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ComplaintController;
+use App\Models\Party;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,4 +37,5 @@ Route::group(['middleware' => ['auth']], function () {
     Route::delete('party/{id}', [ComplaintController::class, 'deleteParty']);
     Route::delete('violation/{id}', [ComplaintController::class, 'deleteViolation']);
     Route::delete('deleteComplaint/{id}', [ComplaintController::class, 'deleteComplaint']);
+    Route::get('search', [ComplaintController::class, 'autosearch']);
 });

@@ -186,10 +186,27 @@
             })
         });
 
-        // $(".selectMultiple").select2();
         $('.selectMultiple').select2({
             placeholder: "Select violation/s",
             width: '100%',
+        });
+
+        $('#lastnameComplainant').on('keyup', function() {
+            const firstname = $('#firstnameComplainant').val();
+            const middlename = $('#middlenameComplainant').val();
+            const lastname = $(this).val();
+            $.ajax({
+                url: "{{ url('search') }}",
+                type: 'GET',
+                data: {
+                    'firstname': firstname,
+                    'middlename': middlename,
+                    'lastname': lastname
+                },
+                success: function(data) {
+                    console.log(data);
+                }
+            })
         });
 
     });
