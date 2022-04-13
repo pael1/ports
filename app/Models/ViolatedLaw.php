@@ -11,7 +11,9 @@ class ViolatedLaw extends Model
 
     protected $fillable = [
         'complaint_id',
-        'details'
+        'details',
+        'docketNo'
+        
     ];
 
     public function complaint()

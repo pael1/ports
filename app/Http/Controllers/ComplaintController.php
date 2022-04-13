@@ -111,7 +111,7 @@ class ComplaintController extends Controller
         ]);
 
         $complaints = Complaint::create([
-            'formType' => $request->formtype,
+            // 'formType' => $request->formtype,
             'receivedBy' => Auth::user()->username,
             'assignedTo' => $request->assignedto,
             'violation' => 'Static',
@@ -140,7 +140,7 @@ class ComplaintController extends Controller
                 }
             }
         }
-        
+
         if ($request->addMoreRespondent != "") {
             foreach ($request->addMoreRespondent as $respondent) {
                 if ($respondent['lastname'] != "") {
@@ -153,12 +153,12 @@ class ComplaintController extends Controller
                         'address' => $respondent['address'],
                         'belongsTo' => 'respondent'
                     ]);
-        
+
                     $complaints->party()->save($respondents);
                 }
             }
         }
-        
+
 
         if ($request->addMoreWitness != "") {
             foreach ($request->addMoreWitness as $witness) {
@@ -172,17 +172,24 @@ class ComplaintController extends Controller
                         'address' => $witness['address'],
                         'belongsTo' => 'witness'
                     ]);
-        
+
                     $complaints->party()->save($witnesses);
                 }
             }
         }
         if ($request->violations != "") {
+            $FType = $request->FType;
+            $alphabet = range('A', 'L');
+            $monthNumber = Carbon::now()->month;
+            $monthLetter = $alphabet[(int)$monthNumber - 1];
+            $year = Carbon::now()->format('y');
             foreach ($request->violations as $violatedLaw) {
+                $NPSDOCKETNO = Helper::NPSDOCKETNO(new ViolatedLaw(), 'docketNo', 5, 'XI-02-' . $FType . '-' . $year . '-' . $monthLetter);
                 $violatedLaws = new ViolatedLaw([
                     'details' => $violatedLaw,
+                    'docketNo' => $NPSDOCKETNO,
                 ]);
-    
+
                 $complaints->violatedlaw()->save($violatedLaws);
             }
         }
@@ -304,7 +311,7 @@ class ComplaintController extends Controller
                 }
             }
         }
-        
+
         //violation
         if ($request->violations != "") {
             foreach ($request->violations as $violation) {
@@ -346,7 +353,7 @@ class ComplaintController extends Controller
                 }
             }
         }
-        
+
         //witness
         if ($request->addMoreWitness != "") {
             foreach ($request->addMoreWitness as $witness) {
@@ -378,7 +385,7 @@ class ComplaintController extends Controller
                 }
             }
         }
-        
+
 
         if ($request->exists('files')) {
             $images = $request->file('files');
@@ -451,25 +458,16 @@ class ComplaintController extends Controller
     public function autosearch(Request $request)
     {
         if ($request->ajax()) {
-            $data = Party::where([
-
-                ['lastName', '=', $request->lastname],
-                ['firstName', '=', $request->firstname],
-                ['middleName', '=', $request->middlename]
-
-            ])->get();
-            // $output = '';
-            // if (count($data)>0) {
-            //     $output = '<ul class="list-group" style="display: block; position: relative; z-index: 1">';
-            //     foreach ($data as $row) {
-            //         $output .= '<li class="list-group-item">'.$row->name.'</li>';
-            //     }
-            //     $output .= '</ul>';
-            // }else {
-            //     $output .= '<li class="list-group-item">'.'No Data Found'.'</li>';
-            // }
+            $data = DB::table('parties')
+                ->join('complaints', 'parties.complaint_id', '=', 'complaints.id')
+                ->select('parties.*', 'complaints.assignedTo')->where([
+                    ['lastName', '=', $request->lastname],
+                    ['firstName', '=', $request->firstname],
+                    ['middleName', '=', $request->middlename]
+                ])
+                ->get();
             return $data;
         }
-        return view('autosearch');  
+        return view('autosearch');
     }
 }

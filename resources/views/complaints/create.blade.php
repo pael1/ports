@@ -26,9 +26,6 @@
 
             <form action="{{ route('complaints.store') }}" method="POST" accept-charset="utf-8" enctype="multipart/form-data">
                 @csrf
-
-
-
                 <div class="accordion" id="accordionPanelsStayOpenExample">
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="panelsStayOpen-headingOne">
@@ -42,16 +39,16 @@
                                 <div class="" id="dynamicComplainant">
                                     <div class="row">
                                         <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
-                                            <input type="text" name="addMoreComplainant[0][firstname]" id="firstnameComplainant" class="form-control" placeholder="First Name">
+                                            <input type="text" name="addMoreComplainant[0][firstname]" class="form-control firstname" placeholder="First Name">
                                         </div>
                                         <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
-                                            <input type="text" name="addMoreComplainant[0][middlename]" id="middlenameComplainant" class="form-control" placeholder="Middle Name">
+                                            <input type="text" name="addMoreComplainant[0][middlename]" class="form-control middlename" placeholder="Middle Name">
                                         </div>
                                         <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
-                                            <input type="text" name="addMoreComplainant[0][lastname]" id="lastnameComplainant" class="form-control" placeholder="Last Name">
+                                            <input type="text" name="addMoreComplainant[0][lastname]" class="form-control lastname" placeholder="Last Name">
                                         </div>
                                         <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">
-                                            <select class="form-select" name="addMoreComplainant[0][sex]" id="floatingSelect" aria-label="Floating label select example" style="width:101px;">
+                                            <select class="form-select" name="addMoreComplainant[0][sex]" aria-label="Floating label select example" style="width:101px;">
                                                 <option value="" selected hidden>Sex</option>
                                                 <option value="Male">Male</option>
                                                 <option value="Female">Female</option>
@@ -151,11 +148,12 @@
                                     </div>
                                 </div>
                             </div> -->
+                            <input type="text" name="FType" value="{{ $FType }}" hidden>
                             <div class="row pr-2 pl-2">
                                 <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
                                     <div class="form-group">
                                         <div class="form-floating">
-                                            <select class="form-select" name="assignedto" id="floatingSelect" aria-label="Floating label select example">
+                                            <select class="form-select" name="assignedto" id="assignedToId" aria-label="Floating label select example">
                                                 <option value="" disabled selected>Select</option>
                                                 @foreach ($prosecutors as $prosecutor)
                                                 <option value="{{ $prosecutor->id }}">

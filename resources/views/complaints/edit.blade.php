@@ -306,7 +306,7 @@
                                                             <input type="text"
                                                                 name="addMoreLawViolated[{{ $value->id }}][lawviolated]"
                                                                 class="form-control" placeholder="Law Violated"
-                                                                value="{{ $value->details }}" readonly>
+                                                                value="{{ $value->details.' ('.$value->docketNo .')'}}" readonly>
                                                         </div>
                                                     </div>
                                                     <div class="col-1 col-sm-1 col-md-1 col-lg-1">

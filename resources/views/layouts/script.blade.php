@@ -16,37 +16,36 @@
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 {{-- sweet alert success --}}
 @if (session('success'))
-<script>
-    Swal.fire({
-        icon: 'success',
-        title: ' {{ session('
-        success ') }}',
-        showConfirmButton: false,
-        timer: 2000
-    })
-</script>
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: ' {{ session(' success ') }}',
+            showConfirmButton: false,
+            timer: 2000
+        })
+    </script>
 @endif
 @if (Request::is('complaints/create'))
-@if ($FType == '')
-<script>
-    Swal.fire({
-        html: '<b style="font-size:17px;">WHAT TYPE OF FORM DO YOU WANT TO CREATE?</b>',
-        icon: 'question',
-        showCancelButton: true,
-        allowOutsideClick: false,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: 'rgb(99 151 64)',
-        confirmButtonText: 'INVESTIGATION',
-        cancelButtonText: 'INQUEST'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            document.location.href = "{{ route('complaints.create', ['formType' => 'INV']) }}";
-        } else {
-            document.location.href = "{{ route('complaints.create', ['formType' => 'INQ']) }}";
-        }
-    })
-</script>
-@endif
+    @if ($FType == '')
+        <script>
+            Swal.fire({
+                html: '<b style="font-size:17px;">WHAT TYPE OF FORM DO YOU WANT TO CREATE?</b>',
+                icon: 'question',
+                showCancelButton: true,
+                allowOutsideClick: false,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: 'rgb(99 151 64)',
+                confirmButtonText: 'INVESTIGATION',
+                cancelButtonText: 'INQUEST'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.location.href = "{{ route('complaints.create', ['formType' => 'INV']) }}";
+                } else {
+                    document.location.href = "{{ route('complaints.create', ['formType' => 'INQ']) }}";
+                }
+            })
+        </script>
+    @endif
 @endif
 <script>
     $(function() {
@@ -165,7 +164,7 @@
                 if (result.isConfirmed) {
                     $.ajax({
                         // url: "/deleteComplaint/" + id,
-                        url: "{{ url('deleteComplaint')}}" + '/' + id,
+                        url: "{{ url('deleteComplaint') }}" + '/' + id,
                         type: 'DELETE',
                         data: {
                             "id": id,
@@ -190,26 +189,67 @@
             placeholder: "Select violation/s",
             width: '100%',
         });
-
-        $('#lastnameComplainant').on('keyup', function() {
-            const firstname = $('#firstnameComplainant').val();
-            const middlename = $('#middlenameComplainant').val();
-            const lastname = $(this).val();
-            $.ajax({
-                url: "{{ url('search') }}",
-                type: 'GET',
-                data: {
-                    'firstname': firstname,
-                    'middlename': middlename,
-                    'lastname': lastname
-                },
-                success: function(data) {
-                    console.log(data);
-                }
-            })
-        });
-
     });
+
+    // $('#lastnameComplainant').on('keyup', function() {
+    //     const firstname = $('#firstnameComplainant').val();
+    //     const middlename = $('#middlenameComplainant').val();
+    //     const lastname = $(this).val();
+    //     $.ajax({
+    //         url: "{{ url('search') }}",
+    //         type: 'GET',
+    //         data: {
+    //             'firstname': firstname,
+    //             'middlename': middlename,
+    //             'lastname': lastname
+    //         },
+    //         success: function(data) {
+    //             console.log(data);
+    //         }
+    //     })
+    // });
+
+    $(document).on('keyup', '.lastname', function() {
+        const firstname = $(this).closest('div.row').find('.firstname').val();
+        const middlename = $(this).closest('div.row').find('.middlename').val();
+        const lastname = $(this).closest('div.row').find('.lastname').val();
+        console.log(lastname);
+        $.ajax({
+            url: "{{ url('search') }}",
+            type: 'GET',
+            data: {
+                'firstname': firstname,
+                'middlename': middlename,
+                'lastname': lastname
+            },
+            success: function(data) {
+                console.log(data);
+                if (data != '') {
+                    Swal.fire({
+                        html: '<b style="font-size:17px;">This complainant was related to...</b>',
+                        icon: 'error',
+                        showCancelButton: true,
+                        allowOutsideClick: false,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: 'rgb(211 71 71)',
+                        confirmButtonText: 'OK',
+                        cancelButtonText: 'CANCEL'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            console.log(data[0].complaint_id);
+                            $('#assignedToId option[value='+data[0].assignedTo+']').attr('selected','selected');
+                        } else {
+                            
+                        }
+                    })
+                }
+            }
+        })
+    });
+
+    // $('.lastname').on('keyup', function() {
+    //     console.log('');
+    // })
 
     $(".deleteParty").click(function() {
         var id = $(this).data("id");
@@ -227,7 +267,7 @@
             if (result.isConfirmed) {
                 $.ajax({
                     // url: "/party/" + id,
-                    url: "{{ url('party')}}" + '/' + id,
+                    url: "{{ url('party') }}" + '/' + id,
                     type: 'DELETE',
                     data: {
                         "id": id,
@@ -262,7 +302,7 @@
             if (result.isConfirmed) {
                 $.ajax({
                     // url: "/violation/" + id,
-                    url: "{{ url('violation')}}" + '/' + id,
+                    url: "{{ url('violation') }}" + '/' + id,
                     type: 'DELETE',
                     data: {
                         "id": id,
@@ -299,7 +339,7 @@
             if (result.isConfirmed) {
                 $.ajax({
                     // url: "/attachments/" + id,
-                    url: "{{ url('attachments')}}" + '/' + id,
+                    url: "{{ url('attachments') }}" + '/' + id,
                     type: 'DELETE',
                     data: {
                         "id": id,
@@ -402,17 +442,17 @@
     $("#addComplainant").click(function() {
         --complainantIndex;
         $("#dynamicComplainant").append('<div class="row mt-2">' +
-            '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">' +
+            '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-2 opsy">' +
             '<input type="text" name="addMoreComplainant[' + complainantIndex + '][firstname]"' +
-            'class="form-control" placeholder="First Name">' +
+            'class="form-control firstname" placeholder="First Name">' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">' +
             '<input type="text" name="addMoreComplainant[' + complainantIndex + '][middlename]"' +
-            'class="form-control" placeholder="Middle Name">' +
+            'class="form-control middlename" placeholder="Middle Name">' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">' +
             '<input type="text" name="addMoreComplainant[' + complainantIndex + '][lastname]"' +
-            'class="form-control" placeholder="Last Name">' +
+            'class="form-control lastname" placeholder="Last Name">' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">' +
             '<select class="form-select" name="addMoreComplainant[' + complainantIndex +
@@ -431,7 +471,8 @@
             'name="addMoreComplainant[' + complainantIndex + '][address]" class="form-control"' +
             'placeholder="Address">' +
             '<input type="text"' +
-            'name="addMoreComplainant[' + complainantIndex + '][belongsTo]"  value="complainant" class="form-control"' +
+            'name="addMoreComplainant[' + complainantIndex +
+            '][belongsTo]"  value="complainant" class="form-control"' +
             'placeholder="Address" hidden>' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">' +
@@ -494,7 +535,8 @@
             'name="addMoreRespondent[' + respondentIndex + '][address]" class="form-control"' +
             'placeholder="Address">' +
             '<input type="text"' +
-            'name="addMoreRespondent[' + respondentIndex + '][belongsTo]"  value="respondent" class="form-control"' +
+            'name="addMoreRespondent[' + respondentIndex +
+            '][belongsTo]"  value="respondent" class="form-control"' +
             'placeholder="Address" hidden>' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">' +
