@@ -45,9 +45,9 @@
                                             <div class="form-floating">
                                                 <select class="form-select" name="designation" id="floatingSelect" aria-label="Floating label select example">
                                                     <option value="" disabled selected>Select</option>
+                                                    <option value="Fiscal">Fiscal</option>
+                                                    <option value="Encoder">Encoder</option>
                                                     <option value="Reviewer">Reviewer</option>
-                                                    <option value="Online">Online</option>
-                                                    <option value="Manual">Manual</option>
                                                     <option value="Chief">Chief</option>
                                                 </select>
                                                 <label for="floatingSelect">Designation</label>

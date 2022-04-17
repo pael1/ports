@@ -11,12 +11,18 @@
     <ul class="navbar-nav ml-auto">
         <!-- Messages Dropdown Menu -->
         <li class="nav-item dropdown">
-            <a class="nav-link" data-toggle="dropdown" href="#" onClick="showDiv();">
+            @foreach($notifications as $value)
+            <a class="nav-link" data-toggle="dropdown" id="{{ $value->id }}" href="#" onClick="showDiv();">
                 <i class="far fa-comments"></i>
                 {{-- if 0 sya class default if not class danger --}}
-                <span class="badge badge-danger navbar-badge">3</span>
-
+                <span class="badge badge-danger navbar-badge pending">{{ $value->unread }}</span>
             </a>
+            @endforeach
+
+            {{-- <a class="nav-link" data-toggle="dropdown" href="#" onClick="showDiv();">
+                <i class="far fa-comments"></i>
+                <span class="badge badge-danger navbar-badge" id="numberNotif"></span>
+            </a> --}}
             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right notif">
                 {{-- @foreach ($departments as $department)
                     <a href="#" class="dropdown-item">
@@ -41,7 +47,8 @@
             </a>
             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                 <a class="dropdown-item" href="#">
-                    {{ Auth::user()->name }}
+                    {{ Auth::user()->firstname . ', ' . Auth::user()->middlename . ', ' . Auth::user()->lastname }}
+                    
                 </a>
                 <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
                              document.getElementById('logout-form').submit();">

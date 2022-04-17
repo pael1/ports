@@ -3,13 +3,16 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use Pusher\Pusher;
+use App\Models\User;
 use App\Models\Party;
 use App\Helpers\Helper;
 use App\Models\Complaint;
+use App\Models\Violation;
 use App\Models\Attachment;
 use App\Models\Prosecutor;
 use App\Models\ViolatedLaw;
-use App\Models\Violation;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
@@ -30,10 +33,11 @@ class ComplaintController extends Controller
 
 
         $complaints = DB::table('complaints')
-            ->join('prosecutors', 'complaints.assignedTo', '=', 'prosecutors.id')
+            ->join('users', 'complaints.assignedTo', '=', 'users.id')
             ->select(
                 'complaints.*',
-                DB::raw("CONCAT(prosecutors.ext, ' ', prosecutors.firstname, ' ', prosecutors.middlename, ' ', prosecutors.lastname) as name, 
+                // DB::raw("CONCAT(users.ext, ' ', users.firstname, ' ', users.middlename, ' ', users.lastname) as name, 
+                DB::raw("CONCAT(users.firstname, ' ', users.middlename, ' ', users.lastname) as name, 
                 DATE_FORMAT(complaints.created_at, '%d-%M-%y') as dateFiled")
             )->get();
         // return view('complaints.index', compact('complaints'));
@@ -52,7 +56,10 @@ class ComplaintController extends Controller
             return $allData;
         }
 
-        return view('complaints.index', compact('complaints'));
+        //notifications
+        $notifications = DB::select("SELECT users.id, COUNT(markmsg) AS unread FROM users LEFT JOIN notifications ON users.id = notifications.assignedto 
+        AND notifications.markmsg = 1 WHERE users.id = " . Auth::id() . " GROUP BY users.id");
+        return view('complaints.index', compact('complaints', 'notifications'));
     }
 
     /**
@@ -62,7 +69,8 @@ class ComplaintController extends Controller
      */
     public function create(Request $request)
     {
-        $prosecutors = Prosecutor::all();
+        // $prosecutors = Prosecutor::all();
+        $prosecutors = User::all();
         $violations = Violation::all();
 
 
@@ -76,7 +84,11 @@ class ComplaintController extends Controller
             $NPSDOCKETNO = Helper::NPSDOCKETNO(new Complaint, 'NPSDNumber', 5, 'XI-02-' . $FType . '-' . $year . '-' . $monthLetter);
         }
 
-        return view('complaints.create', compact('NPSDOCKETNO', 'FType', 'prosecutors', 'violations'));
+        //test delete later
+        $notifications = DB::select("SELECT users.id, COUNT(markmsg) AS unread FROM users LEFT JOIN notifications ON users.id = notifications.assignedto 
+        AND notifications.markmsg = 1 WHERE users.id = " . Auth::id() . " GROUP BY users.id");
+
+        return view('complaints.create', compact('NPSDOCKETNO', 'FType', 'prosecutors', 'violations', 'notifications'));
     }
 
     /**
@@ -110,6 +122,12 @@ class ComplaintController extends Controller
             // 'addMorewitness.*.price' => 'required',
         ]);
 
+        $alphabetC = range('A', 'L');
+        $monthNumberC = Carbon::now()->month;
+        $monthLetterC = $alphabetC[(int)$monthNumberC - 1];
+        $yearC = Carbon::now()->format('y');
+        $notifNo = Helper::NPSDOCKETNO(new Complaint, 'NPSDNumber', 5, 'NOTIF-' . $yearC . '-' . $monthLetterC);
+
         $complaints = Complaint::create([
             // 'formType' => $request->formtype,
             'receivedBy' => Auth::user()->username,
@@ -121,8 +139,16 @@ class ComplaintController extends Controller
             'counterChargeDetails' => ($request->counterchargedetails != "") ? $request->counterchargedetails : $request->chargeNo,
             'relatedComplaint' => 'static',
             'relatedDetails' => ($request->relateddetails != "") ? $request->relateddetails : $request->complaintNo,
-            'NPSDNumber' => $request->NPSDNumber
+            'NPSDNumber' => $notifNo
         ]);
+
+        $notifications = new Notification([
+            'assignedto' => $request->assignedto,
+            //1 means unread
+            'markmsg' => 1,
+            'notifno' => $notifNo
+        ]);
+        $complaints->notification()->save($notifications);
 
         if ($request->addMoreComplainant != "") {
             foreach ($request->addMoreComplainant as $complainant) {
@@ -208,6 +234,25 @@ class ComplaintController extends Controller
             }
         }
 
+        $options = array(
+            'cluster' => 'ap1',
+            'useTLS' => true
+        );
+
+        $pusher = new Pusher(
+            env('PUSHER_APP_KEY'),
+            env('PUSHER_APP_SECRET'),
+            env('PUSHER_APP_ID'),
+            $options
+        );
+
+        $data = [
+            'assignedto' => $request->assignedto,
+            'notifno' => $notifNo
+        ];
+
+        $pusher->trigger('my-channel', 'my-event', $data);
+
         return redirect()->route('complaints.index')->with('success', 'Created successfully!');
     }
 
@@ -233,6 +278,10 @@ class ComplaintController extends Controller
         $complaint = Complaint::find($id);
         // $prosecutors = Prosecutor::pluck('firstname', 'id');
 
+        //notifications
+        $notifications = DB::select("SELECT users.id, COUNT(markmsg) AS unread FROM users LEFT JOIN notifications ON users.id = notifications.assignedto 
+        AND notifications.markmsg = 1 WHERE users.id = " . Auth::id() . " GROUP BY users.id");
+
         $prosecutors = Prosecutor::select(
             DB::raw("CONCAT(firstname,' ',middlename,'. ',lastname) AS name"),
             'id'
@@ -248,7 +297,7 @@ class ComplaintController extends Controller
             ->select('filename', 'id', 'path', DB::raw("date_format(created_at, '%Y-%m-%d %r') AS created_at"))
             ->where('complaint_id', $id)
             ->get();
-        return view('complaints.edit', compact('complaint', 'complainants', 'respondents', 'witnesses', 'lawviolated', 'attachments', 'prosecutors', 'prosecutorId', 'violations'));
+        return view('complaints.edit', compact('complaint', 'complainants', 'respondents', 'witnesses', 'lawviolated', 'attachments', 'prosecutors', 'prosecutorId', 'violations', 'notifications'));
     }
 
     /**
@@ -469,5 +518,16 @@ class ComplaintController extends Controller
             return $data;
         }
         return view('autosearch');
+    }
+
+    public function getComplat_id(Request $request)
+    {
+        if ($request->ajax()) {
+            $data = DB::table('notifications')
+                ->select('complaint_id')->where('notifno', '=', $request->notifno)
+                ->get();
+            return $data;
+        }
+        return view('getComplat_id');
     }
 }

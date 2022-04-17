@@ -42,4 +42,9 @@ class Complaint extends Model
     {
         return $this->hasOne(Prosecutor::class);
     }
+
+    public function notification()
+    {
+        return $this->hasOne(Notification::class);
+    }
 }

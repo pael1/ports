@@ -39,7 +39,6 @@
                 <table id="generalTable" class="table">
                     <thead>
                         <tr>
-                            <th >NPS DOCKET NO.</th>
                             <th>Recieved By</th>
                             <th>Assigned To</th>
                             <th>Date Filed</th>

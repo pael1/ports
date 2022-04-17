@@ -157,7 +157,7 @@
                                                 <option value="" disabled selected>Select</option>
                                                 @foreach ($prosecutors as $prosecutor)
                                                 <option value="{{ $prosecutor->id }}">
-                                                    {{ $prosecutor->firstname . ' ' . $prosecutor->middlename . '. ' . $prosecutor->lastname }}
+                                                    {{ $prosecutor->firstname . ', ' . $prosecutor->middlename . ', ' . $prosecutor->lastname }}
                                                 </option>
                                                 @endforeach
                                             </select>
@@ -291,7 +291,7 @@
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-12 mt-2 text-center">
-                    <button type="submit" class="btn btn-success">Save</button>
+                    <button type="submit" class="btn btn-success btn_save">Save</button>
                 </div>
             </form>
         </div>

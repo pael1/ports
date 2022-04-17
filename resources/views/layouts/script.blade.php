@@ -2,6 +2,7 @@
 
 <!-- jQuery -->
 <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
+<script src="https://js.pusher.com/7.0/pusher.min.js"></script>
 <!-- Bootstrap 4 -->
 {{-- <script src="{{ asset('plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script> --}}
 <!-- AdminLTE App -->
@@ -50,6 +51,70 @@
 <script>
     $(function() {
 
+        var pusher = new Pusher('60d1f9fb0b13cd84a90d', {
+            cluster: 'ap1'
+            });
+            var channel = pusher.subscribe('my-channel');
+            channel.bind('my-event', function(data){
+                
+            if(data.assignedto == {!! json_encode(Auth::user()->id) !!}){
+                Swal.fire({
+                    title: 'You have new notification.',
+                    text: "You want to open it?",
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, open it',
+                    cancelButtonText: 'No, thanks'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        //read message
+                        var token = $("meta[name='csrf-token']").attr("content");
+                        $.ajax({
+                            url: "{{ url('read') }}" + '/' + data.notifno,
+                            type: 'PUT',
+                            data: {
+                                "notifno": data.notifno,
+                                "_token": token,
+                            },
+                            success: function(data) {
+                                console.log(data);
+                            }
+                        })
+                        //redirect to the complaint details
+                        $.ajax({
+                            url: "{{ url('complaint_id') }}",
+                            type: 'GET',
+                            data: {
+                                'notifno': data.notifno
+                            },
+                            success: function(data) {
+                                console.log(data);
+                                let url = "{{ route('complaints.edit', ':id') }}";
+                                url = url.replace(':id', data[0].complaint_id);
+                                document.location.href = url;
+                            }
+                        })
+                    }
+                    else{
+                        let pending = parseInt($('#' + data.assignedto).find('.pending').html());
+                        if(pending){
+                            $('#' + data.assignedto).find('.pending').html(pending + 1);
+                        }
+                        else{
+                            $('#' + data.assignedto).html('<a class="nav-link" data-toggle="dropdown" href="#">'
+                            +'<i class="far fa-comments"></i>'
+                            +'<span class="badge badge-danger navbar-badge pending">1</span>'
+                            +'</a>');
+                        }
+                    }
+                })
+
+                
+            }
+        });
+
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -60,10 +125,6 @@
             processing: true,
             ajax: "{{ route('complaints.index') }}",
             columns: [{
-                    data: 'NPSDNumber',
-                    name: 'NPSDNumber'
-                },
-                {
                     data: 'receivedBy',
                     name: 'receivedBy'
                 },
@@ -185,10 +246,32 @@
             })
         });
 
+        //multiple select violated laws
         $('.selectMultiple').select2({
             placeholder: "Select violation/s",
             width: '100%',
         });
+                    
+        //notifications
+        // const notification = () => {
+        //     $.ajax({
+        //         url: "{{ url('notifications') }}",
+        //         type: 'GET',
+        //         data: {
+        //             'id': {!! json_encode(Auth::user()->id) !!}
+        //         },
+        //         success: function(data) {
+        //             console.log(data);
+        //             $("#numberNotif").text(data.length);
+        //         }
+        //     })
+        // }
+        // setInterval(notification,1000);
+    });
+
+    //disabled save btn if clicked
+    $(".btn_save" ).click(function() {
+        $(".btn_save").hide();
     });
 
     // $('#lastnameComplainant').on('keyup', function() {

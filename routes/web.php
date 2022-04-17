@@ -7,7 +7,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ComplaintController;
-use App\Models\Party;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,4 +38,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::delete('violation/{id}', [ComplaintController::class, 'deleteViolation']);
     Route::delete('deleteComplaint/{id}', [ComplaintController::class, 'deleteComplaint']);
     Route::get('search', [ComplaintController::class, 'autosearch']);
+    Route::get('notifications', [NotificationController::class, 'getNewMessages']);
+    Route::get('complaint_id', [ComplaintController::class, 'getComplat_id']);
+    Route::put('read/{id}', [NotificationController::class, 'updateMarkMsg']);
 });
