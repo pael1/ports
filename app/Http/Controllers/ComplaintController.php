@@ -55,11 +55,7 @@ class ComplaintController extends Controller
                 ->make(true);
             return $allData;
         }
-
-        //notifications
-        $notifications = DB::select("SELECT users.id, COUNT(markmsg) AS unread FROM users LEFT JOIN notifications ON users.id = notifications.assignedto 
-        AND notifications.markmsg = 1 WHERE users.id = " . Auth::id() . " GROUP BY users.id");
-        return view('complaints.index', compact('complaints', 'notifications'));
+        return view('complaints.index', compact('complaints'));
     }
 
     /**
@@ -84,11 +80,7 @@ class ComplaintController extends Controller
             $NPSDOCKETNO = Helper::NPSDOCKETNO(new Complaint, 'NPSDNumber', 5, 'XI-02-' . $FType . '-' . $year . '-' . $monthLetter);
         }
 
-        //test delete later
-        $notifications = DB::select("SELECT users.id, COUNT(markmsg) AS unread FROM users LEFT JOIN notifications ON users.id = notifications.assignedto 
-        AND notifications.markmsg = 1 WHERE users.id = " . Auth::id() . " GROUP BY users.id");
-
-        return view('complaints.create', compact('NPSDOCKETNO', 'FType', 'prosecutors', 'violations', 'notifications'));
+        return view('complaints.create', compact('NPSDOCKETNO', 'FType', 'prosecutors', 'violations'));
     }
 
     /**
@@ -129,7 +121,7 @@ class ComplaintController extends Controller
         $notifNo = Helper::NPSDOCKETNO(new Complaint, 'NPSDNumber', 5, 'NOTIF-' . $yearC . '-' . $monthLetterC);
 
         $complaints = Complaint::create([
-            // 'formType' => $request->formtype,
+            'formType' => $request->FType,
             'receivedBy' => Auth::user()->username,
             'assignedTo' => $request->assignedto,
             'violation' => 'Static',
@@ -278,11 +270,7 @@ class ComplaintController extends Controller
         $complaint = Complaint::find($id);
         // $prosecutors = Prosecutor::pluck('firstname', 'id');
 
-        //notifications
-        $notifications = DB::select("SELECT users.id, COUNT(markmsg) AS unread FROM users LEFT JOIN notifications ON users.id = notifications.assignedto 
-        AND notifications.markmsg = 1 WHERE users.id = " . Auth::id() . " GROUP BY users.id");
-
-        $prosecutors = Prosecutor::select(
+        $prosecutors = User::select(
             DB::raw("CONCAT(firstname,' ',middlename,'. ',lastname) AS name"),
             'id'
         )->pluck('name', 'id');
@@ -297,7 +285,7 @@ class ComplaintController extends Controller
             ->select('filename', 'id', 'path', DB::raw("date_format(created_at, '%Y-%m-%d %r') AS created_at"))
             ->where('complaint_id', $id)
             ->get();
-        return view('complaints.edit', compact('complaint', 'complainants', 'respondents', 'witnesses', 'lawviolated', 'attachments', 'prosecutors', 'prosecutorId', 'violations', 'notifications'));
+        return view('complaints.edit', compact('complaint', 'complainants', 'respondents', 'witnesses', 'lawviolated', 'attachments', 'prosecutors', 'prosecutorId', 'violations'));
     }
 
     /**
@@ -309,14 +297,13 @@ class ComplaintController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // dd($request->all());
         // $complaints = Complaint::updateOrCreate(
         $complaints = Complaint::updateOrCreate(
             [
                 'id'   => $id,
             ],
             [
-                'formType' => $request->formtype,
+                'formType' => $request->FType,
                 'receivedBy' => Auth::user()->username,
                 'assignedTo' => $request->assignedto,
                 'violation' => 'Static',
@@ -362,10 +349,17 @@ class ComplaintController extends Controller
         }
 
         //violation
+        $FType = $request->FType;
+        $alphabet = range('A', 'L');
+        $monthNumber = Carbon::now()->month;
+        $monthLetter = $alphabet[(int)$monthNumber - 1];
+        $year = Carbon::now()->format('y');
         if ($request->violations != "") {
             foreach ($request->violations as $violation) {
+                $NPSDOCKETNO = Helper::NPSDOCKETNO(new ViolatedLaw(), 'docketNo', 5, 'XI-02-' . $FType . '-' . $year . '-' . $monthLetter);
                 $violations = new ViolatedLaw([
-                    'details' => $violation
+                    'details' => $violation,
+                    'docketNo' => $NPSDOCKETNO
                 ]);
                 $complaints->violatedlaw()->save($violations);
             }

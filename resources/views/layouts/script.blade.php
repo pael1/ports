@@ -48,6 +48,7 @@
         </script>
     @endif
 @endif
+@stack('scripts')
 <script>
     $(function() {
 
@@ -120,37 +121,37 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-        var complaintTable = $("#generalTable").DataTable({
-            serverSide: true,
-            processing: true,
-            ajax: "{{ route('complaints.index') }}",
-            columns: [{
-                    data: 'receivedBy',
-                    name: 'receivedBy'
-                },
-                {
-                    data: 'name',
-                    name: 'assignedTo'
-                },
-                {
-                    data: 'dateFiled',
-                    name: 'dateFiled'
-                },
-                {
-                    data: 'action',
-                    name: 'action'
-                },
-            ]
-        });
+        // var complaintTable = $("#generalTable").DataTable({
+        //     serverSide: true,
+        //     processing: true,
+        //     ajax: "{{ route('complaints.index') }}",
+        //     columns: [{
+        //             data: 'receivedBy',
+        //             name: 'receivedBy'
+        //         },
+        //         {
+        //             data: 'name',
+        //             name: 'assignedTo'
+        //         },
+        //         {
+        //             data: 'dateFiled',
+        //             name: 'dateFiled'
+        //         },
+        //         {
+        //             data: 'action',
+        //             name: 'action'
+        //         },
+        //     ]
+        // });
 
-        //show complaint/redirect to edit page of the complaint
-        var id = "";
-        $("body").on('click', '.editComplaint', function() {
-            var id = $(this).data("id");
-            let url = "{{ route('complaints.edit', ':id') }}";
-            url = url.replace(':id', id);
-            document.location.href = url;
-        });
+        // //show complaint/redirect to edit page of the complaint
+        // var id = "";
+        // $("body").on('click', '.editComplaint', function() {
+        //     var id = $(this).data("id");
+        //     let url = "{{ route('complaints.edit', ':id') }}";
+        //     url = url.replace(':id', id);
+        //     document.location.href = url;
+        // });
 
         //edit tables
 
@@ -209,42 +210,42 @@
         }
 
 
-        //delete complaint
-        $("body").on('click', '.deleteComplaint', function() {
-            var id = $(this).data("id");
-            var token = $("meta[name='csrf-token']").attr("content");
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        // url: "/deleteComplaint/" + id,
-                        url: "{{ url('deleteComplaint') }}" + '/' + id,
-                        type: 'DELETE',
-                        data: {
-                            "id": id,
-                            "_token": token,
-                        },
-                        success: function() {
-                            complaintTable.draw();
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Successfully deleted',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
+        // //delete complaint
+        // $("body").on('click', '.deleteComplaint', function() {
+        //     var id = $(this).data("id");
+        //     var token = $("meta[name='csrf-token']").attr("content");
+        //     Swal.fire({
+        //         title: 'Are you sure?',
+        //         text: "You won't be able to revert this!",
+        //         icon: 'warning',
+        //         showCancelButton: true,
+        //         confirmButtonColor: '#3085d6',
+        //         cancelButtonColor: '#d33',
+        //         confirmButtonText: 'Yes, delete it!'
+        //     }).then((result) => {
+        //         if (result.isConfirmed) {
+        //             $.ajax({
+        //                 // url: "/deleteComplaint/" + id,
+        //                 url: "{{ url('deleteComplaint') }}" + '/' + id,
+        //                 type: 'DELETE',
+        //                 data: {
+        //                     "id": id,
+        //                     "_token": token,
+        //                 },
+        //                 success: function() {
+        //                     complaintTable.draw();
+        //                     Swal.fire({
+        //                         icon: 'success',
+        //                         title: 'Successfully deleted',
+        //                         showConfirmButton: false,
+        //                         timer: 1500
+        //                     })
 
-                        }
-                    });
-                }
-            })
-        });
+        //                 }
+        //             });
+        //         }
+        //     })
+        // });
 
         //multiple select violated laws
         $('.selectMultiple').select2({
@@ -270,9 +271,9 @@
     });
 
     //disabled save btn if clicked
-    $(".btn_save" ).click(function() {
-        $(".btn_save").hide();
-    });
+    // $(".btn_save" ).click(function() {
+    //     $(".btn_save").hide();
+    // });
 
     // $('#lastnameComplainant').on('keyup', function() {
     //     const firstname = $('#firstnameComplainant').val();
@@ -334,115 +335,115 @@
     //     console.log('');
     // })
 
-    $(".deleteParty").click(function() {
-        var id = $(this).data("id");
-        var token = $("meta[name='csrf-token']").attr("content");
-        console.log(id);
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    // url: "/party/" + id,
-                    url: "{{ url('party') }}" + '/' + id,
-                    type: 'DELETE',
-                    data: {
-                        "id": id,
-                        "_token": token,
-                    },
-                    success: function() {
-                        $("#" + id + "").remove();
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Successfully deleted',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                    }
-                });
-            }
-        })
-    });
-    $(".deleteViolation").click(function() {
-        var id = $(this).data("id");
-        var token = $("meta[name='csrf-token']").attr("content");
-        console.log(id);
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    // url: "/violation/" + id,
-                    url: "{{ url('violation') }}" + '/' + id,
-                    type: 'DELETE',
-                    data: {
-                        "id": id,
-                        "_token": token,
-                    },
-                    success: function() {
-                        $("#" + id + "").remove();
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Successfully deleted',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        // $( ".accordion-collapse" ).load(window.location.href + " .accordion-collapse" );
-                    }
-                });
-            }
-        })
-    });
+    // $(".deleteParty").click(function() {
+    //     var id = $(this).data("id");
+    //     var token = $("meta[name='csrf-token']").attr("content");
+    //     console.log(id);
+    //     Swal.fire({
+    //         title: 'Are you sure?',
+    //         text: "You won't be able to revert this!",
+    //         icon: 'warning',
+    //         showCancelButton: true,
+    //         confirmButtonColor: '#3085d6',
+    //         cancelButtonColor: '#d33',
+    //         confirmButtonText: 'Yes, delete it!'
+    //     }).then((result) => {
+    //         if (result.isConfirmed) {
+    //             $.ajax({
+    //                 // url: "/party/" + id,
+    //                 url: "{{ url('party') }}" + '/' + id,
+    //                 type: 'DELETE',
+    //                 data: {
+    //                     "id": id,
+    //                     "_token": token,
+    //                 },
+    //                 success: function() {
+    //                     $("#" + id + "").remove();
+    //                     Swal.fire({
+    //                         icon: 'success',
+    //                         title: 'Successfully deleted',
+    //                         showConfirmButton: false,
+    //                         timer: 1500
+    //                     })
+    //                 }
+    //             });
+    //         }
+    //     })
+    // });
+    // $(".deleteViolation").click(function() {
+    //     var id = $(this).data("id");
+    //     var token = $("meta[name='csrf-token']").attr("content");
+    //     console.log(id);
+    //     Swal.fire({
+    //         title: 'Are you sure?',
+    //         text: "You won't be able to revert this!",
+    //         icon: 'warning',
+    //         showCancelButton: true,
+    //         confirmButtonColor: '#3085d6',
+    //         cancelButtonColor: '#d33',
+    //         confirmButtonText: 'Yes, delete it!'
+    //     }).then((result) => {
+    //         if (result.isConfirmed) {
+    //             $.ajax({
+    //                 // url: "/violation/" + id,
+    //                 url: "{{ url('violation') }}" + '/' + id,
+    //                 type: 'DELETE',
+    //                 data: {
+    //                     "id": id,
+    //                     "_token": token,
+    //                 },
+    //                 success: function() {
+    //                     $("#" + id + "").remove();
+    //                     Swal.fire({
+    //                         icon: 'success',
+    //                         title: 'Successfully deleted',
+    //                         showConfirmButton: false,
+    //                         timer: 1500
+    //                     })
+    //                     // $( ".accordion-collapse" ).load(window.location.href + " .accordion-collapse" );
+    //                 }
+    //             });
+    //         }
+    //     })
+    // });
 
-    $(".deleteAttachment").click(function() {
-        var id = $(this).data("id");
-        var token = $("meta[name='csrf-token']").attr("content");
+    // $(".deleteAttachment").click(function() {
+    //     var id = $(this).data("id");
+    //     var token = $("meta[name='csrf-token']").attr("content");
 
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    // url: "/attachments/" + id,
-                    url: "{{ url('attachments') }}" + '/' + id,
-                    type: 'DELETE',
-                    data: {
-                        "id": id,
-                        "_token": token,
-                    },
-                    success: function() {
-                        $("#" + id + "").remove();
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Successfully deleted',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        // $("#attachmentsTable").load(window.location.href +
-                        //     " #attachmentsTable");
-                    }
-                });
-            }
-        })
-    });
+    //     Swal.fire({
+    //         title: 'Are you sure?',
+    //         text: "You won't be able to revert this!",
+    //         icon: 'warning',
+    //         showCancelButton: true,
+    //         confirmButtonColor: '#3085d6',
+    //         cancelButtonColor: '#d33',
+    //         confirmButtonText: 'Yes, delete it!'
+    //     }).then((result) => {
+    //         if (result.isConfirmed) {
+    //             $.ajax({
+    //                 // url: "/attachments/" + id,
+    //                 url: "{{ url('attachments') }}" + '/' + id,
+    //                 type: 'DELETE',
+    //                 data: {
+    //                     "id": id,
+    //                     "_token": token,
+    //                 },
+    //                 success: function() {
+    //                     $("#" + id + "").remove();
+    //                     Swal.fire({
+    //                         icon: 'success',
+    //                         title: 'Successfully deleted',
+    //                         showConfirmButton: false,
+    //                         timer: 1500
+    //                     })
+    //                     // $("#attachmentsTable").load(window.location.href +
+    //                     //     " #attachmentsTable");
+    //                 }
+    //             });
+    //         }
+    //     })
+    // });
 
     //similar checkbox
     function similarYesCheckBox() {
@@ -497,28 +498,28 @@
     }
 
     //enable update
-    $("#enabledUpdateBtn").click(function() {
-        $("#enabledUpdateBtn").hide();
-        $("#disabledUpdateBtn").show();
-        // $("#formId .form-control").prop("disabled", false);
-        $("#formId .form-select").prop("disabled", false);
-        $("#formId input").prop("disabled", false);
-        $("#select2multiple").prop("disabled", false);
-        $("#formId .add").show();
-        $("#btnUpdate").show();
-    });
+    // $("#enabledUpdateBtn").click(function() {
+    //     $("#enabledUpdateBtn").hide();
+    //     $("#disabledUpdateBtn").show();
+    //     // $("#formId .form-control").prop("disabled", false);
+    //     $("#formId .form-select").prop("disabled", false);
+    //     $("#formId input").prop("disabled", false);
+    //     $("#select2multiple").prop("disabled", false);
+    //     $("#formId .add").show();
+    //     $("#btnUpdate").show();
+    // });
 
     //disable update
-    $("#disabledUpdateBtn").click(function() {
-        $("#enabledUpdateBtn").show();
-        // $("#formId .form-control").prop("disabled", true);
-        $("#formId .form-select").prop("disabled", true);
-        $("#formId input").prop("disabled", true);
-        $("#select2multiple").prop("disabled", true);
-        $("#formId .add").hide();
-        $("#btnUpdate").hide();
-        $("#disabledUpdateBtn").hide();
-    });
+    // $("#disabledUpdateBtn").click(function() {
+    //     $("#enabledUpdateBtn").show();
+    //     // $("#formId .form-control").prop("disabled", true);
+    //     $("#formId .form-select").prop("disabled", true);
+    //     $("#formId input").prop("disabled", true);
+    //     $("#select2multiple").prop("disabled", true);
+    //     $("#formId .add").hide();
+    //     $("#btnUpdate").hide();
+    //     $("#disabledUpdateBtn").hide();
+    // });
 
     //add new fields for complainants
     var complainantIndex = 0;

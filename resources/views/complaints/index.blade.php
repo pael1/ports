@@ -46,35 +46,85 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- @foreach ($complaints as $complaint)
-                            <tr>
-                                <td>{{ $complaint->NPSDNumber }}</td>
-                                <td class="text-center">{{ $complaint->receivedBy }}</td>
-                                <td class="text-center">{{ $complaint->name }}</td>
-                                <td class="text-center">{{ Carbon\Carbon::parse($complaint->created_at)->format('d-M-y') }}</td>
-                                <td class="text-center">
-                                    <form action="{{ route('complaints.destroy', $complaint->id) }}" method="POST">
-                                        {{-- <a class="btn btn-info btn-sm"
-                                            href="{{ route('complaints.show', $complaint->id) }}">Show</a> --}}
-                                        @can('product-edit')
-                                            <a class="btn btn-info btn-sm"
-                                                href="{{ route('complaints.edit', $complaint->id) }}" data-bs-toggle="tooltip" title="Show complaint"><i class="fas fa-eye"></i></a>
-                                        @endcan
-
-
-                                        @csrf
-                                        @method('DELETE')
-                                        @can('product-delete')
-                                            <button type="submit" class="btn btn-danger btn-sm" data-bs-toggle="tooltip" title="Delete complaint"><i class="far fa-trash-alt"></i></button>
-                                        @endcan
-                                    </form>
-                                </td>
-                            </tr>
-                        @endforeach -->
                     </tbody>
                 </table>
             </div>
             {{-- {!! $products->links() !!} --}}
         </div>
     </div>
+
+    @push('scripts')
+        <script>
+            $(function() {
+                var complaintTable = $("#generalTable").DataTable({
+                    serverSide: true,
+                    processing: true,
+                    ajax: "{{ route('complaints.index') }}",
+                    columns: [{
+                            data: 'receivedBy',
+                            name: 'receivedBy'
+                        },
+                        {
+                            data: 'name',
+                            name: 'assignedTo'
+                        },
+                        {
+                            data: 'dateFiled',
+                            name: 'dateFiled'
+                        },
+                        {
+                            data: 'action',
+                            name: 'action'
+                        },
+                    ]
+                });
+
+                //show complaint/redirect to edit page of the complaint
+                var id = "";
+                $("body").on('click', '.editComplaint', function() {
+                    var id = $(this).data("id");
+                    let url = "{{ route('complaints.edit', ':id') }}";
+                    url = url.replace(':id', id);
+                    document.location.href = url;
+                });
+
+                //delete complaint
+                $("body").on('click', '.deleteComplaint', function() {
+                    var id = $(this).data("id");
+                    var token = $("meta[name='csrf-token']").attr("content");
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to revert this!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                // url: "/deleteComplaint/" + id,
+                                url: "{{ url('deleteComplaint') }}" + '/' + id,
+                                type: 'DELETE',
+                                data: {
+                                    "id": id,
+                                    "_token": token,
+                                },
+                                success: function() {
+                                    complaintTable.draw();
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Successfully deleted',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    })
+
+                                }
+                            });
+                        }
+                    })
+                });
+            });
+        </script>
+    @endpush
 @endsection

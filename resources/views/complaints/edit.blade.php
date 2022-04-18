@@ -31,135 +31,23 @@
                     accept-charset="utf-8" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
-
-                    <div class="text-right">
-                        <button type="button" id="enabledUpdateBtn" class="btn btn-info btn-sm">Enable Update</button>
-                        <button type="button" id="disabledUpdateBtn" class="btn btn-danger btn-sm">Disable Update</button>
-                    </div>
-                    <div class="card">
-                        <div class="card-boy">
-                            <div class="row pr-2 pl-2 pt-2">
-                                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
-                                    <div class="form-group">
-                                        <div class="form-floating">
-                                            <input type="text" name="NPSDNumber" class="form-control"
-                                                placeholder="NPS DOCKET NO" value="{{ $complaint->NPSDNumber }}"
-                                                readonly="readonly">
-                                            <label for="floatingNPSDNumber">NPS DOCKET NO</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row pr-2 pl-2">
-                                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
-                                    <div class="form-group">
-                                        <div class="form-floating">
-                                            <select class="form-select" name="assignedto" id="floatingSelect"
-                                                aria-label="Floating label select example">
-
-                                                @foreach ($prosecutors as $key => $value)
-                                                    <option value="{{ $key }}"
-                                                        {{ $key == $prosecutorId ? 'selected' : '' }}>
-                                                        {{ $value }}
-                                                    </option>
-                                                @endforeach
-
-                                            </select>
-                                            <label for="floatingSelect">Assigned To</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
-                                    <div class="form-group">
-                                        <div class="form-floating">
-                                            <input type="text" name="placeofcommission" class="form-control"
-                                                placeholder="Place Of Commission"
-                                                value="{{ $complaint->placeofCommission }}">
-                                            <label for="floatingplaceofCommissionr">Place Of Commission</label>
-                                            @error('placeofcommission')
-                                                <span class="text-danger" role="alert">
-                                                    {{ $message }}
-                                                </span>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
-                                    <P>1. Has a Similar complaint been filed before any other office?</P>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" name="similar" type="checkbox" id="yesCheckedBox"
-                                            value="Yes" onchange="similarYesCheckBox()"
-                                            {{ $complaint->similar != 'No' ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="inlineCheckbox1">Yes</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" name="similar" type="checkbox" id="noCheckedBox"
-                                            value="No" onchange="similarNoCheckBox()"
-                                            {{ $complaint->similar == 'No' ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="inlineCheckbox2">No</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row pr-2 pl-2 pt-2">
-                                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-6">
-
-                                    <P>2. Is this complaint in the nature of a counter-charge? If yes, indicate details
-                                        below.</P>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" name="chargeYes" type="checkbox"
-                                            id="yesCheckedBoxCC" value="Yes" onchange="checkedCheckBoxCC()"
-                                            {{ $complaint->counterChargeDetails != 'No' ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="inlineCheckbox1">Yes</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" name="chargeNo" type="checkbox" id="noCheckedBoxCC"
-                                            value="No" onchange="noCheckBoxCC()"
-                                            {{ $complaint->counterChargeDetails == 'No' ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="inlineCheckbox2">No</label>
-                                    </div>
-
-                                    <div class="form-group" id="counter-charge">
-                                        <div class="form-floating">
-                                            <input type="text" name="counterchargedetails"
-                                                value="{{ $complaint->counterChargeDetails }}" id="counterChargeDetails"
-                                                class="form-control" placeholder="Details Here"
-                                                value="{{ old('counterchargedetails') }}">
-                                            <label for="floatingNPSDNumber">Details Here</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-6">
-
-                                    <P>3. Is this complaint related to another case before this office? If yes, indicate
-                                        details below.</P>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" name="complaintYes" type="checkbox"
-                                            id="yesCheckBoxRC" value="Yes" onchange="checkedCheckBoxRC()"
-                                            {{ $complaint->relatedDetails != 'No' ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="inlineCheckbox1">Yes</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" name="complaintNo" type="checkbox" id="noCheckBoxRC"
-                                            value="No" onchange="nocheckedCheckBoxRC()"
-                                            {{ $complaint->relatedDetails == 'No' ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="inlineCheckbox2">No</label>
-                                    </div>
-
-                                    <div class="form-group" id="related-complaint">
-                                        <div class="form-floating">
-                                            <input type="text" name="relateddetails"
-                                                value="{{ $complaint->relatedDetails == 'No' ? '' : $complaint->relatedDetails }}"
-                                                id="relatedComplaintDetails" class="form-control"
-                                                placeholder="Details Here" value="{{ old('relateddetails') }}">
-                                            <label for="floatingNPSDNumber">Details Here</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" id="subpoena" class="btn btn-danger btn-sm">Subpoena</button>
+                            <button type="button" id="summarycase" class="btn btn-success btn-sm">Summary Cases</button>
+                        </div>
+                        <div class="col-6 text-right">
+                            <button type="button" id="enabledUpdateBtn" class="btn btn-info btn-sm">Enable Update</button>
+                            <button type="button" id="disabledUpdateBtn" class="btn btn-danger btn-sm">Disable
+                                Update</button>
                         </div>
                     </div>
+                    {{-- <div class="text-right">
+                        <button type="button" id="enabledUpdateBtn" class="btn btn-info btn-sm">Enable Update</button>
+                        <button type="button" id="disabledUpdateBtn" class="btn btn-danger btn-sm">Disable Update</button>
+                    </div> --}}
 
-                    <div class="accordion" id="accordionPanelsStayOpenExample">
+                    <div class="accordion mt-3" id="accordionPanelsStayOpenExample">
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="panelsStayOpen-headingOne">
                                 <button class="accordion-button" type="button" data-bs-toggle="collapse"
@@ -268,79 +156,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
-                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#lawviolated" aria-expanded="false"
-                                    aria-controls="panelsStayOpen-collapseTwo">
-                                    Law/s Violated
-                                </button>
-                            </h2>
-                            <div id="lawviolated" class="accordion-collapse collapse show"
-                                aria-labelledby="panelsStayOpen-headingTwo">
-                                <div class="accordion-body">
-                                    <div class="" id="dynamicLawViolated">
-                                        <div class="row mt-1">
-                                            <div
-                                                class="col-xs-12 col-sm-6 col-md-4 col-lg-11 d-flex justify-content-center">
-                                                <b>VIOLATION</b>
-                                            </div>
-                                            <div
-                                                class="col-xs-12 col-sm-6 col-md-4 col-lg-1 d-flex justify-content-center">
-                                                <!-- <button type="button" name="addRespondent" id="addLawViolated"
-                                                        data-bs-toggle="tooltip" title="Add Violation"
-                                                        class="btn btn-success btn-sm add float-right">+</button> -->
-                                            </div>
-                                        </div>
-                                        @if ($lawviolated->count())
-                                            @foreach ($lawviolated as $value)
-                                                <div class="row" id="{{ $value->id }}">
-                                                    <div class="col-11 col-sm-11 col-md-11 col-lg-11">
-                                                        <div class="form-group">
-                                                            <input type="text"
-                                                                name="addMoreLawViolated[{{ $value->id }}][complaint_id]"
-                                                                value="{{ $value->complaint_id }}" hidden>
-                                                            <input type="text"
-                                                                name="addMoreLawViolated[{{ $value->id }}][id]"
-                                                                value="{{ $value->id }}" hidden>
-                                                            <input type="text"
-                                                                name="addMoreLawViolated[{{ $value->id }}][lawviolated]"
-                                                                class="form-control" placeholder="Law Violated"
-                                                                value="{{ $value->details.' ('.$value->docketNo .')'}}" readonly>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-1 col-sm-1 col-md-1 col-lg-1">
-                                                        <button type="button" name="removeViolation"
-                                                            data-id="{{ $value->id }}" data-bs-toggle="tooltip"
-                                                            title="Remove Violation"
-                                                            class="btn btn-danger btn-sm add deleteViolation">-</button>
-                                                    </div>
-                                                </div>
-                                            @endforeach
-                                        @else
-                                            <div class="mt-3 text-center">
-                                                <p><i class="bi bi-file-earmark-x"></i> No Data.</p>
-                                            </div>
-                                        @endif
-                                        <div class="row">
-                                            <div class="col-1 col-sm-1 col-md-1 col-lg-11">
-                                                <select id="select2multiple" class="selectMultiple" name="violations[]"
-                                                    multiple="multiple">
-                                                    @foreach ($violations as $violation)
-                                                        <option value="{{ $violation->law }}">
-                                                            {{ $violation->law }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            <div class="col-1 col-sm-1 col-md-1 col-lg-1">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
+                        <div class="accordion-item mt-1">
                             <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
                                 <button class="accordion-button" type="button" data-bs-toggle="collapse"
                                     data-bs-target="#respondent" aria-expanded="false"
@@ -353,32 +169,25 @@
                                 <div class="accordion-body">
                                     <div class="" id="dynamicRespondent">
                                         <div class="row mt-1">
-                                            <div
-                                                class="col-xs-12 col-sm-6 col-md-4 col-lg-2 d-flex justify-content-center">
+                                            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2 d-flex justify-content-center">
                                                 <b>FIRST NAME</b>
                                             </div>
-                                            <div
-                                                class="col-xs-12 col-sm-6 col-md-4 col-lg-2 d-flex justify-content-center">
+                                            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2 d-flex justify-content-center">
                                                 <b>MIDDLE NAME</b>
                                             </div>
-                                            <div
-                                                class="col-xs-12 col-sm-6 col-md-4 col-lg-2 d-flex justify-content-center">
+                                            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2 d-flex justify-content-center">
                                                 <b>LAST NAME</b>
                                             </div>
-                                            <div
-                                                class="col-xs-12 col-sm-6 col-md-4 col-lg-1 d-flex justify-content-center">
+                                            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1 d-flex justify-content-center">
                                                 <b>SEX</b>
                                             </div>
-                                            <div
-                                                class="col-xs-12 col-sm-6 col-md-4 col-lg-1 d-flex justify-content-center">
+                                            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1 d-flex justify-content-center">
                                                 <b>AGE</b>
                                             </div>
-                                            <div
-                                                class="col-xs-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
+                                            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
                                                 <b>ADDRESS</b>
                                             </div>
-                                            <div
-                                                class="col-xs-12 col-sm-6 col-md-4 col-lg-1 d-flex justify-content-center">
+                                            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1 d-flex justify-content-center">
                                                 <button type="button" name="addRespondent" id="addRespondent"
                                                     data-bs-toggle="tooltip" title="Add Respondent"
                                                     class="btn btn-success btn-sm add float-right">+</button>
@@ -455,7 +264,205 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="accordion-item">
+                        <div class="accordion-item mt-1">
+                            <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#lawviolated" aria-expanded="false"
+                                    aria-controls="panelsStayOpen-collapseTwo">
+                                    Law/s Violated
+                                </button>
+                            </h2>
+                            <div id="lawviolated" class="accordion-collapse collapse show"
+                                aria-labelledby="panelsStayOpen-headingTwo">
+                                <div class="accordion-body">
+                                    <div class="" id="dynamicLawViolated">
+                                        <div class="row mt-1">
+                                            <div
+                                                class="col-xs-12 col-sm-6 col-md-4 col-lg-11 d-flex justify-content-center">
+                                                <b>VIOLATION</b>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1 d-flex justify-content-center">
+                                                <!-- <button type="button" name="addRespondent" id="addLawViolated"
+                                                                                    data-bs-toggle="tooltip" title="Add Violation"
+                                                                                    class="btn btn-success btn-sm add float-right">+</button> -->
+                                            </div>
+                                        </div>
+                                        @if ($lawviolated->count())
+                                            @foreach ($lawviolated as $value)
+                                                <div class="row" id="{{ $value->id }}">
+                                                    <div class="col-11 col-sm-11 col-md-11 col-lg-11">
+                                                        <div class="form-group">
+                                                            <input type="text"
+                                                                name="addMoreLawViolated[{{ $value->id }}][complaint_id]"
+                                                                value="{{ $value->complaint_id }}" hidden>
+                                                            <input type="text"
+                                                                name="addMoreLawViolated[{{ $value->id }}][id]"
+                                                                value="{{ $value->id }}" hidden>
+                                                            <input type="text"
+                                                                name="addMoreLawViolated[{{ $value->id }}][lawviolated]"
+                                                                class="form-control" placeholder="Law Violated"
+                                                                value="{{ $value->details . ' (' . $value->docketNo . ')' }}"
+                                                                readonly>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-1 col-sm-1 col-md-1 col-lg-1">
+                                                        <button type="button" name="removeViolation"
+                                                            data-id="{{ $value->id }}" data-bs-toggle="tooltip"
+                                                            title="Remove Violation"
+                                                            class="btn btn-danger btn-sm add deleteViolation">-</button>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        @else
+                                            <div class="mt-3 text-center">
+                                                <p><i class="bi bi-file-earmark-x"></i> No Data.</p>
+                                            </div>
+                                        @endif
+                                        <div class="row">
+                                            <div class="col-1 col-sm-1 col-md-1 col-lg-11">
+                                                <select id="select2multiple" class="selectMultiple" name="violations[]"
+                                                    multiple="multiple">
+                                                    @foreach ($violations as $violation)
+                                                        <option value="{{ $violation->law }}">
+                                                            {{ $violation->law }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-1 col-sm-1 col-md-1 col-lg-1">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card mt-3">
+                            <div class="card-boy">
+                                {{-- <div class="row pr-2 pl-2 pt-2">
+                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
+                                        <div class="form-group">
+                                            <div class="form-floating">
+                                                <input type="text" name="NPSDNumber" class="form-control"
+                                                    placeholder="NPS DOCKET NO" value="{{ $complaint->NPSDNumber }}"
+                                                    readonly="readonly">
+                                                <label for="floatingNPSDNumber">NPS DOCKET NO</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> --}}
+                                <input type="text" name="FType" value="{{ $complaint->formType }}" hidden>
+                                <input type="text" name="NPSDNumber" value="{{ $complaint->NPSDNumber }}" hidden>
+                                <div class="row mt-2 pr-2 pl-2">
+                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                                        <div class="form-group">
+                                            <div class="form-floating">
+                                                <select class="form-select" name="assignedto" id="floatingSelect"
+                                                    aria-label="Floating label select example">
+
+                                                    @foreach ($prosecutors as $key => $value)
+                                                        <option value="{{ $key }}"
+                                                            {{ $key == $prosecutorId ? 'selected' : '' }}>
+                                                            {{ $value }}
+                                                        </option>
+                                                    @endforeach
+
+                                                </select>
+                                                <label for="floatingSelect">Assigned To</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                                        <div class="form-group">
+                                            <div class="form-floating">
+                                                <input type="text" name="placeofcommission" class="form-control"
+                                                    placeholder="Place Of Commission"
+                                                    value="{{ $complaint->placeofCommission }}">
+                                                <label for="floatingplaceofCommissionr">Place Of Commission</label>
+                                                @error('placeofcommission')
+                                                    <span class="text-danger" role="alert">
+                                                        {{ $message }}
+                                                    </span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                                        <P>1. Has a Similar complaint been filed before any other office?</P>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" name="similar" type="checkbox"
+                                                id="yesCheckedBox" value="Yes" onchange="similarYesCheckBox()"
+                                                {{ $complaint->similar != 'No' ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="inlineCheckbox1">Yes</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" name="similar" type="checkbox"
+                                                id="noCheckedBox" value="No" onchange="similarNoCheckBox()"
+                                                {{ $complaint->similar == 'No' ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="inlineCheckbox2">No</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row pr-2 pl-2 pt-2">
+                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-6">
+
+                                        <P>2. Is this complaint in the nature of a counter-charge? If yes, indicate details
+                                            below.</P>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" name="chargeYes" type="checkbox"
+                                                id="yesCheckedBoxCC" value="Yes" onchange="checkedCheckBoxCC()"
+                                                {{ $complaint->counterChargeDetails != 'No' ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="inlineCheckbox1">Yes</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" name="chargeNo" type="checkbox"
+                                                id="noCheckedBoxCC" value="No" onchange="noCheckBoxCC()"
+                                                {{ $complaint->counterChargeDetails == 'No' ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="inlineCheckbox2">No</label>
+                                        </div>
+
+                                        <div class="form-group" id="counter-charge">
+                                            <div class="form-floating">
+                                                <input type="text" name="counterchargedetails"
+                                                    value="{{ $complaint->counterChargeDetails }}"
+                                                    id="counterChargeDetails" class="form-control"
+                                                    placeholder="Details Here" value="{{ old('counterchargedetails') }}">
+                                                <label for="floatingNPSDNumber">Details Here</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-6">
+
+                                        <P>3. Is this complaint related to another case before this office? If yes, indicate
+                                            details below.</P>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" name="complaintYes" type="checkbox"
+                                                id="yesCheckBoxRC" value="Yes" onchange="checkedCheckBoxRC()"
+                                                {{ $complaint->relatedDetails != 'No' ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="inlineCheckbox1">Yes</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" name="complaintNo" type="checkbox"
+                                                id="noCheckBoxRC" value="No" onchange="nocheckedCheckBoxRC()"
+                                                {{ $complaint->relatedDetails == 'No' ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="inlineCheckbox2">No</label>
+                                        </div>
+
+                                        <div class="form-group" id="related-complaint">
+                                            <div class="form-floating">
+                                                <input type="text" name="relateddetails"
+                                                    value="{{ $complaint->relatedDetails == 'No' ? '' : $complaint->relatedDetails }}"
+                                                    id="relatedComplaintDetails" class="form-control"
+                                                    placeholder="Details Here" value="{{ old('relateddetails') }}">
+                                                <label for="floatingNPSDNumber">Details Here</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item mt-1">
                             <h2 class="accordion-header" id="panelsStayOpen-headingThree">
                                 <button class="accordion-button" type="button" data-bs-toggle="collapse"
                                     data-bs-target="#witness" aria-expanded="false"
@@ -569,7 +576,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="accordion-item">
+                        <div class="accordion-item mt-1">
                             <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
                                 <button class="accordion-button" type="button" data-bs-toggle="collapse"
                                     data-bs-target="#attachment" aria-expanded="false"
@@ -580,41 +587,6 @@
                             <div id="attachment" class="accordion-collapse collapse show"
                                 aria-labelledby="panelsStayOpen-headingTwo">
                                 <div class="accordion-body">
-                                    {{-- <div class="row">
-                                        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
-
-                                        </div>
-                                        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-6">
-                                            @if ($attachments->count())
-                                                <table class="table" id="attachmentsTable">
-                                                    <thead>
-                                                        <tr>
-                                                            <th scope="">Filename</th>
-                                                            <th scope="">Action</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach ($attachments as $file)
-                                                            <tr>
-                                                                <td>{{ $file->filename }}</td>
-                                <td class="text-right">
-                                    <button type="button" data-path="{{ URL::asset($file->path) }}" data-filename="{{ $file->filename }}" data-toggle="modal" data-target="#filePreview" class="btn btn-primary showModal btn-sm">
-                                        View
-                                    </button>
-                                    <meta name="csrf-token" content="{{ csrf_token() }}">
-                                    <button type="button" data-id="{{ $file->id }}" class="btn btn-danger btn-sm deleteAttachment">
-                                        delete
-                                    </button>
-                                </td>
-                                </tr>
-                                @endforeach
-                                </tbody>
-                                </table>
-                            </div>
-                            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
-
-                            </div>
-                        </div> --}}
                                     @if ($attachments->count())
                                         @foreach ($attachments as $file)
                                             <div class="row mt-2" id="{{ $file->id }}">
@@ -672,4 +644,176 @@
         </div>
 
     </div>
+
+    @push('scripts')
+        <script>
+            //mark as subpoena
+            $("#subpoena").click(function() {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, proceed'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        //send to maam ivy and notify
+                    }
+                })
+            });
+            //mark as summary case
+            $("#summarycase").click(function() {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, proceed'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        //send to maam ivy and notify
+
+                    }
+                })
+            });
+
+            //enable update
+            $("#enabledUpdateBtn").click(function() {
+                $("#enabledUpdateBtn").hide();
+                $("#disabledUpdateBtn").show();
+                // $("#formId .form-control").prop("disabled", false);
+                $("#formId .form-select").prop("disabled", false);
+                $("#formId input").prop("disabled", false);
+                $("#select2multiple").prop("disabled", false);
+                $("#formId .add").show();
+                $("#btnUpdate").show();
+            });
+
+            //disable update
+            $("#disabledUpdateBtn").click(function() {
+                $("#enabledUpdateBtn").show();
+                // $("#formId .form-control").prop("disabled", true);
+                $("#formId .form-select").prop("disabled", true);
+                $("#formId input").prop("disabled", true);
+                $("#select2multiple").prop("disabled", true);
+                $("#formId .add").hide();
+                $("#btnUpdate").hide();
+                $("#disabledUpdateBtn").hide();
+            });
+
+            $(".deleteParty").click(function() {
+                var id = $(this).data("id");
+                var token = $("meta[name='csrf-token']").attr("content");
+                console.log(id);
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            // url: "/party/" + id,
+                            url: "{{ url('party') }}" + '/' + id,
+                            type: 'DELETE',
+                            data: {
+                                "id": id,
+                                "_token": token,
+                            },
+                            success: function() {
+                                $("#" + id + "").remove();
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Successfully deleted',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                })
+                            }
+                        });
+                    }
+                })
+            });
+            $(".deleteViolation").click(function() {
+                var id = $(this).data("id");
+                var token = $("meta[name='csrf-token']").attr("content");
+                console.log(id);
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            // url: "/violation/" + id,
+                            url: "{{ url('violation') }}" + '/' + id,
+                            type: 'DELETE',
+                            data: {
+                                "id": id,
+                                "_token": token,
+                            },
+                            success: function() {
+                                $("#" + id + "").remove();
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Successfully deleted',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                })
+                                // $( ".accordion-collapse" ).load(window.location.href + " .accordion-collapse" );
+                            }
+                        });
+                    }
+                })
+            });
+
+            $(".deleteAttachment").click(function() {
+                var id = $(this).data("id");
+                var token = $("meta[name='csrf-token']").attr("content");
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            // url: "/attachments/" + id,
+                            url: "{{ url('attachments') }}" + '/' + id,
+                            type: 'DELETE',
+                            data: {
+                                "id": id,
+                                "_token": token,
+                            },
+                            success: function() {
+                                $("#" + id + "").remove();
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Successfully deleted',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                })
+                                // $("#attachmentsTable").load(window.location.href +
+                                //     " #attachmentsTable");
+                            }
+                        });
+                    }
+                })
+            });
+        </script>
+    @endpush
 @endsection
