@@ -28,12 +28,23 @@ class ComplaintController extends Controller
     // public function index()
     public function index(Request $request)
     {
-        if (Auth::user()->designation != "Reviewer") {
+        //reviewer = maam ivy monitoring and aging
+        if (Auth::user()->designation == "Encoder") {
+            $complaints = DB::table('complaints')
+                ->join('users', 'complaints.assignedTo', '=', 'users.id')
+                ->join('investigated_cases', 'complaints.id', '=', 'investigated_cases.complaint_id')
+                ->select(
+                    'complaints.*',
+                    'investigated_cases.*',
+                    DB::raw("CONCAT(users.firstname, ' ', users.middlename, ' ', users.lastname) as fullname, 
+                DATE_FORMAT(complaints.created_at, '%d-%M-%y') as dateFiled")
+                )->get();
+        } elseif (Auth::user()->designation != "Reviewer") {
             $complaints = DB::table('complaints')
                 ->join('users', 'complaints.assignedTo', '=', 'users.id')
                 ->select(
                     'complaints.*',
-                    DB::raw("CONCAT(users.firstname, ' ', users.middlename, ' ', users.lastname) as name, 
+                    DB::raw("CONCAT(users.firstname, ' ', users.middlename, ' ', users.lastname) as fullname, 
                 DATE_FORMAT(complaints.created_at, '%d-%M-%y') as dateFiled")
                 )->where('complaints.assignedTo', '=', Auth::user()->id)->get();
         } else {
@@ -42,11 +53,10 @@ class ComplaintController extends Controller
                 ->select(
                     'complaints.*',
                     // DB::raw("CONCAT(users.firstname, ' ', users.middlename, ' ', users.lastname) as name, 
-                    DB::raw("investigated_cases.receivedby as name, 
+                    DB::raw("investigated_cases.receivedby as fullname, 
                 DATE_FORMAT(complaints.created_at, '%d-%M-%y') as dateFiled")
                 )->where('investigated_cases.assignedTo', '=', Auth::user()->id)->get();
         }
-
         if ($request->ajax()) {
             $allData = DataTables::of($complaints)
                 ->addIndexColumn()
@@ -290,7 +300,8 @@ class ComplaintController extends Controller
             ->select('filename', 'id', 'path', DB::raw("date_format(created_at, '%Y-%m-%d %r') AS created_at"))
             ->where('complaint_id', $id)
             ->get();
-        return view('complaints.edit', compact('complaint', 'complainants', 'respondents', 'witnesses', 'lawviolated', 'attachments', 'prosecutors', 'prosecutorId', 'violations'));
+        $case = DB::table('investigated_cases')->where(['complaint_id' => $id])->get();
+        return view('complaints.edit', compact('complaint', 'complainants', 'respondents', 'witnesses', 'lawviolated', 'attachments', 'prosecutors', 'prosecutorId', 'violations', 'case'));
     }
 
     /**
@@ -476,6 +487,7 @@ class ComplaintController extends Controller
         DB::table("attachments")->where("complaint_id", $id)->delete();
         DB::table("violated_laws")->where("complaint_id", $id)->delete();
         DB::table("notifications")->where("complaint_id", $id)->delete();
+        DB::table("investigated_cases")->where("complaint_id", $id)->delete();
 
         return response()->json([
             'success' => 'Record deleted successfully!'
@@ -549,7 +561,7 @@ class ComplaintController extends Controller
                 ->select(
                     'complaints.*',
                     DB::raw("investigated_cases.receivedby as name, 
-                DATE_FORMAT(complaints.created_at, '%d-%M-%y') as dateFiled")
+                DATE_FORMAT(complaints.created_at, '%d-%M-%y') as dateFiled, investigated_cases.is_read")
                 )->where('investigated_cases.assignedTo', '=', Auth::user()->id)->get();
         }
         return response()->json($complaint, 200);
