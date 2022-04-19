@@ -42,6 +42,7 @@
                             <th>Recieved By</th>
                             <th>Assigned To</th>
                             <th>Date Filed</th>
+                            <th>Case</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -65,12 +66,16 @@
                             name: 'receivedBy'
                         },
                         {
-                            data: 'name',
-                            name: 'assignedTo'
+                            data: 'fullname',
+                            name: 'fullname'
                         },
                         {
                             data: 'dateFiled',
                             name: 'dateFiled'
+                        },
+                        {
+                            data: 'name',
+                            name: 'name'
                         },
                         {
                             data: 'action',

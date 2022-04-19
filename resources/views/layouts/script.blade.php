@@ -128,7 +128,7 @@
                             $('#' + data.assignedto).find('.pending').html(pending + 1);
                         } else {
                             $('#' + data.assignedto).html(
-                                '<a class="nav-link" data-toggle="dropdown" href="#">' +
+                                '<a class="nav-link" data-toggle="dropdown" href="#" onClick="showDiv();>' +
                                 '<i class="far fa-comments"></i>' +
                                 '<span class="badge badge-danger navbar-badge pending">1</span>' +
                                 '</a>');
@@ -309,8 +309,9 @@
                     var email = data[i].email;
                     var dateFiled = data[i].dateFiled;
                     var markmsg = data[i].markmsg;
+                    var is_read = data[i].is_read;
                     let NPSDNumber = data[i].NPSDNumber;
-                    let classNotif = (markmsg != 1) ? 'text-secondary' : 'text-danger';
+                    let classNotif = ({!! json_encode(Auth::user()->designation) !!} != "Reviewer") ? ((markmsg != 1) ? 'text-secondary' : 'text-danger') : ((is_read != 1) ? 'text-secondary' : 'text-danger');
                     var option = '<a href="#" class="dropdown-item open-notif" data-id="'+data[i].id+'" id="' + NPSDNumber + '">' +
                         '<div class="media openNotification">' +
                         '<div class="media-body">' +
@@ -327,6 +328,11 @@
                         '</a>' +
                         '<div class="dropdown-divider"></div>'
                     $(".notif").append(option);
+                }
+                var offsetHeight = document.getElementById('notificationBox').offsetHeight;
+                console.log(offsetHeight);
+                if(offsetHeight > 287){
+                    $('#notificationBox').css({"overflow": "scroll", "height": "288px"});
                 }
             }
         });

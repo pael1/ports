@@ -48,6 +48,8 @@
                                                     <option value="Fiscal">Fiscal</option>
                                                     <option value="Encoder">Encoder</option>
                                                     <option value="Reviewer">Reviewer</option>
+                                                    <option value="MTCC">MTCC</option>
+                                                    <option value="RTC">RTC</option>
                                                     <option value="Chief">Chief</option>
                                                 </select>
                                                 <label for="floatingSelect">Designation</label>

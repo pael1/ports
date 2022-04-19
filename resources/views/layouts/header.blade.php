@@ -18,7 +18,7 @@
             </a>
             @endforeach
 
-            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right notif" style="overflow:scroll; height:400px;">
+            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right notif" id="notificationBox">
             </div>
         </li>
         <li class="nav-item dropdown">

@@ -33,12 +33,17 @@
                     <div class="row">
                         <div class="col-6">
                             @if (Auth::user()->designation == 'Fiscal')
-                                <button type="button" id="subpoena" class="btn btn-danger btn-sm">Subpoena</button>
-                                <button type="button" id="summarycase" class="btn btn-success btn-sm">Summary Cases</button>
+                                <button type="button" id="subpoena" class="btn btn-danger btn-sm" data-bs-toggle="tooltip"
+                                title="Forward now">Subpoena</button>
+                                <button type="button" id="summarycase" class="btn btn-success btn-sm" data-bs-toggle="tooltip"
+                                title="Forward now">Summary Cases</button>
                             @endif
                             @if (Auth::user()->designation == 'Reviewer')
-                                <button type="button" id="MTCC" class="btn btn-secondary btn-sm">MTCC Reviewer</button>
-                                <button type="button" id="RTC" class="btn btn-success btn-sm">RTC Reviewer</button>
+                                {{-- <button type="button" class="btn btn-outline-dark btn-sm" disabled>{{ $case[0]->name }}</button> --}}
+                                <button type="button" id="MTCC" class="btn btn-secondary btn-sm" data-bs-toggle="tooltip"
+                                title="Forward now">MTCC Reviewer</button>
+                                <button type="button" id="RTC" class="btn btn-secondary btn-sm" data-bs-toggle="tooltip"
+                                title="Forward now">RTC Reviewer</button>
                             @endif
                         </div>
                         <div class="col-6 text-right">
