@@ -12,15 +12,27 @@ class InvestigatedCaseController extends Controller
 {
     public function save(Request $request)
     {
-        DB::table('investigated_cases')->insert([
-            'name' => $request->name,
-            'days' => $request->days,
-            'receivedby' => $request->receivedby,
-            'complaint_id' => $request->complaint_id,
-            'assignedto' => $request->assignedto,
-            'is_read' => $request->is_read,
-            'created_at' => Carbon::now(),
-        ]);
+        if (InvestigatedCase::where('complaint_id', $request->complaint_id)->exists()) {
+            $updateInvestigation =
+                [
+                    'is_read' => 1,
+                    'name' => $request->name,
+                ];
+            InvestigatedCase::where([
+                ['complaint_id', '=', $request->complaint_id]
+            ])->update($updateInvestigation);
+            // InvestigatedCase::where('complaint_id', $request->complaint_id)->update(array(['is_read' => 1, 'name' => $request->name]));
+        } else {
+            DB::table('investigated_cases')->insert([
+                'name' => $request->name,
+                'days' => $request->days,
+                'receivedby' => $request->receivedby,
+                'complaint_id' => $request->complaint_id,
+                'assignedto' => $request->assignedto,
+                'is_read' => $request->is_read,
+                'created_at' => Carbon::now(),
+            ]);
+        }
 
         $options = array(
             'cluster' => 'ap1',
