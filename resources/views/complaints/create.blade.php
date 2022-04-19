@@ -192,7 +192,7 @@
                                                     <option value="" disabled selected>Select</option>
                                                     @foreach ($prosecutors as $prosecutor)
                                                         <option value="{{ $prosecutor->id }}">
-                                                            {{ $prosecutor->firstname . ', ' . $prosecutor->middlename . ', ' . $prosecutor->lastname }}
+                                                            {{ $prosecutor->name }}
                                                         </option>
                                                     @endforeach
                                                 </select>

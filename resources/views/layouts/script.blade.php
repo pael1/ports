@@ -54,11 +54,11 @@
 
         var pusher = new Pusher('60d1f9fb0b13cd84a90d', {
             cluster: 'ap1'
-            });
-            var channel = pusher.subscribe('my-channel');
-            channel.bind('my-event', function(data){
-                
-            if(data.assignedto == {!! json_encode(Auth::user()->id) !!}){
+        });
+        var channel = pusher.subscribe('my-channel');
+        channel.bind('my-event', function(data) {
+
+            if (data.assignedto == {!! json_encode(Auth::user()->id) !!}) {
                 Swal.fire({
                     title: 'You have new notification.',
                     text: "You want to open it?",
@@ -70,49 +70,73 @@
                     cancelButtonText: 'No, thanks'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        //read message
-                        var token = $("meta[name='csrf-token']").attr("content");
-                        $.ajax({
-                            url: "{{ url('read') }}" + '/' + data.notifno,
-                            type: 'PUT',
-                            data: {
-                                "notifno": data.notifno,
-                                "_token": token,
-                            },
-                            success: function(data) {
-                                console.log(data);
-                            }
-                        })
-                        //redirect to the complaint details
-                        $.ajax({
-                            url: "{{ url('complaint_id') }}",
-                            type: 'GET',
-                            data: {
-                                'notifno': data.notifno
-                            },
-                            success: function(data) {
-                                console.log(data);
-                                let url = "{{ route('complaints.edit', ':id') }}";
-                                url = url.replace(':id', data[0].complaint_id);
-                                document.location.href = url;
-                            }
-                        })
-                    }
-                    else{
-                        let pending = parseInt($('#' + data.assignedto).find('.pending').html());
-                        if(pending){
-                            $('#' + data.assignedto).find('.pending').html(pending + 1);
+                        //check if this notification is for monitoring case aging
+                        if (data.admin == "yes") {
+                            //read message
+                            var token = $("meta[name='csrf-token']").attr("content");
+                            $.ajax({
+                                url: "{{ url('readAdmin') }}" + '/' + data
+                                    .complaint_id,
+                                type: 'PUT',
+                                data: {
+                                    "complaint_id": data.complaint_id,
+                                    "_token": token,
+                                },
+                                success: function(data) {
+                                    console.log(data);
+                                }
+                            })
+
+                            //redirecto to the complaint
+                            let url = "{{ route('complaints.edit', ':id') }}";
+                            url = url.replace(':id', data.complaint_id);
+                            document.location.href = url;
+                        } else {
+                            //read message
+                            var token = $("meta[name='csrf-token']").attr("content");
+                            $.ajax({
+                                url: "{{ url('read') }}" + '/' + data.notifno,
+                                type: 'PUT',
+                                data: {
+                                    "notifno": data.notifno,
+                                    "_token": token,
+                                },
+                                success: function(data) {
+                                    console.log(data);
+                                }
+                            })
+                            //redirect to the complaint details
+                            $.ajax({
+                                url: "{{ url('complaint_id') }}",
+                                type: 'GET',
+                                data: {
+                                    'notifno': data.notifno
+                                },
+                                success: function(data) {
+                                    console.log(data);
+                                    let url =
+                                        "{{ route('complaints.edit', ':id') }}";
+                                    url = url.replace(':id', data[0].complaint_id);
+                                    document.location.href = url;
+                                }
+                            })
                         }
-                        else{
-                            $('#' + data.assignedto).html('<a class="nav-link" data-toggle="dropdown" href="#">'
-                            +'<i class="far fa-comments"></i>'
-                            +'<span class="badge badge-danger navbar-badge pending">1</span>'
-                            +'</a>');
+                    } else {
+                        let pending = parseInt($('#' + data.assignedto).find('.pending')
+                            .html());
+                        if (pending) {
+                            $('#' + data.assignedto).find('.pending').html(pending + 1);
+                        } else {
+                            $('#' + data.assignedto).html(
+                                '<a class="nav-link" data-toggle="dropdown" href="#">' +
+                                '<i class="far fa-comments"></i>' +
+                                '<span class="badge badge-danger navbar-badge pending">1</span>' +
+                                '</a>');
                         }
                     }
                 })
 
-                
+
             }
         });
 
@@ -252,7 +276,7 @@
             placeholder: "Select violation/s",
             width: '100%',
         });
-                    
+
         //notifications
         // const notification = () => {
         //     $.ajax({
@@ -269,6 +293,44 @@
         // }
         // setInterval(notification,1000);
     });
+
+    function showDiv() {
+        $(".notif").empty();
+        $.ajax({
+            type: "GET",
+            url: "{{ url('openNotification') }}",
+            success: function(data) {
+                console.log(data);
+                len = data.length;
+
+                for (var i = 0; i < len; i++) {
+                    var id = data[i].id;
+                    var receivedBy = data[i].receivedBy;
+                    var email = data[i].email;
+                    var dateFiled = data[i].dateFiled;
+                    var markmsg = data[i].markmsg;
+                    let NPSDNumber = data[i].NPSDNumber;
+                    let classNotif = (markmsg != 1) ? 'text-secondary' : 'text-danger';
+                    var option = '<a href="#" class="dropdown-item open-notif" data-id="'+data[i].id+'" id="' + NPSDNumber + '">' +
+                        '<div class="media openNotification">' +
+                        '<div class="media-body">' +
+                        '<h3 class="dropdown-item-title">' +
+                        '' + data[i].name + '' +
+                        '<span class="float-right text-sm ' + classNotif +
+                        '"><i class="fas fa-bell"></i></span>' +
+                        '</h3>' +
+                        //   '<p class="text-sm">'+email+'</p>'+
+                        '<p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> ' + dateFiled +
+                        '</p>' +
+                        '</div>' +
+                        '</div>' +
+                        '</a>' +
+                        '<div class="dropdown-divider"></div>'
+                    $(".notif").append(option);
+                }
+            }
+        });
+    }
 
     //disabled save btn if clicked
     // $(".btn_save" ).click(function() {
@@ -321,9 +383,10 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             console.log(data[0].complaint_id);
-                            $('#assignedToId option[value='+data[0].assignedTo+']').attr('selected','selected');
+                            $('#assignedToId option[value=' + data[0].assignedTo + ']')
+                                .attr('selected', 'selected');
                         } else {
-                            
+
                         }
                     })
                 }
@@ -677,5 +740,56 @@
     //remove added field //general remove function
     $(document).on('click', '.remove-data', function() {
         $(this).closest("div.row").remove();
+    });
+
+    $(document).on('click', '.open-notif', function() {
+        if ('{!! Auth::user()->designation !!}' == "Reviewer") {
+            //read message
+            var token = $("meta[name='csrf-token']").attr("content");
+            $.ajax({
+                url: "{{ url('readAdmin') }}" + '/' + $(this).attr("data-id"),
+                type: 'PUT',
+                data: {
+                    "complaint_id": $(this).attr("data-id"),
+                    "_token": token,
+                },
+                success: function(data) {
+                    console.log(data);
+                }
+            })
+
+            //redirecto to the complaint
+            let url = "{{ route('complaints.edit', ':id') }}";
+            url = url.replace(':id', $(this).attr("data-id"));
+            document.location.href = url;
+        } else {
+            var token = $("meta[name='csrf-token']").attr("content");
+            $.ajax({
+                url: "{{ url('read') }}" + '/' + this.id,
+                type: 'PUT',
+                data: {
+                    "notifno": this.id,
+                    "_token": token,
+                },
+                success: function(data) {
+                    console.log(data);
+                }
+            })
+            //redirect to the complaint details
+            $.ajax({
+                url: "{{ url('complaint_id') }}",
+                type: 'GET',
+                data: {
+                    'notifno': this.id
+                },
+                success: function(data) {
+                    console.log(data);
+                    let url =
+                        "{{ route('complaints.edit', ':id') }}";
+                    url = url.replace(':id', data[0].complaint_id);
+                    document.location.href = url;
+                }
+            })
+        }
     });
 </script>

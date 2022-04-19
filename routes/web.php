@@ -8,6 +8,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ComplaintController;
+use App\Http\Controllers\InvestigatedCaseController;
 use App\Http\Controllers\NotificationController;
 
 /*
@@ -27,9 +28,8 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', [HomeController::class, 'index'])->name('home');
-
 Route::group(['middleware' => ['auth']], function () {
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);
     Route::resource('products', ProductController::class);
@@ -42,4 +42,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('notifications', [NotificationController::class, 'getNewMessages']);
     Route::get('complaint_id', [ComplaintController::class, 'getComplat_id']);
     Route::put('read/{id}', [NotificationController::class, 'updateMarkMsg']);
+    Route::post('caseSaved', [InvestigatedCaseController::class, 'save']);
+    Route::put('readAdmin/{id}', [InvestigatedCaseController::class, 'updateNotif']);
+    Route::get('openNotification', [ComplaintController::class, 'openNotif']);
 });

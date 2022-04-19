@@ -10,7 +10,6 @@ use App\Helpers\Helper;
 use App\Models\Complaint;
 use App\Models\Violation;
 use App\Models\Attachment;
-use App\Models\Prosecutor;
 use App\Models\ViolatedLaw;
 use App\Models\Notification;
 use Illuminate\Http\Request;
@@ -29,20 +28,25 @@ class ComplaintController extends Controller
     // public function index()
     public function index(Request $request)
     {
-        // $complaints = Complaint::all();
-
-
-        $complaints = DB::table('complaints')
-            ->join('users', 'complaints.assignedTo', '=', 'users.id')
-            ->select(
-                'complaints.*',
-                // DB::raw("CONCAT(users.ext, ' ', users.firstname, ' ', users.middlename, ' ', users.lastname) as name, 
-                DB::raw("CONCAT(users.firstname, ' ', users.middlename, ' ', users.lastname) as name, 
+        if (Auth::user()->designation != "Reviewer") {
+            $complaints = DB::table('complaints')
+                ->join('users', 'complaints.assignedTo', '=', 'users.id')
+                ->select(
+                    'complaints.*',
+                    DB::raw("CONCAT(users.firstname, ' ', users.middlename, ' ', users.lastname) as name, 
                 DATE_FORMAT(complaints.created_at, '%d-%M-%y') as dateFiled")
-            )->get();
-        // return view('complaints.index', compact('complaints'));
+                )->where('complaints.assignedTo', '=', Auth::user()->id)->get();
+        } else {
+            $complaints = DB::table('complaints')
+                ->join('investigated_cases', 'complaints.id', '=', 'investigated_cases.complaint_id')
+                ->select(
+                    'complaints.*',
+                    // DB::raw("CONCAT(users.firstname, ' ', users.middlename, ' ', users.lastname) as name, 
+                    DB::raw("investigated_cases.receivedby as name, 
+                DATE_FORMAT(complaints.created_at, '%d-%M-%y') as dateFiled")
+                )->where('investigated_cases.assignedTo', '=', Auth::user()->id)->get();
+        }
 
-        // $complaints = Complaint::get();
         if ($request->ajax()) {
             $allData = DataTables::of($complaints)
                 ->addIndexColumn()
@@ -65,8 +69,10 @@ class ComplaintController extends Controller
      */
     public function create(Request $request)
     {
-        // $prosecutors = Prosecutor::all();
-        $prosecutors = User::all();
+        $prosecutors = User::select(DB::raw("CONCAT(firstname,' ',middlename,' ',lastname) AS name"), 'id')
+            ->where("designation", "=", "Fiscal")
+            ->get();
+
         $violations = Violation::all();
 
 
@@ -268,12 +274,11 @@ class ComplaintController extends Controller
     public function edit($id)
     {
         $complaint = Complaint::find($id);
-        // $prosecutors = Prosecutor::pluck('firstname', 'id');
 
-        $prosecutors = User::select(
-            DB::raw("CONCAT(firstname,' ',middlename,'. ',lastname) AS name"),
-            'id'
-        )->pluck('name', 'id');
+        $prosecutors = User::select(DB::raw("CONCAT(firstname,' ',middlename,' ',lastname) AS name"), 'id')
+            ->where("designation", "=", "Fiscal")
+            ->pluck('name', 'id');
+
         $violations = Violation::all();
         $prosecutorId = Complaint::where('id', $id)->first()->assignedTo;
 
@@ -470,6 +475,7 @@ class ComplaintController extends Controller
         DB::table("parties")->where("complaint_id", $id)->delete();
         DB::table("attachments")->where("complaint_id", $id)->delete();
         DB::table("violated_laws")->where("complaint_id", $id)->delete();
+        DB::table("notifications")->where("complaint_id", $id)->delete();
 
         return response()->json([
             'success' => 'Record deleted successfully!'
@@ -523,5 +529,29 @@ class ComplaintController extends Controller
             return $data;
         }
         return view('getComplat_id');
+    }
+
+    public function openNotif()
+    {
+        if (Auth::user()->designation != "Reviewer") {
+            $complaint = DB::table('complaints')
+                ->join('users', 'complaints.receivedBy', '=', 'users.username')
+                ->join('notifications', 'complaints.id', '=', 'notifications.complaint_id')
+                ->select(
+                    'complaints.*',
+                    'notifications.*',
+                    DB::raw("CONCAT(users.firstname, ' ', users.middlename, ' ', users.lastname) as name, 
+            DATE_FORMAT(complaints.created_at, '%d-%M-%y') as dateFiled, users.email")
+                )->where('complaints.assignedTo', '=', Auth::user()->id)->get();
+        } else {
+            $complaint = DB::table('complaints')
+                ->join('investigated_cases', 'complaints.id', '=', 'investigated_cases.complaint_id')
+                ->select(
+                    'complaints.*',
+                    DB::raw("investigated_cases.receivedby as name, 
+                DATE_FORMAT(complaints.created_at, '%d-%M-%y') as dateFiled")
+                )->where('investigated_cases.assignedTo', '=', Auth::user()->id)->get();
+        }
+        return response()->json($complaint, 200);
     }
 }

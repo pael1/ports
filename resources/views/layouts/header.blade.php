@@ -14,30 +14,11 @@
             @foreach($notifications as $value)
             <a class="nav-link" data-toggle="dropdown" id="{{ $value->id }}" href="#" onClick="showDiv();">
                 <i class="far fa-comments"></i>
-                {{-- if 0 sya class default if not class danger --}}
                 <span class="badge badge-danger navbar-badge pending">{{ $value->unread }}</span>
             </a>
             @endforeach
 
-            {{-- <a class="nav-link" data-toggle="dropdown" href="#" onClick="showDiv();">
-                <i class="far fa-comments"></i>
-                <span class="badge badge-danger navbar-badge" id="numberNotif"></span>
-            </a> --}}
-            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right notif">
-                {{-- @foreach ($departments as $department)
-                    <a href="#" class="dropdown-item">
-                      <div class="media">
-                          <div class="media-body">
-                              <h3 class="dropdown-item-title">
-                                {{ $department->name }}
-                              </h3>
-                              <p class="text-sm">{{ $department->address }}</p>
-                              <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> {{ $department->created_at }}</p>
-                          </div>
-                      </div>
-                  </a>
-                <div class="dropdown-divider"></div>
-                @endforeach --}}
+            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right notif" style="overflow:scroll; height:400px;">
             </div>
         </li>
         <li class="nav-item dropdown">

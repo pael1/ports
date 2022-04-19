@@ -26,15 +26,20 @@
                         </ul>
                     </div>
                 @endif
-
                 <form action="{{ route('complaints.update', $complaint->id) }}" id="formId" method="POST"
                     accept-charset="utf-8" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <div class="row">
                         <div class="col-6">
-                            <button type="button" id="subpoena" class="btn btn-danger btn-sm">Subpoena</button>
-                            <button type="button" id="summarycase" class="btn btn-success btn-sm">Summary Cases</button>
+                            @if (Auth::user()->designation == 'Fiscal')
+                                <button type="button" id="subpoena" class="btn btn-danger btn-sm">Subpoena</button>
+                                <button type="button" id="summarycase" class="btn btn-success btn-sm">Summary Cases</button>
+                            @endif
+                            @if (Auth::user()->designation == 'Reviewer')
+                                <button type="button" id="MTCC" class="btn btn-secondary btn-sm">MTCC Reviewer</button>
+                                <button type="button" id="RTC" class="btn btn-success btn-sm">RTC Reviewer</button>
+                            @endif
                         </div>
                         <div class="col-6 text-right">
                             <button type="button" id="enabledUpdateBtn" class="btn btn-info btn-sm">Enable Update</button>
@@ -283,8 +288,8 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1 d-flex justify-content-center">
                                                 <!-- <button type="button" name="addRespondent" id="addLawViolated"
-                                                                                    data-bs-toggle="tooltip" title="Add Violation"
-                                                                                    class="btn btn-success btn-sm add float-right">+</button> -->
+                                                                                                                data-bs-toggle="tooltip" title="Add Violation"
+                                                                                                                class="btn btn-success btn-sm add float-right">+</button> -->
                                             </div>
                                         </div>
                                         @if ($lawviolated->count())
@@ -659,7 +664,37 @@
                     confirmButtonText: 'Yes, proceed'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        //send to maam ivy and notify
+                        let dt = new Date();
+                        dt.setDate(dt.getDate() + 60);
+                        let complain_id = {!! json_encode($complaint->id) !!}
+                        let name = "subpoena case";
+                        let days = dt.toLocaleDateString('en-ZA');
+                        let recievedby = {!! json_encode(Auth::user()->username) !!};
+                        let assignedto = 5;
+                        let is_read = 1;
+                        $.ajax({
+                            url: "{{ url('caseSaved') }}",
+                            method: 'POST',
+                            data: {
+                                name: name,
+                                days: days,
+                                receivedby: recievedby,
+                                complaint_id: complain_id,
+                                assignedto: assignedto,
+                                is_read: is_read
+                            },
+                            success: function(data) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Successfully forwarded',
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                })
+                            },
+                            error: function(error) {
+                                console.log(error)
+                            }
+                        });
                     }
                 })
             });
@@ -675,8 +710,130 @@
                     confirmButtonText: 'Yes, proceed'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        //send to maam ivy and notify
+                        let dt = new Date();
+                        dt.setDate(dt.getDate() + 15);
+                        let complain_id = {!! json_encode($complaint->id) !!}
+                        let name = "summary case";
+                        let days = dt.toLocaleDateString('en-ZA');
+                        let recievedby = {!! json_encode(Auth::user()->username) !!};
+                        let assignedto = 5;
+                        let is_read = 1;
+                        $.ajax({
+                            url: "{{ url('caseSaved') }}",
+                            method: 'POST',
+                            data: {
+                                name: name,
+                                days: days,
+                                receivedby: recievedby,
+                                complaint_id: complain_id,
+                                assignedto: assignedto,
+                                is_read: is_read
+                            },
+                            success: function(data) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Successfully forwarded',
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                })
+                            },
+                            error: function(error) {
+                                console.log(error)
+                            }
+                        });
+                    }
+                })
+            });
 
+            //mark as subpoena
+            $("#MTCC").click(function() {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, proceed'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // let dt = new Date();
+                        // dt.setDate(dt.getDate() + 60);
+                        // let complain_id = {!! json_encode($complaint->id) !!}
+                        // let name = "MTCC Review";
+                        // let days = dt.toLocaleDateString('en-ZA');
+                        // let recievedby = {!! json_encode(Auth::user()->username) !!};
+                        // let assignedto = 5;
+                        // let is_read = 1;
+                        // $.ajax({
+                        //     url: "{{ url('caseSaved') }}",
+                        //     method: 'POST',
+                        //     data: {
+                        //         name: name,
+                        //         days: days,
+                        //         receivedby: recievedby,
+                        //         complaint_id: complain_id,
+                        //         assignedto: assignedto,
+                        //         is_read: is_read
+                        //     },
+                        //     success: function(data) {
+                        //         Swal.fire({
+                        //             icon: 'success',
+                        //             title: 'Successfully forwarded',
+                        //             showConfirmButton: false,
+                        //             timer: 2000
+                        //         })
+                        //     },
+                        //     error: function(error) {
+                        //         console.log(error)
+                        //     }
+                        // });
+                    }
+                })
+            });
+            //mark as summary case
+            $("#RTC").click(function() {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, proceed'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // let dt = new Date();
+                        // dt.setDate(dt.getDate() + 15);
+                        // let complain_id = {!! json_encode($complaint->id) !!}
+                        // let name = "RTC Review";
+                        // let days = dt.toLocaleDateString('en-ZA');
+                        // let recievedby = {!! json_encode(Auth::user()->username) !!};
+                        // let assignedto = 5;
+                        // let is_read = 1;
+                        // $.ajax({
+                        //     url: "{{ url('caseSaved') }}",
+                        //     method: 'POST',
+                        //     data: {
+                        //         name: name,
+                        //         days: days,
+                        //         receivedby: recievedby,
+                        //         complaint_id: complain_id,
+                        //         assignedto: assignedto,
+                        //         is_read: is_read
+                        //     },
+                        //     success: function(data) {
+                        //         Swal.fire({
+                        //             icon: 'success',
+                        //             title: 'Successfully forwarded',
+                        //             showConfirmButton: false,
+                        //             timer: 2000
+                        //         })
+                        //     },
+                        //     error: function(error) {
+                        //         console.log(error)
+                        //     }
+                        // });
                     }
                 })
             });
