@@ -40,7 +40,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::delete('deleteComplaint/{id}', [ComplaintController::class, 'deleteComplaint']);
     Route::get('search', [ComplaintController::class, 'autosearch']);
     Route::get('notifications', [NotificationController::class, 'getNewMessages']);
-    Route::get('complaint_id', [ComplaintController::class, 'getComplat_id']);
+    Route::get('complaint_id', [ComplaintController::class, 'getComplaint_id']);
     Route::put('read/{id}', [NotificationController::class, 'updateMarkMsg']);
     Route::post('caseSaved', [InvestigatedCaseController::class, 'save']);
     Route::put('readAdmin/{id}', [InvestigatedCaseController::class, 'updateNotif']);

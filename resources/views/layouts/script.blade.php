@@ -71,27 +71,27 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         //check if this notification is for monitoring case aging
-                        if (data.admin == "yes") {
-                            //read message
-                            var token = $("meta[name='csrf-token']").attr("content");
-                            $.ajax({
-                                url: "{{ url('readAdmin') }}" + '/' + data
-                                    .complaint_id,
-                                type: 'PUT',
-                                data: {
-                                    "complaint_id": data.complaint_id,
-                                    "_token": token,
-                                },
-                                success: function(data) {
-                                    console.log(data);
-                                }
-                            })
+                        // if (data.admin == "yes") {
+                        //     //read message
+                        //     var token = $("meta[name='csrf-token']").attr("content");
+                        //     $.ajax({
+                        //         url: "{{ url('readAdmin') }}" + '/' + data
+                        //             .complaint_id,
+                        //         type: 'PUT',
+                        //         data: {
+                        //             "complaint_id": data.complaint_id,
+                        //             "_token": token,
+                        //         },
+                        //         success: function(data) {
+                        //             console.log(data);
+                        //         }
+                        //     })
 
-                            //redirecto to the complaint
-                            let url = "{{ route('complaints.edit', ':id') }}";
-                            url = url.replace(':id', data.complaint_id);
-                            document.location.href = url;
-                        } else {
+                        //     //redirecto to the complaint
+                        //     let url = "{{ route('complaints.edit', ':id') }}";
+                        //     url = url.replace(':id', data.complaint_id);
+                        //     document.location.href = url;
+                        // } else {
                             //read message
                             var token = $("meta[name='csrf-token']").attr("content");
                             $.ajax({
@@ -120,7 +120,7 @@
                                     document.location.href = url;
                                 }
                             })
-                        }
+                        // }
                     } else {
                         let pending = parseInt($('#' + data.assignedto).find('.pending')
                             .html());
@@ -311,7 +311,7 @@
                     var markmsg = data[i].markmsg;
                     var is_read = data[i].is_read;
                     let NPSDNumber = data[i].NPSDNumber;
-                    let classNotif = ({!! json_encode(Auth::user()->designation) !!} != "Reviewer") ? ((markmsg != 1) ? 'text-secondary' : 'text-danger') : ((is_read != 1) ? 'text-secondary' : 'text-danger');
+                    let classNotif = (markmsg != 1) ? 'text-secondary' : 'text-danger';
                     var option = '<a href="#" class="dropdown-item open-notif" data-id="'+data[i].id+'" id="' + NPSDNumber + '">' +
                         '<div class="media openNotification">' +
                         '<div class="media-body">' +
@@ -749,26 +749,26 @@
     });
 
     $(document).on('click', '.open-notif', function() {
-        if ('{!! Auth::user()->designation !!}' == "Reviewer") {
-            //read message
-            var token = $("meta[name='csrf-token']").attr("content");
-            $.ajax({
-                url: "{{ url('readAdmin') }}" + '/' + $(this).attr("data-id"),
-                type: 'PUT',
-                data: {
-                    "complaint_id": $(this).attr("data-id"),
-                    "_token": token,
-                },
-                success: function(data) {
-                    console.log(data);
-                }
-            })
+        // if ('{!! Auth::user()->designation !!}' == "Reviewer") {
+        //     //read message
+        //     var token = $("meta[name='csrf-token']").attr("content");
+        //     $.ajax({
+        //         url: "{{ url('readAdmin') }}" + '/' + $(this).attr("data-id"),
+        //         type: 'PUT',
+        //         data: {
+        //             "complaint_id": $(this).attr("data-id"),
+        //             "_token": token,
+        //         },
+        //         success: function(data) {
+        //             console.log(data);
+        //         }
+        //     })
 
-            //redirecto to the complaint
-            let url = "{{ route('complaints.edit', ':id') }}";
-            url = url.replace(':id', $(this).attr("data-id"));
-            document.location.href = url;
-        } else {
+        //     //redirecto to the complaint
+        //     let url = "{{ route('complaints.edit', ':id') }}";
+        //     url = url.replace(':id', $(this).attr("data-id"));
+        //     document.location.href = url;
+        // } else {
             var token = $("meta[name='csrf-token']").attr("content");
             $.ajax({
                 url: "{{ url('read') }}" + '/' + this.id,
@@ -790,12 +790,11 @@
                 },
                 success: function(data) {
                     console.log(data);
-                    let url =
-                        "{{ route('complaints.edit', ':id') }}";
+                    let url = "{{ route('complaints.edit', ':id') }}";
                     url = url.replace(':id', data[0].complaint_id);
                     document.location.href = url;
                 }
             })
-        }
+        // }
     });
 </script>

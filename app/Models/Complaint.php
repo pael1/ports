@@ -47,4 +47,9 @@ class Complaint extends Model
     {
         return $this->hasOne(Notification::class);
     }
+
+    public function case()
+    {
+        return $this->hasOne(InvestigatedCase::class);
+    }
 }

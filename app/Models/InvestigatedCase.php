@@ -15,6 +15,11 @@ class InvestigatedCase extends Model
         'receivedby',
         'complaint_id',
         'assignedto',
-        'is_read',
+        // 'is_read',
     ];
+
+    public function complaint()
+    {
+        return $this->belongsTo(Complaint::class);
+    }
 }

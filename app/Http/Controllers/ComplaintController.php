@@ -10,6 +10,7 @@ use App\Helpers\Helper;
 use App\Models\Complaint;
 use App\Models\Violation;
 use App\Models\Attachment;
+use App\Models\InvestigatedCase;
 use App\Models\ViolatedLaw;
 use App\Models\Notification;
 use Illuminate\Http\Request;
@@ -29,34 +30,39 @@ class ComplaintController extends Controller
     public function index(Request $request)
     {
         //reviewer = maam ivy monitoring and aging
-        if (Auth::user()->designation == "Encoder") {
+        // if (Auth::user()->designation == "Encoder") {
+        //     $complaints = DB::table('complaints')
+        //         ->join('users', 'complaints.assignedTo', '=', 'users.id')
+        //         ->join('investigated_cases', 'complaints.id', '=', 'investigated_cases.complaint_id')
+        //         ->select(
+        //             'complaints.*',
+        //             'investigated_cases.name',
+        //             DB::raw("CONCAT(users.firstname, ' ', users.middlename, ' ', users.lastname) as fullname, 
+        //         DATE_FORMAT(complaints.created_at, '%d-%M-%y') as dateFiled")
+        //         )->get();
+        // } elseif (Auth::user()->designation != "Reviewer") {
             $complaints = DB::table('complaints')
                 ->join('users', 'complaints.assignedTo', '=', 'users.id')
                 ->join('investigated_cases', 'complaints.id', '=', 'investigated_cases.complaint_id')
+                ->join('notifications', 'complaints.id', '=', 'notifications.complaint_id')
                 ->select(
                     'complaints.*',
-                    'investigated_cases.*',
+                    'investigated_cases.name',
                     DB::raw("CONCAT(users.firstname, ' ', users.middlename, ' ', users.lastname) as fullname, 
                 DATE_FORMAT(complaints.created_at, '%d-%M-%y') as dateFiled")
-                )->get();
-        } elseif (Auth::user()->designation != "Reviewer") {
-            $complaints = DB::table('complaints')
-                ->join('users', 'complaints.assignedTo', '=', 'users.id')
-                ->select(
-                    'complaints.*',
-                    DB::raw("CONCAT(users.firstname, ' ', users.middlename, ' ', users.lastname) as fullname, 
-                DATE_FORMAT(complaints.created_at, '%d-%M-%y') as dateFiled")
-                )->where('complaints.assignedTo', '=', Auth::user()->id)->get();
-        } else {
-            $complaints = DB::table('complaints')
-                ->join('investigated_cases', 'complaints.id', '=', 'investigated_cases.complaint_id')
-                ->select(
-                    'complaints.*',
-                    // DB::raw("CONCAT(users.firstname, ' ', users.middlename, ' ', users.lastname) as name, 
-                    DB::raw("investigated_cases.receivedby as fullname, 
-                DATE_FORMAT(complaints.created_at, '%d-%M-%y') as dateFiled")
-                )->where('investigated_cases.assignedTo', '=', Auth::user()->id)->get();
-        }
+                // )->where('complaints.assignedTo', '=', Auth::user()->id)->get();
+                )->where('notifications.assignedto', '=', Auth::user()->id)->get();
+        // } else {
+        //     $complaints = DB::table('complaints')
+        //         ->join('investigated_cases', 'complaints.id', '=', 'investigated_cases.complaint_id')
+        //         ->select(
+        //             'complaints.*',
+        //             'investigated_cases.name',
+        //             // DB::raw("CONCAT(users.firstname, ' ', users.middlename, ' ', users.lastname) as name, 
+        //             DB::raw("investigated_cases.receivedby as fullname, 
+        //         DATE_FORMAT(complaints.created_at, '%d-%M-%y') as dateFiled")
+        //         )->where('investigated_cases.assignedTo', '=', Auth::user()->id)->get();
+        // }
         if ($request->ajax()) {
             $allData = DataTables::of($complaints)
                 ->addIndexColumn()
@@ -65,7 +71,13 @@ class ComplaintController extends Controller
                     $btn .= '<a href="javascript:void(0)" data-bs-toggle="tooltip" data-id="' . $row->id . '" title="Show complaint" class="btn btn-danger btn-sm deleteComplaint">Delete</a>';
                     return $btn;
                 })
-                ->rawColumns(['action'])
+                ->addColumn('name', function ($row) {
+                    $className = ($row->name == "Pending") ? "bg-warning" : (($row->name == "summary case") ? "bg-info" : "bg-success");
+                    // $name = ($row->name == "") ? "Pending" : $row->name;
+                    $caseData = '<h5><span class="badge '.$className.'">'.$row->name.'</span></h5>';
+                    return $caseData;
+                })
+                ->rawColumns(['action', 'name'])
                 ->make(true);
             return $allData;
         }
@@ -150,14 +162,6 @@ class ComplaintController extends Controller
             'NPSDNumber' => $notifNo
         ]);
 
-        $notifications = new Notification([
-            'assignedto' => $request->assignedto,
-            //1 means unread
-            'markmsg' => 1,
-            'notifno' => $notifNo
-        ]);
-        $complaints->notification()->save($notifications);
-
         if ($request->addMoreComplainant != "") {
             foreach ($request->addMoreComplainant as $complainant) {
                 if ($complainant['lastname'] != "") {
@@ -241,6 +245,23 @@ class ComplaintController extends Controller
                 $complaints->attachment()->save($fm);
             }
         }
+
+        $notifications = new Notification([
+            'assignedto' => $request->assignedto,
+            //1 means unread
+            'markmsg' => 1,
+            'notifno' => $notifNo
+        ]);
+        $complaints->notification()->save($notifications);
+
+        $case = new InvestigatedCase([
+            'receivedby' => $request->assignedto,
+            //status of case
+            'name' => "Pending",
+            'days' => Carbon::now(),
+            'assignedto' => 0
+        ]);
+        $complaints->case()->save($case);
 
         $options = array(
             'cluster' => 'ap1',
@@ -532,7 +553,7 @@ class ComplaintController extends Controller
         return view('autosearch');
     }
 
-    public function getComplat_id(Request $request)
+    public function getComplaint_id(Request $request)
     {
         if ($request->ajax()) {
             $data = DB::table('notifications')
@@ -545,7 +566,7 @@ class ComplaintController extends Controller
 
     public function openNotif()
     {
-        if (Auth::user()->designation != "Reviewer") {
+        // if (Auth::user()->designation != "Reviewer") {
             $complaint = DB::table('complaints')
                 ->join('users', 'complaints.receivedBy', '=', 'users.username')
                 ->join('notifications', 'complaints.id', '=', 'notifications.complaint_id')
@@ -554,16 +575,16 @@ class ComplaintController extends Controller
                     'notifications.*',
                     DB::raw("CONCAT(users.firstname, ' ', users.middlename, ' ', users.lastname) as name, 
             DATE_FORMAT(complaints.created_at, '%d-%M-%y') as dateFiled, users.email")
-                )->where('complaints.assignedTo', '=', Auth::user()->id)->get();
-        } else {
-            $complaint = DB::table('complaints')
-                ->join('investigated_cases', 'complaints.id', '=', 'investigated_cases.complaint_id')
-                ->select(
-                    'complaints.*',
-                    DB::raw("investigated_cases.receivedby as name, 
-                DATE_FORMAT(complaints.created_at, '%d-%M-%y') as dateFiled, investigated_cases.is_read")
-                )->where('investigated_cases.assignedTo', '=', Auth::user()->id)->get();
-        }
+                )->where('notifications.assignedto', '=', Auth::user()->id)->get();
+        // } else {
+        //     $complaint = DB::table('complaints')
+        //         ->join('investigated_cases', 'complaints.id', '=', 'investigated_cases.complaint_id')
+        //         ->select(
+        //             'complaints.*',
+        //             DB::raw("investigated_cases.receivedby as name, 
+        //         DATE_FORMAT(complaints.created_at, '%d-%M-%y') as dateFiled, investigated_cases.is_read")
+        //         )->where('investigated_cases.assignedTo', '=', Auth::user()->id)->get();
+        // }
         return response()->json($complaint, 200);
     }
 }
