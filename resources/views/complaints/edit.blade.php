@@ -685,7 +685,8 @@
                                 days: days,
                                 receivedby: recievedby,
                                 complaint_id: complain_id,
-                                assignedto: assignedto
+                                assignedto: assignedto,
+                                notifno: {!! json_encode($complaint->NPSDNumber) !!}
                                 // is_read: is_read
                             },
                             success: function(data) {
@@ -722,7 +723,7 @@
                         let days = dt.toLocaleDateString('en-ZA');
                         let recievedby = {!! json_encode(Auth::user()->username) !!};
                         let assignedto = 5;
-                        let is_read = 1;
+                        // let is_read = 1;
                         $.ajax({
                             url: "{{ url('caseSaved') }}",
                             method: 'POST',
@@ -732,7 +733,8 @@
                                 receivedby: recievedby,
                                 complaint_id: complain_id,
                                 assignedto: assignedto,
-                                is_read: is_read
+                                notifno: {!! json_encode($complaint->NPSDNumber) !!}
+                                // is_read: is_read
                             },
                             success: function(data) {
                                 Swal.fire({

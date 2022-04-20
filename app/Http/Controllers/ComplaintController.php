@@ -51,7 +51,7 @@ class ComplaintController extends Controller
                     DB::raw("CONCAT(users.firstname, ' ', users.middlename, ' ', users.lastname) as fullname, 
                 DATE_FORMAT(complaints.created_at, '%d-%M-%y') as dateFiled")
                 // )->where('complaints.assignedTo', '=', Auth::user()->id)->get();
-                )->where('notifications.assignedto', '=', Auth::user()->id)->get();
+                )->where('notifications.assignedto', '=', Auth::user()->id)->orderBy('complaints.id', 'desc')->get();
         // } else {
         //     $complaints = DB::table('complaints')
         //         ->join('investigated_cases', 'complaints.id', '=', 'investigated_cases.complaint_id')
@@ -557,11 +557,14 @@ class ComplaintController extends Controller
     {
         if ($request->ajax()) {
             $data = DB::table('notifications')
-                ->select('complaint_id')->where('notifno', '=', $request->notifno)
+                ->select('complaint_id')->where([
+                    ['notifno', '=', $request->notifno],
+                    ['assignedto', '=', Auth::user()->id]
+                ])
                 ->get();
             return $data;
         }
-        return view('getComplat_id');
+        return view('getComplaint_id');
     }
 
     public function openNotif()
@@ -575,7 +578,7 @@ class ComplaintController extends Controller
                     'notifications.*',
                     DB::raw("CONCAT(users.firstname, ' ', users.middlename, ' ', users.lastname) as name, 
             DATE_FORMAT(complaints.created_at, '%d-%M-%y') as dateFiled, users.email")
-                )->where('notifications.assignedto', '=', Auth::user()->id)->get();
+                )->where('notifications.assignedto', '=', Auth::user()->id)->orderBy('complaints.id', 'desc')->get();
         // } else {
         //     $complaint = DB::table('complaints')
         //         ->join('investigated_cases', 'complaints.id', '=', 'investigated_cases.complaint_id')

@@ -39,11 +39,11 @@ class InvestigatedCaseController extends Controller
         //     ]);
         // }
 
-        $alphabetC = range('A', 'L');
-        $monthNumberC = Carbon::now()->month;
-        $monthLetterC = $alphabetC[(int)$monthNumberC - 1];
-        $yearC = Carbon::now()->format('y');
-        $notifNo = Helper::NPSDOCKETNO(new Complaint, 'NPSDNumber', 5, 'NOTIF-' . $yearC . '-' . $monthLetterC);
+        // $alphabetC = range('A', 'L');
+        // $monthNumberC = Carbon::now()->month;
+        // $monthLetterC = $alphabetC[(int)$monthNumberC - 1];
+        // $yearC = Carbon::now()->format('y');
+        // $notifNo = Helper::NPSDOCKETNO(new Complaint, 'NPSDNumber', 5, 'NOTIF-' . $yearC . '-' . $monthLetterC);
 
         // DB::table('notifications')->insert([
         //     'assignedto' => $request->assignedto,
@@ -62,7 +62,7 @@ class InvestigatedCaseController extends Controller
             'complaint_id' => $request->complaint_id,
             //1 means unread
             'markmsg' => 1,
-            'notifno' => $notifNo
+            'notifno' => $request->notifno
             ]
         );
         
@@ -86,7 +86,7 @@ class InvestigatedCaseController extends Controller
         // ];
         $data = [
             'assignedto' => $request->assignedto,
-            'notifno' => $notifNo
+            'notifno' => $request->notifno
         ];
 
         $pusher->trigger('my-channel', 'my-event', $data);
