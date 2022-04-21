@@ -44,5 +44,5 @@ Route::group(['middleware' => ['auth']], function () {
     Route::put('read/{id}', [NotificationController::class, 'updateMarkMsg']);
     Route::post('caseSaved', [InvestigatedCaseController::class, 'save']);
     Route::put('readAdmin/{id}', [InvestigatedCaseController::class, 'updateNotif']);
-    Route::get('openNotification', [ComplaintController::class, 'openNotif']);
+    Route::get('openNotification', [NotificationController::class, 'openNotif']);
 });

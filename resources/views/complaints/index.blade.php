@@ -88,6 +88,20 @@
                 var id = "";
                 $("body").on('click', '.editComplaint', function() {
                     var id = $(this).data("id");
+
+                    var token = $("meta[name='csrf-token']").attr("content");
+                    $.ajax({
+                        url: "{{ url('read') }}" + '/' + this.id,
+                        type: 'PUT',
+                        data: {
+                            "notifno": this.id,
+                            "_token": token,
+                        },
+                        success: function(data) {
+                            console.log(data);
+                        }
+                    })
+
                     let url = "{{ route('complaints.edit', ':id') }}";
                     url = url.replace(':id', id);
                     document.location.href = url;

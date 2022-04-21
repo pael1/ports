@@ -14,6 +14,7 @@ class Notification extends Model
         'markmsg',
         'notifno',
         'complaint_id',
+        'from',
     ];
 
     public function complaint()

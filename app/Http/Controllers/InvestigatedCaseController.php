@@ -16,16 +16,19 @@ class InvestigatedCaseController extends Controller
     public function save(Request $request)
     {
         // if (InvestigatedCase::where('complaint_id', $request->complaint_id)->exists()) {
-        $updateInvestigation =
-            [
-                // 'is_read' => 1,
-                'days' => $request->days,
-                'name' => $request->name,
-                'assignedto' => $request->assignedto,
-            ];
-        InvestigatedCase::where([
-            ['complaint_id', '=', $request->complaint_id]
-        ])->update($updateInvestigation);
+            if($request->notifyOnly != "true"){
+                $updateInvestigation =
+                [
+                    // 'is_read' => 1,
+                    'days' => $request->days,
+                    'name' => $request->name,
+                    'assignedto' => $request->assignedto,
+                ];
+            InvestigatedCase::where([
+                ['complaint_id', '=', $request->complaint_id]
+            ])->update($updateInvestigation);
+            }
+        
         // InvestigatedCase::where('complaint_id', $request->complaint_id)->update(array(['is_read' => 1, 'name' => $request->name]));
         // } else {
         //     DB::table('investigated_cases')->insert([
@@ -62,7 +65,8 @@ class InvestigatedCaseController extends Controller
             'complaint_id' => $request->complaint_id,
             //1 means unread
             'markmsg' => 1,
-            'notifno' => $request->notifno
+            'notifno' => $request->notifno,
+            'from' => $request->from
             ]
         );
         

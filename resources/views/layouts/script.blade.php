@@ -277,6 +277,8 @@
             width: '100%',
         });
 
+        $('.selectCrime').select2();
+
         //notifications
         // const notification = () => {
         //     $.ajax({
@@ -312,16 +314,17 @@
                     var is_read = data[i].is_read;
                     let NPSDNumber = data[i].NPSDNumber;
                     let classNotif = (markmsg != 1) ? 'text-secondary' : 'text-danger';
+                    let className = (markmsg != 1) ? 'fw-light' : 'fw-bold';
                     var option = '<a href="#" class="dropdown-item open-notif" data-id="'+data[i].id+'" id="' + NPSDNumber + '">' +
                         '<div class="media openNotification">' +
                         '<div class="media-body">' +
-                        '<h3 class="dropdown-item-title">' +
+                        '<h3 class="dropdown-item-title '+className+'">' +
                         '' + data[i].name + '' +
                         '<span class="float-right text-sm ' + classNotif +
                         '"><i class="fas fa-bell"></i></span>' +
                         '</h3>' +
                         //   '<p class="text-sm">'+email+'</p>'+
-                        '<p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> ' + dateFiled +
+                        '<p class="text-sm text-muted '+className+'"><i class="far fa-clock mr-1"></i> ' + dateFiled +
                         '</p>' +
                         '</div>' +
                         '</div>' +

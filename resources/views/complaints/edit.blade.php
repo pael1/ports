@@ -33,17 +33,19 @@
                     <div class="row">
                         <div class="col-6">
                             @if (Auth::user()->designation == 'Fiscal')
-                                <button type="button" id="subpoena" class="btn btn-danger btn-sm" data-bs-toggle="tooltip"
-                                title="Forward now">Subpoena</button>
-                                <button type="button" id="summarycase" class="btn btn-success btn-sm" data-bs-toggle="tooltip"
-                                title="Forward now">Summary Cases</button>
+                                <button type="button" id="forwardToMonitoring" class="btn btn-secondary btn-sm"
+                                    data-bs-toggle="tooltip" title="Forward now">Forward to Monitoring</button>
+                                {{-- <button type="button" id="subpoena" class="btn btn-secondary btn-sm"
+                                    data-bs-toggle="tooltip" title="Forward now">Subpoena</button>
+                                <button type="button" id="summarycase" class="btn btn-secondary btn-sm"
+                                    data-bs-toggle="tooltip" title="Forward now">Summary</button> --}}
                             @endif
-                            @if (Auth::user()->designation == 'Reviewer')
+                            @if (Auth::user()->designation == 'Monitoring')
                                 {{-- <button type="button" class="btn btn-outline-dark btn-sm" disabled>{{ $case[0]->name }}</button> --}}
-                                <button type="button" id="MTCC" class="btn btn-secondary btn-sm" data-bs-toggle="tooltip"
-                                title="Forward now">MTCC Reviewer</button>
-                                <button type="button" id="RTC" class="btn btn-secondary btn-sm" data-bs-toggle="tooltip"
-                                title="Forward now">RTC Reviewer</button>
+                                {{-- <button type="button" id="MTCC" class="btn btn-secondary btn-sm" data-bs-toggle="tooltip"
+                                    title="Forward now">MTCC Reviewer</button> --}}
+                                <button type="button" id="forwardToReviewer" class="btn btn-secondary btn-sm"
+                                    data-bs-toggle="tooltip" title="Forward now">Forward to Reviewer</button>
                             @endif
                         </div>
                         <div class="col-6 text-right">
@@ -293,8 +295,8 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1 d-flex justify-content-center">
                                                 <!-- <button type="button" name="addRespondent" id="addLawViolated"
-                                                                                                                data-bs-toggle="tooltip" title="Add Violation"
-                                                                                                                class="btn btn-success btn-sm add float-right">+</button> -->
+                                                                                                                                                                                            data-bs-toggle="tooltip" title="Add Violation"
+                                                                                                                                                                                            class="btn btn-success btn-sm add float-right">+</button> -->
                                             </div>
                                         </div>
                                         @if ($lawviolated->count())
@@ -657,8 +659,8 @@
 
     @push('scripts')
         <script>
-            //mark as subpoena
-            $("#subpoena").click(function() {
+            //forward to monitoring
+            $("#forwardToMonitoring").click(function() {
                 Swal.fire({
                     title: 'Are you sure?',
                     text: "You won't be able to revert this!",
@@ -669,91 +671,225 @@
                     confirmButtonText: 'Yes, proceed'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        let dt = new Date();
-                        dt.setDate(dt.getDate() + 60);
-                        let complain_id = {!! json_encode($complaint->id) !!}
-                        let name = "subpoena case";
-                        let days = dt.toLocaleDateString('en-ZA');
-                        let recievedby = {!! json_encode(Auth::user()->username) !!};
-                        let assignedto = 5;
-                        // let is_read = 1;
-                        $.ajax({
-                            url: "{{ url('caseSaved') }}",
-                            method: 'POST',
-                            data: {
-                                name: name,
-                                days: days,
-                                receivedby: recievedby,
-                                complaint_id: complain_id,
-                                assignedto: assignedto,
-                                notifno: {!! json_encode($complaint->NPSDNumber) !!}
-                                // is_read: is_read
-                            },
-                            success: function(data) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Successfully forwarded',
-                                    showConfirmButton: false,
-                                    timer: 2000
-                                })
-                            },
-                            error: function(error) {
-                                console.log(error)
+                        Swal.fire({
+                            html: '<select class="form-select selectCrime" id="crime"' +
+                                'aria-label="Floating label select example">' +
+                                '<option value="" disabled selected>Select Case</option>' +
+                                '<option value="Subpoena">Subpoena</option>' +
+                                '<option value="Summary">Summary</option>' +
+                                '</select> <br/>' +
+                                '<select class="form-select" id="personnel"' +
+                                'aria-label="Floating label select example">' +
+                                '<option value="" disabled selected>Select monitoring personnel</option>' +
+                                '@foreach ($monitoringReviewer as $key => $value)'+
+                                        '<option value="{{ $key }}"'+
+                                            '{{ $key }}>'+
+                                            '{{ $value }}'+
+                                        '</option>'+
+                                '@endforeach'+
+                                // '<option value="Subpoena">Subpoena</option>' +
+                                // '<option value="Summary">Summary</option>' +
+                                '</select>',
+                            showCancelButton: true,
+                            allowOutsideClick: false,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: 'rgb(211 71 71)',
+                            confirmButtonText: 'Proccee',
+                            cancelButtonText: 'CANCEL'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                console.log($('#crime').val());
+                                console.log($('#personnel').val());
+                                let daysOfCrime = ($('#crime').val() == "Subpoena") ? 60 : 30;
+                                let dt = new Date();
+                                dt.setDate(dt.getDate() + daysOfCrime);
+                                let complain_id = {!! json_encode($complaint->id) !!}
+                                let name = $('#crime').val();
+                                let days = dt.toLocaleDateString('en-ZA');
+                                let assignedto = $('#personnel').val();
+                                let from = {!! json_encode(Auth::user()->username) !!};
+                                $.ajax({
+                                    url: "{{ url('caseSaved') }}",
+                                    method: 'POST',
+                                    data: {
+                                        name: name,
+                                        days: days,
+                                        // receivedby: recievedby,
+                                        complaint_id: complain_id,
+                                        assignedto: assignedto,
+                                        notifno: {!! json_encode($complaint->NPSDNumber) !!},
+                                        from: from
+                                        // is_read: is_read
+                                    },
+                                    success: function(data) {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Successfully forwarded',
+                                            showConfirmButton: false,
+                                            timer: 2000
+                                        })
+                                    },
+                                    error: function(error) {
+                                        console.log(error)
+                                    }
+                                });
+                            } else {
+
                             }
-                        });
+                        })
                     }
                 })
-            });
-            //mark as summary case
-            $("#summarycase").click(function() {
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "You won't be able to revert this!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, proceed'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        let dt = new Date();
-                        dt.setDate(dt.getDate() + 15);
-                        let complain_id = {!! json_encode($complaint->id) !!}
-                        let name = "summary case";
-                        let days = dt.toLocaleDateString('en-ZA');
-                        let recievedby = {!! json_encode(Auth::user()->username) !!};
-                        let assignedto = 5;
-                        // let is_read = 1;
-                        $.ajax({
-                            url: "{{ url('caseSaved') }}",
-                            method: 'POST',
-                            data: {
-                                name: name,
-                                days: days,
-                                receivedby: recievedby,
-                                complaint_id: complain_id,
-                                assignedto: assignedto,
-                                notifno: {!! json_encode($complaint->NPSDNumber) !!}
-                                // is_read: is_read
-                            },
-                            success: function(data) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Successfully forwarded',
-                                    showConfirmButton: false,
-                                    timer: 2000
-                                })
-                            },
-                            error: function(error) {
-                                console.log(error)
-                            }
-                        });
-                    }
-                })
+                
             });
 
-            //mark as subpoena
-            $("#MTCC").click(function() {
+
+            // //mark as subpoena
+            // $("#subpoena").click(function() {
+            //     Swal.fire({
+            //         title: 'Are you sure?',
+            //         text: "You won't be able to revert this!",
+            //         icon: 'warning',
+            //         showCancelButton: true,
+            //         confirmButtonColor: '#3085d6',
+            //         cancelButtonColor: '#d33',
+            //         confirmButtonText: 'Yes, proceed'
+            //     }).then((result) => {
+            //         if (result.isConfirmed) {
+            //             let dt = new Date();
+            //             dt.setDate(dt.getDate() + 60);
+            //             let complain_id = {!! json_encode($complaint->id) !!}
+            //             let name = "Subpoena";
+            //             let days = dt.toLocaleDateString('en-ZA');
+            //             // let recievedby = {!! json_encode(Auth::user()->username) !!};
+            //             let assignedto = 5;
+            //             let from = {!! json_encode(Auth::user()->username) !!};
+            //             // let is_read = 1;
+            //             $.ajax({
+            //                 url: "{{ url('caseSaved') }}",
+            //                 method: 'POST',
+            //                 data: {
+            //                     name: name,
+            //                     days: days,
+            //                     // receivedby: recievedby,
+            //                     complaint_id: complain_id,
+            //                     assignedto: assignedto,
+            //                     notifno: {!! json_encode($complaint->NPSDNumber) !!},
+            //                     from: from
+            //                     // is_read: is_read
+            //                 },
+            //                 success: function(data) {
+            //                     Swal.fire({
+            //                         icon: 'success',
+            //                         title: 'Successfully forwarded',
+            //                         showConfirmButton: false,
+            //                         timer: 2000
+            //                     })
+            //                 },
+            //                 error: function(error) {
+            //                     console.log(error)
+            //                 }
+            //             });
+            //         }
+            //     })
+            // });
+            // //mark as summary case
+            // $("#summarycase").click(function() {
+            //     Swal.fire({
+            //         title: 'Are you sure?',
+            //         text: "You won't be able to revert this!",
+            //         icon: 'warning',
+            //         showCancelButton: true,
+            //         confirmButtonColor: '#3085d6',
+            //         cancelButtonColor: '#d33',
+            //         confirmButtonText: 'Yes, proceed'
+            //     }).then((result) => {
+            //         if (result.isConfirmed) {
+            //             let dt = new Date();
+            //             dt.setDate(dt.getDate() + 30);
+            //             let complain_id = {!! json_encode($complaint->id) !!}
+            //             let name = "Summary";
+            //             let days = dt.toLocaleDateString('en-ZA');
+            //             // let recievedby = {!! json_encode(Auth::user()->username) !!};
+            //             let assignedto = 5;
+            //             let from = {!! json_encode(Auth::user()->username) !!};
+            //             // let is_read = 1;
+            //             $.ajax({
+            //                 url: "{{ url('caseSaved') }}",
+            //                 method: 'POST',
+            //                 data: {
+            //                     name: name,
+            //                     days: days,
+            //                     // receivedby: recievedby,
+            //                     complaint_id: complain_id,
+            //                     assignedto: assignedto,
+            //                     notifno: {!! json_encode($complaint->NPSDNumber) !!},
+            //                     from: from
+            //                     // is_read: is_read
+            //                 },
+            //                 success: function(data) {
+            //                     Swal.fire({
+            //                         icon: 'success',
+            //                         title: 'Successfully forwarded',
+            //                         showConfirmButton: false,
+            //                         timer: 2000
+            //                     })
+            //                 },
+            //                 error: function(error) {
+            //                     console.log(error)
+            //                 }
+            //             });
+            //         }
+            //     })
+            // });
+
+            //forward to MTCC Reviewer
+            // $("#MTCC").click(function() {
+            //     Swal.fire({
+            //         title: 'Are you sure?',
+            //         text: "You won't be able to revert this!",
+            //         icon: 'warning',
+            //         showCancelButton: true,
+            //         confirmButtonColor: '#3085d6',
+            //         cancelButtonColor: '#d33',
+            //         confirmButtonText: 'Yes, proceed'
+            //     }).then((result) => {
+            //         if (result.isConfirmed) {
+            //             // let dt = new Date();
+            //             // dt.setDate(dt.getDate() + 60);
+            //             // let complain_id = {!! json_encode($complaint->id) !!}
+            //             // let name = "MTCC Review";
+            //             // let days = dt.toLocaleDateString('en-ZA');
+            //             // let recievedby = {!! json_encode(Auth::user()->username) !!};
+            //             // let assignedto = 5;
+            //             // let is_read = 1;
+            //             // $.ajax({
+            //             //     url: "{{ url('caseSaved') }}",
+            //             //     method: 'POST',
+            //             //     data: {
+            //             //         name: name,
+            //             //         days: days,
+            //             //         receivedby: recievedby,
+            //             //         complaint_id: complain_id,
+            //             //         assignedto: assignedto,
+            //             //         is_read: is_read
+            //             //     },
+            //             //     success: function(data) {
+            //             //         Swal.fire({
+            //             //             icon: 'success',
+            //             //             title: 'Successfully forwarded',
+            //             //             showConfirmButton: false,
+            //             //             timer: 2000
+            //             //         })
+            //             //     },
+            //             //     error: function(error) {
+            //             //         console.log(error)
+            //             //     }
+            //             // });
+            //         }
+            //     })
+            // });
+            //forward to Reviewer
+            $("#forwardToReviewer").click(function() {
                 Swal.fire({
                     title: 'Are you sure?',
                     text: "You won't be able to revert this!",
@@ -764,52 +900,62 @@
                     confirmButtonText: 'Yes, proceed'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        // let dt = new Date();
-                        // dt.setDate(dt.getDate() + 60);
-                        // let complain_id = {!! json_encode($complaint->id) !!}
-                        // let name = "MTCC Review";
-                        // let days = dt.toLocaleDateString('en-ZA');
-                        // let recievedby = {!! json_encode(Auth::user()->username) !!};
-                        // let assignedto = 5;
-                        // let is_read = 1;
-                        // $.ajax({
-                        //     url: "{{ url('caseSaved') }}",
-                        //     method: 'POST',
-                        //     data: {
-                        //         name: name,
-                        //         days: days,
-                        //         receivedby: recievedby,
-                        //         complaint_id: complain_id,
-                        //         assignedto: assignedto,
-                        //         is_read: is_read
-                        //     },
-                        //     success: function(data) {
-                        //         Swal.fire({
-                        //             icon: 'success',
-                        //             title: 'Successfully forwarded',
-                        //             showConfirmButton: false,
-                        //             timer: 2000
-                        //         })
-                        //     },
-                        //     error: function(error) {
-                        //         console.log(error)
-                        //     }
-                        // });
-                    }
-                })
-            });
-            //mark as summary case
-            $("#RTC").click(function() {
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "You won't be able to revert this!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, proceed'
-                }).then((result) => {
-                    if (result.isConfirmed) {
+
+                        Swal.fire({
+                            title: 'Select Reviewer',
+                            input: 'select',
+                            inputOptions: {
+                                'MTCC Reviewer': {!! $reviewerMTCC !!},
+                                'RTC Reviewer': {!! $reviewerRTC !!},
+                            },
+                            inputPlaceholder: 'Select a reviewer',
+                            showCancelButton: true,
+                            inputValidator: (value) => {
+                                return new Promise((resolve) => {
+                                    if (value != '') {
+                                        console.log(value);
+                                        // let dt = new Date();
+                                        // dt.setDate(dt.getDate() + 10);
+                                        let complain_id = {!! json_encode($complaint->id) !!}
+                                        // let name = $('#crime').val();
+                                        // let days = dt.toLocaleDateString('en-ZA');
+                                        let assignedto = value;
+                                        let from = {!! json_encode(Auth::user()->username) !!};
+                                        $.ajax({
+                                            url: "{{ url('caseSaved') }}",
+                                            method: 'POST',
+                                            data: {
+                                                // name: name,
+                                                // days: days,
+                                                // receivedby: recievedby,
+                                                complaint_id: complain_id,
+                                                assignedto: assignedto,
+                                                notifno: {!! json_encode($complaint->NPSDNumber) !!},
+                                                from: from,
+                                                notifyOnly: "true"
+                                                // is_read: is_read
+                                            },
+                                            success: function(data) {
+                                                Swal.fire({
+                                                    icon: 'success',
+                                                    title: 'Successfully forwarded',
+                                                    showConfirmButton: false,
+                                                    timer: 2000
+                                                })
+                                            },
+                                            error: function(error) {
+                                                console.log(error)
+                                            }
+                                        });
+
+                                        resolve()
+                                    } else {
+                                        resolve('Please select reviewer')
+                                    }
+                                })
+                            }
+                        });
+
                         // let dt = new Date();
                         // dt.setDate(dt.getDate() + 15);
                         // let complain_id = {!! json_encode($complaint->id) !!}
