@@ -14,10 +14,11 @@
 .select2-container--default .select2-selection--multiple .select2-selection__choice {
     color: black !important;
 }
+
 .select2-results__option[aria-selected=true] {
     background-color: #134b9d !important;
     color: white !important;
-  }
+}
 
 .accordion-button:not(.collapsed) {
     color: #e9e9e9;
@@ -28,11 +29,22 @@
 .accordion-button {
     color: #000408;
     /* background-color: #c0314b; */
-    border:1px solid #134b9d;
+    border: 1px solid #134b9d;
 }
-.form-control:disabled, .form-control[readonly] {
+
+.form-control:disabled,
+.form-control[readonly] {
     background-color: #aeb3bb !important;
 }
+
 .form-select:disabled {
     background-color: #aeb3bb !important;
+}
+
+.swal2-popup.swal2-toast {
+    background-color: #dbd69c !important;
+}
+
+.position-absolute {
+    position: absolute;
 }

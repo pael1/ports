@@ -315,6 +315,10 @@ class ComplaintController extends Controller
         $reviewerMTCC = User::select(DB::raw("CONCAT(firstname,' ',middlename,' ',lastname) AS name"), 'id')
             ->where("designation", "=", "MTCC")
             ->pluck('name', 'id');
+            
+        $chief = User::select(DB::raw("CONCAT(firstname,' ',middlename,' ',lastname) AS name"), 'id')
+            ->where("designation", "=", "Chief")
+            ->pluck('name', 'id');
 
         $monitoringReviewer = User::select(DB::raw("CONCAT(firstname,' ',middlename,' ',lastname) AS name"), 'id')
             ->where("designation", "=", "monitoring")
@@ -336,7 +340,7 @@ class ComplaintController extends Controller
             ->where('complaint_id', $id)
             ->get();
         $case = DB::table('investigated_cases')->where(['complaint_id' => $id])->get();
-        return view('complaints.edit', compact('complaint', 'complainants', 'respondents', 'witnesses', 'lawviolated', 'attachments', 'prosecutors', 'prosecutorId', 'violations', 'case', 'reviewerMTCC', 'reviewerRTC', 'monitoringReviewer'));
+        return view('complaints.edit', compact('complaint', 'complainants', 'respondents', 'witnesses', 'lawviolated', 'attachments', 'prosecutors', 'prosecutorId', 'violations', 'case', 'reviewerMTCC', 'reviewerRTC', 'monitoringReviewer', 'chief'));
     }
 
     /**

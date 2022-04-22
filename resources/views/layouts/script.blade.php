@@ -59,41 +59,31 @@
         channel.bind('my-event', function(data) {
 
             if (data.assignedto == {!! json_encode(Auth::user()->id) !!}) {
-                Swal.fire({
-                    title: 'You have new notification.',
-                    text: "You want to open it?",
-                    icon: 'info',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, open it',
-                    cancelButtonText: 'No, thanks'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        //check if this notification is for monitoring case aging
-                        // if (data.admin == "yes") {
-                        //     //read message
-                        //     var token = $("meta[name='csrf-token']").attr("content");
-                        //     $.ajax({
-                        //         url: "{{ url('readAdmin') }}" + '/' + data
-                        //             .complaint_id,
-                        //         type: 'PUT',
-                        //         data: {
-                        //             "complaint_id": data.complaint_id,
-                        //             "_token": token,
-                        //         },
-                        //         success: function(data) {
-                        //             console.log(data);
-                        //         }
-                        //     })
+                let pending = parseInt($('#' + data.assignedto).find('.pending')
+                            .html());
+                        if (pending) {
+                            $('#' + data.assignedto).find('.pending').html(pending + 1);
+                        } else {
+                            $('#' + data.assignedto).html(
+                                '<i class="far fa-comments"></i>' +
+                                '<span class="badge badge-danger navbar-badge pending">1</span>' +
+                                '</a>');
+                        }
 
-                        //     //redirecto to the complaint
-                        //     let url = "{{ route('complaints.edit', ':id') }}";
-                        //     url = url.replace(':id', data.complaint_id);
-                        //     document.location.href = url;
-                        // } else {
-                            //read message
-                            var token = $("meta[name='csrf-token']").attr("content");
+                Swal.fire({
+                    icon: 'info',
+                    text: 'You have new notification.',
+                    target: '#custom-target',
+                    showCancelButton: true,
+                    confirmButtonText: 'Read',
+                    customClass: {
+                        container: 'position-absolute'
+                    },
+                    toast: true,
+                    position: 'bottom-right'
+                    }).then((result) => {
+                    if (result.isConfirmed) {
+                        var token = $("meta[name='csrf-token']").attr("content");
                             $.ajax({
                                 url: "{{ url('read') }}" + '/' + data.notifno,
                                 type: 'PUT',
@@ -120,21 +110,89 @@
                                     document.location.href = url;
                                 }
                             })
-                        // }
-                    } else {
-                        let pending = parseInt($('#' + data.assignedto).find('.pending')
-                            .html());
-                        if (pending) {
-                            $('#' + data.assignedto).find('.pending').html(pending + 1);
-                        } else {
-                            $('#' + data.assignedto).html(
-                                '<a class="nav-link" data-toggle="dropdown" href="#" onClick="showDiv();>' +
-                                '<i class="far fa-comments"></i>' +
-                                '<span class="badge badge-danger navbar-badge pending">1</span>' +
-                                '</a>');
-                        }
+                    }
+                    else{
+                        
                     }
                 })
+
+
+                // Swal.fire({
+                //     title: 'You have new notification.',
+                //     text: "You want to open it?",
+                //     icon: 'info',
+                //     showCancelButton: true,
+                //     confirmButtonColor: '#3085d6',
+                //     cancelButtonColor: '#d33',
+                //     confirmButtonText: 'Yes, open it',
+                //     cancelButtonText: 'No, thanks'
+                // }).then((result) => {
+                //     if (result.isConfirmed) {
+                //         //check if this notification is for monitoring case aging
+                //         // if (data.admin == "yes") {
+                //         //     //read message
+                //         //     var token = $("meta[name='csrf-token']").attr("content");
+                //         //     $.ajax({
+                //         //         url: "{{ url('readAdmin') }}" + '/' + data
+                //         //             .complaint_id,
+                //         //         type: 'PUT',
+                //         //         data: {
+                //         //             "complaint_id": data.complaint_id,
+                //         //             "_token": token,
+                //         //         },
+                //         //         success: function(data) {
+                //         //             console.log(data);
+                //         //         }
+                //         //     })
+
+                //         //     //redirecto to the complaint
+                //         //     let url = "{{ route('complaints.edit', ':id') }}";
+                //         //     url = url.replace(':id', data.complaint_id);
+                //         //     document.location.href = url;
+                //         // } else {
+                //             //read message
+                //             var token = $("meta[name='csrf-token']").attr("content");
+                //             $.ajax({
+                //                 url: "{{ url('read') }}" + '/' + data.notifno,
+                //                 type: 'PUT',
+                //                 data: {
+                //                     "notifno": data.notifno,
+                //                     "_token": token,
+                //                 },
+                //                 success: function(data) {
+                //                     console.log(data);
+                //                 }
+                //             })
+                //             //redirect to the complaint details
+                //             $.ajax({
+                //                 url: "{{ url('complaint_id') }}",
+                //                 type: 'GET',
+                //                 data: {
+                //                     'notifno': data.notifno
+                //                 },
+                //                 success: function(data) {
+                //                     console.log(data);
+                //                     let url =
+                //                         "{{ route('complaints.edit', ':id') }}";
+                //                     url = url.replace(':id', data[0].complaint_id);
+                //                     document.location.href = url;
+                //                 }
+                //             })
+                //         // }
+                //     } else {
+                //         let pending = parseInt($('#' + data.assignedto).find('.pending')
+                //             .html());
+                //         if (pending) {
+                //             $('#' + data.assignedto).find('.pending').html(pending + 1);
+                //         } else {
+                //             $('#' + data.assignedto).html(
+                //                 '<a class="nav-link" data-toggle="dropdown" href="#" onClick="showDiv();>' +
+                //                 '<i class="far fa-comments"></i>' +
+                //                 '<span class="badge badge-danger navbar-badge pending">1</span>' +
+                //                 '</a>');
+                //         }
+                //     }
+                // })
 
 
             }

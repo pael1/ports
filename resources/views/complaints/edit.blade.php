@@ -35,18 +35,15 @@
                             @if (Auth::user()->designation == 'Fiscal')
                                 <button type="button" id="forwardToMonitoring" class="btn btn-secondary btn-sm"
                                     data-bs-toggle="tooltip" title="Forward now">Forward to Monitoring</button>
-                                {{-- <button type="button" id="subpoena" class="btn btn-secondary btn-sm"
-                                    data-bs-toggle="tooltip" title="Forward now">Subpoena</button>
-                                <button type="button" id="summarycase" class="btn btn-secondary btn-sm"
-                                    data-bs-toggle="tooltip" title="Forward now">Summary</button> --}}
                             @endif
                             @if (Auth::user()->designation == 'Monitoring')
-                                {{-- <button type="button" class="btn btn-outline-dark btn-sm" disabled>{{ $case[0]->name }}</button> --}}
-                                {{-- <button type="button" id="MTCC" class="btn btn-secondary btn-sm" data-bs-toggle="tooltip"
-                                    title="Forward now">MTCC Reviewer</button> --}}
                                 <button type="button" id="forwardToReviewer" class="btn btn-secondary btn-sm"
                                     data-bs-toggle="tooltip" title="Forward now">Forward to Reviewer</button>
                             @endif
+                            @if (Auth::user()->designation == 'MTCC')
+                            <button type="button" id="forwardToAssignedFiscalOrChief" class="btn btn-secondary btn-sm"
+                                data-bs-toggle="tooltip" title="Forward now">Forward to assigned Fiscal/Chief</button>
+                        @endif
                         </div>
                         <div class="col-6 text-right">
                             <button type="button" id="enabledUpdateBtn" class="btn btn-info btn-sm">Enable Update</button>
@@ -58,8 +55,19 @@
                         <button type="button" id="enabledUpdateBtn" class="btn btn-info btn-sm">Enable Update</button>
                         <button type="button" id="disabledUpdateBtn" class="btn btn-danger btn-sm">Disable Update</button>
                     </div> --}}
-
-                    <div class="accordion mt-3" id="accordionPanelsStayOpenExample">
+                    <div class="row mt-2">
+                        <div class="col-md-2">
+                            <div class="badge p-2 rounded-pill {{($case[0]->name == "Pending") ? 'bg-warning' : 'bg-primary'}} col-md-12">
+                            {{ $case[0]->name }}
+                            </div>
+                        </div>
+                        <div class="col-md-10">
+                            {{-- @if (Auth::user()->designation == 'MTCC')
+                            <textarea class="form-control" name="comment" id="exampleFormControlTextarea1" placeholder="Comment here.." rows="1"></textarea>
+                            @endif --}}
+                        </div>
+                    </div>
+                    <div class="accordion mt-1" id="accordionPanelsStayOpenExample">
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="panelsStayOpen-headingOne">
                                 <button class="accordion-button" type="button" data-bs-toggle="collapse"
@@ -295,8 +303,8 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1 d-flex justify-content-center">
                                                 <!-- <button type="button" name="addRespondent" id="addLawViolated"
-                                                                                                                                                                                            data-bs-toggle="tooltip" title="Add Violation"
-                                                                                                                                                                                            class="btn btn-success btn-sm add float-right">+</button> -->
+                                                                                                                                                                                                data-bs-toggle="tooltip" title="Add Violation"
+                                                                                                                                                                                                class="btn btn-success btn-sm add float-right">+</button> -->
                                             </div>
                                         </div>
                                         @if ($lawviolated->count())
@@ -672,13 +680,13 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         Swal.fire({
-                            html: '<select class="form-select selectCrime" id="crime"' +
+                            html: '<select class="swal2-select" id="crime"' +
                                 'aria-label="Floating label select example">' +
                                 '<option value="" disabled selected>Select Case</option>' +
                                 '<option value="Subpoena">Subpoena</option>' +
                                 '<option value="Summary">Summary</option>' +
-                                '</select> <br/>' +
-                                '<select class="form-select" id="personnel"' +
+                                '</select>' +
+                                '<select class="swal2-select" id="personnel"' +
                                 'aria-label="Floating label select example">' +
                                 '<option value="" disabled selected>Select monitoring personnel</option>' +
                                 '@foreach ($monitoringReviewer as $key => $value)'+
@@ -695,13 +703,20 @@
                             confirmButtonColor: '#3085d6',
                             cancelButtonColor: 'rgb(211 71 71)',
                             confirmButtonText: 'Proccee',
-                            cancelButtonText: 'CANCEL'
+                            cancelButtonText: 'CANCEL',
+                            preConfirm: () => {
+                                const crime = Swal.getPopup().querySelector('#crime').value
+                                const personnel = Swal.getPopup().querySelector('#personnel').value
+                                if (!crime || !personnel) {
+                                Swal.showValidationMessage(`Please select case or personnel`)
+                                }
+                            }
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 console.log($('#crime').val());
                                 console.log($('#personnel').val());
                                 let daysOfCrime = ($('#crime').val() == "Subpoena") ? 60 : 30;
-                                let dt = new Date();
+                                let dt = new Date({!! json_encode($complaint->created_at) !!});
                                 dt.setDate(dt.getDate() + daysOfCrime);
                                 let complain_id = {!! json_encode($complaint->id) !!}
                                 let name = $('#crime').val();
@@ -739,7 +754,7 @@
                         })
                     }
                 })
-                
+
             });
 
 
@@ -987,6 +1002,112 @@
                         //         console.log(error)
                         //     }
                         // });
+                    }
+                })
+            });
+
+            //forward to assigned fiscal
+            $("#forwardToAssignedFiscalOrChief").click(function() {
+                Swal.fire({
+                title: 'Forward to?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#5e5046',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Assigned Fiscal',
+                cancelButtonText: 'Chief'
+                }).then((result) => {
+                    //forward to assigned fiscal
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            input: 'textarea',
+                            inputLabel: 'Comment',
+                            inputPlaceholder: 'Type your comment here...',
+                            inputAttributes: {
+                                'aria-label': 'Type your comment here'
+                            },
+                            showCancelButton: true,
+                            inputValidator: (value) => {
+                                return new Promise((resolve) => {
+                                if (value != "") {
+                                    console.log(value);
+                                    let from = {!! json_encode(Auth::user()->username) !!};
+                                    $.ajax({
+                                        url: "{{ url('caseSaved') }}",
+                                        method: 'POST',
+                                        data: {
+                                            name: {!! json_encode($case[0]->name) !!},
+                                            days: {!! json_encode($case[0]->days) !!},
+                                            complaint_id: {!! json_encode($case[0]->complaint_id) !!},
+                                            assignedto: {!! json_encode($case[0]->receivedby) !!},
+                                            notifno: {!! json_encode($complaint->NPSDNumber) !!},
+                                            from: from,
+                                            comment: value,
+                                        },
+                                        success: function(data) {
+                                            Swal.fire({
+                                                icon: 'success',
+                                                title: 'Successfully forwarded',
+                                                showConfirmButton: false,
+                                                timer: 2000
+                                            })
+                                        },
+                                        error: function(error) {
+                                        console.log(error)
+                                        }
+                                    });
+                                    resolve()
+                                } else {
+                                    resolve('Please enter comment')
+                                }
+                                })
+                            }
+                        })
+                    }
+                    //forward to chief
+                    else{
+                        Swal.fire({
+                            title: 'Select Chief',
+                            input: 'select',
+                            inputOptions: {!! $chief !!},
+                            inputPlaceholder: 'Select Chief here',
+                            showCancelButton: true,
+                            inputValidator: (value) => {
+                                return new Promise((resolve) => {
+                                if (value != "") {
+                                    let complain_id = {!! json_encode($complaint->id) !!}
+                                    let assignedto = value;
+                                    let from = {!! json_encode(Auth::user()->username) !!};
+                                    $.ajax({
+                                    url: "{{ url('caseSaved') }}",
+                                    method: 'POST',
+                                    data: {
+                                        complaint_id: complain_id,
+                                        assignedto: assignedto,
+                                        notifno: {!! json_encode($complaint->NPSDNumber) !!},
+                                        from: from,
+                                        notifyOnly: "true"
+                                    },
+                                    success: function(data) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Successfully forwarded',
+                                        showConfirmButton: false,
+                                        timer: 2000
+                                    })
+                                        },
+                                        error: function(error) {
+                                        console.log(error)
+                                        }
+                                    });
+                                    resolve()
+                                } else {
+                                    resolve('Please select Chief')
+                                }
+                                })
+                            }
+                        })
                     }
                 })
             });

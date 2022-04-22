@@ -18,15 +18,16 @@ class InvestigatedCaseController extends Controller
         // if (InvestigatedCase::where('complaint_id', $request->complaint_id)->exists()) {
             if($request->notifyOnly != "true"){
                 $updateInvestigation =
-                [
-                    // 'is_read' => 1,
-                    'days' => $request->days,
-                    'name' => $request->name,
-                    'assignedto' => $request->assignedto,
-                ];
-            InvestigatedCase::where([
-                ['complaint_id', '=', $request->complaint_id]
-            ])->update($updateInvestigation);
+                    [
+                        // 'is_read' => 1,
+                        'days' => $request->days,
+                        'name' => $request->name,
+                        'assignedto' => $request->assignedto,
+                        'comment' => $request->comment,
+                    ];
+                InvestigatedCase::where([
+                    ['complaint_id', '=', $request->complaint_id]
+                ])->update($updateInvestigation);
             }
         
         // InvestigatedCase::where('complaint_id', $request->complaint_id)->update(array(['is_read' => 1, 'name' => $request->name]));
