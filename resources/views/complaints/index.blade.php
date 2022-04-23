@@ -109,6 +109,7 @@
 
                 //delete complaint
                 $("body").on('click', '.deleteComplaint', function() {
+                    document.getElementById('audio').play();
                     var id = $(this).data("id");
                     var token = $("meta[name='csrf-token']").attr("content");
                     Swal.fire({

@@ -52,6 +52,7 @@
     </style>
 
     <div class="wrapper">
+        <audio src="{{ asset('dist/audio/audio.wav') }}" id="audio" controls style="display: none;"></audio>
         @include('layouts.header')
         @include('layouts.sidebar')
         @yield('content')

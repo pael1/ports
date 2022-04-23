@@ -30,7 +30,7 @@ class ComplaintController extends Controller
     public function index(Request $request)
     {
         //reviewer = maam ivy monitoring and aging
-        if (Auth::user()->designation == "Encoder") {
+        if (Auth::user()->designation == "Receiving") {
             $complaints = DB::table('complaints')
                 ->join('users', 'complaints.assignedTo', '=', 'users.id')
                 ->join('investigated_cases', 'complaints.id', '=', 'investigated_cases.complaint_id')
@@ -315,7 +315,7 @@ class ComplaintController extends Controller
         $reviewerMTCC = User::select(DB::raw("CONCAT(firstname,' ',middlename,' ',lastname) AS name"), 'id')
             ->where("designation", "=", "MTCC")
             ->pluck('name', 'id');
-            
+
         $chief = User::select(DB::raw("CONCAT(firstname,' ',middlename,' ',lastname) AS name"), 'id')
             ->where("designation", "=", "Chief")
             ->pluck('name', 'id');
@@ -326,6 +326,10 @@ class ComplaintController extends Controller
 
         $reviewerRTC = User::select(DB::raw("CONCAT(firstname,' ',middlename,' ',lastname) AS name"), 'id')
             ->where("designation", "=", "RTC")
+            ->pluck('name', 'id');
+
+        $encoder = User::select(DB::raw("CONCAT(firstname,' ',middlename,' ',lastname) AS name"), 'id')
+            ->where("designation", "=", "Encoder")
             ->pluck('name', 'id');
 
         $violations = Violation::all();
@@ -340,7 +344,7 @@ class ComplaintController extends Controller
             ->where('complaint_id', $id)
             ->get();
         $case = DB::table('investigated_cases')->where(['complaint_id' => $id])->get();
-        return view('complaints.edit', compact('complaint', 'complainants', 'respondents', 'witnesses', 'lawviolated', 'attachments', 'prosecutors', 'prosecutorId', 'violations', 'case', 'reviewerMTCC', 'reviewerRTC', 'monitoringReviewer', 'chief'));
+        return view('complaints.edit', compact('complaint', 'complainants', 'respondents', 'witnesses', 'lawviolated', 'attachments', 'prosecutors', 'prosecutorId', 'violations', 'case', 'reviewerMTCC', 'reviewerRTC', 'monitoringReviewer', 'chief', 'encoder'));
     }
 
     /**

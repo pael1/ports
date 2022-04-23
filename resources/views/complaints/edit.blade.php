@@ -37,6 +37,10 @@
                                     data-bs-toggle="tooltip" title="Forward now">Forward to Monitoring</button>
                             @endif
                             @if (Auth::user()->designation == 'Monitoring')
+                                <button type="button" id="forwardToEncoder" class="btn btn-secondary btn-sm"
+                                    data-bs-toggle="tooltip" title="Forward now">Forward to Encoder</button>
+                            @endif
+                            @if (Auth::user()->designation == 'Encoder')
                                 <button type="button" id="forwardToReviewer" class="btn btn-secondary btn-sm"
                                     data-bs-toggle="tooltip" title="Forward now">Forward to Reviewer</button>
                             @endif
@@ -903,6 +907,67 @@
             //         }
             //     })
             // });
+            
+            //forward to encoder
+            $("#forwardToEncoder").click(function() {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, proceed'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+
+                        Swal.fire({
+                            title: 'Select Encoder',
+                            input: 'select',
+                            inputOptions: {!! $encoder !!},
+                            inputPlaceholder: 'Select a encoder',
+                            showCancelButton: true,
+                            inputValidator: (value) => {
+                                return new Promise((resolve) => {
+                                    if (value != '') {
+                                        console.log(value);
+                                        let complain_id = {!! json_encode($complaint->id) !!}
+                                        let assignedto = value;
+                                        let from = {!! json_encode(Auth::user()->username) !!};
+                                        $.ajax({
+                                            url: "{{ url('caseSaved') }}",
+                                            method: 'POST',
+                                            data: {
+                                                complaint_id: complain_id,
+                                                assignedto: assignedto,
+                                                notifno: {!! json_encode($complaint->NPSDNumber) !!},
+                                                from: from,
+                                                notifyOnly: "true"
+                                            },
+                                            success: function(data) {
+                                                Swal.fire({
+                                                    icon: 'success',
+                                                    title: 'Successfully forwarded',
+                                                    showConfirmButton: false,
+                                                    timer: 2000
+                                                })
+                                            },
+                                            error: function(error) {
+                                                console.log(error)
+                                            }
+                                        });
+
+                                        resolve()
+                                    } else {
+                                        resolve('Please select reviewer')
+                                    }
+                                })
+                            }
+                        });
+                    }
+                })
+            });
+
             //forward to Reviewer
             $("#forwardToReviewer").click(function() {
                 Swal.fire({
@@ -970,38 +1035,6 @@
                                 })
                             }
                         });
-
-                        // let dt = new Date();
-                        // dt.setDate(dt.getDate() + 15);
-                        // let complain_id = {!! json_encode($complaint->id) !!}
-                        // let name = "RTC Review";
-                        // let days = dt.toLocaleDateString('en-ZA');
-                        // let recievedby = {!! json_encode(Auth::user()->username) !!};
-                        // let assignedto = 5;
-                        // let is_read = 1;
-                        // $.ajax({
-                        //     url: "{{ url('caseSaved') }}",
-                        //     method: 'POST',
-                        //     data: {
-                        //         name: name,
-                        //         days: days,
-                        //         receivedby: recievedby,
-                        //         complaint_id: complain_id,
-                        //         assignedto: assignedto,
-                        //         is_read: is_read
-                        //     },
-                        //     success: function(data) {
-                        //         Swal.fire({
-                        //             icon: 'success',
-                        //             title: 'Successfully forwarded',
-                        //             showConfirmButton: false,
-                        //             timer: 2000
-                        //         })
-                        //     },
-                        //     error: function(error) {
-                        //         console.log(error)
-                        //     }
-                        // });
                     }
                 })
             });

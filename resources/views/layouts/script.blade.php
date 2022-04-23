@@ -59,6 +59,7 @@
         channel.bind('my-event', function(data) {
 
             if (data.assignedto == {!! json_encode(Auth::user()->id) !!}) {
+                document.getElementById('audio').play();
                 let pending = parseInt($('#' + data.assignedto).find('.pending')
                             .html());
                         if (pending) {
