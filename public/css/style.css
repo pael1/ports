@@ -48,3 +48,7 @@
 .position-absolute {
     position: absolute;
 }
+
+#notificationBox>a:hover {
+    background-color: #e7ebf0 !important;
+}
