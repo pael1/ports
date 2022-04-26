@@ -52,3 +52,24 @@
 #notificationBox>a:hover {
     background-color: #e7ebf0 !important;
 }
+
+.carousel-indicators [data-bs-target] {
+    background-color: black !important;
+}
+
+.ageGrid{
+    margin-left: 1rem;
+}
+
+/* @media only screen and (max-width: 600px) {
+    .forMobile {
+        width: 100% !important;
+        margin: auto !important;
+    }
+} */
+@media screen and (max-width: 1024px) {
+    .forMobile {
+        width: 100% !important;
+        margin-left: 0 !important;
+    }
+}

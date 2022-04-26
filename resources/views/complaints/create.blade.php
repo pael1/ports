@@ -56,7 +56,7 @@
                                                     class="form-control lastname" placeholder="Last Name">
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">
-                                                <select class="form-select" name="addMoreComplainant[0][sex]"
+                                                <select class="form-select forMobile" name="addMoreComplainant[0][sex]"
                                                     aria-label="Floating label select example" style="width:101px;">
                                                     <option value="" selected hidden>Sex</option>
                                                     <option value="Male">Male</option>
@@ -64,7 +64,7 @@
                                                 </select>
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1"> <input type="text"
-                                                    name="addMoreComplainant[0][age]" class="form-control ml-3"
+                                                    name="addMoreComplainant[0][age]" class="form-control ageGrid forMobile"
                                                     placeholder="Age" style="width:72px;">
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3"> <input type="text"
@@ -107,7 +107,7 @@
                                                     class="form-control" placeholder="Last Name">
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">
-                                                <select class="form-select" name="addMoreRespondent[0][sex]"
+                                                <select class="form-select forMobile" name="addMoreRespondent[0][sex]"
                                                     id="floatingSelect" aria-label="Floating label select example"
                                                     style="width:101px;">
                                                     <option value="" selected hidden>Sex</option>
@@ -116,7 +116,7 @@
                                                 </select>
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1"> <input type="text"
-                                                    name="addMoreRespondent[0][age]" class="form-control ml-3"
+                                                    name="addMoreRespondent[0][age]" class="form-control ageGrid forMobile"
                                                     placeholder="Age" style="width:72px;">
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3"> <input type="text"
@@ -191,7 +191,7 @@
                                                     aria-label="Floating label select example">
                                                     <option value="" disabled selected>Select</option>
                                                     @foreach ($prosecutors as $prosecutor)
-                                                        <option value="{{ $prosecutor->id }}">
+                                                        <option value="{{ $prosecutor->id }}" {{ old('assignedto') == $prosecutor->id ? "selected" : "" }}>
                                                             {{ $prosecutor->name }}
                                                         </option>
                                                     @endforeach
@@ -220,12 +220,12 @@
                                         <P>1. Has a Similar complaint been filed before any other office?</P>
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" name="similar" type="checkbox"
-                                                id="yesCheckedBox" value="Yes" onchange="similarYesCheckBox()">
+                                                id="yesCheckedBox" value="Yes" {{(old('similar') == "Yes") ? 'checked': ''}} onchange="similarYesCheckBox()">
                                             <label class="form-check-label" for="inlineCheckbox1">Yes</label>
                                         </div>
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" name="similar" type="checkbox" id="noCheckedBox"
-                                                value="No" onchange="similarNoCheckBox()">
+                                                value="No" {{(old('similar') == "No") ? 'checked': ''}} onchange="similarNoCheckBox()">
                                             <label class="form-check-label" for="inlineCheckbox2">No</label>
                                         </div>
                                     </div>
@@ -237,12 +237,12 @@
                                             below.</P>
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" name="chargeYes" type="checkbox"
-                                                id="yesCheckedBoxCC" value="Yes" onchange="checkedCheckBoxCC()">
+                                                id="yesCheckedBoxCC" value="Yes" {{(old('chargeYes') == "Yes") ? 'checked': ''}} onchange="checkedCheckBoxCC()">
                                             <label class="form-check-label" for="inlineCheckbox1">Yes</label>
                                         </div>
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" name="chargeNo" type="checkbox"
-                                                id="noCheckedBoxCC" value="No" onchange="noCheckBoxCC()">
+                                                id="noCheckedBoxCC" value="No" {{(old('chargeNo') == "No") ? 'checked': ''}} onchange="noCheckBoxCC()">
                                             <label class="form-check-label" for="inlineCheckbox2">No</label>
                                         </div>
 
@@ -261,12 +261,12 @@
                                             details below.</P>
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" name="complaintYes" type="checkbox"
-                                                id="yesCheckBoxRC" value="Yes" onchange="checkedCheckBoxRC()">
+                                                id="yesCheckBoxRC" value="Yes" {{(old('complaintYes') == "Yes") ? 'checked': ''}} onchange="checkedCheckBoxRC()">
                                             <label class="form-check-label" for="inlineCheckbox1">Yes</label>
                                         </div>
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" name="complaintNo" type="checkbox"
-                                                id="noCheckBoxRC" value="No" onchange="nocheckedCheckBoxRC()">
+                                                id="noCheckBoxRC" value="No" {{(old('complaintNo') == "No") ? 'checked': ''}} onchange="nocheckedCheckBoxRC()">
                                             <label class="form-check-label" for="inlineCheckbox2">No</label>
                                         </div>
 
@@ -308,7 +308,7 @@
                                                     class="form-control" placeholder="Last Name">
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">
-                                                <select class="form-select" name="addMoreWitness[0][sex]"
+                                                <select class="form-select forMobile" name="addMoreWitness[0][sex]"
                                                     id="floatingSelect" aria-label="Floating label select example"
                                                     style="width:101px;">
                                                     <option value="" selected hidden>Sex</option>
@@ -317,7 +317,7 @@
                                                 </select>
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1"> <input type="text"
-                                                    name="addMoreWitness[0][age]" class="form-control ml-3"
+                                                    name="addMoreWitness[0][age]" class="form-control ageGrid forMobile"
                                                     placeholder="Age" style="width:72px;">
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3"> <input type="text"

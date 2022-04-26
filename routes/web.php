@@ -45,4 +45,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('caseSaved', [InvestigatedCaseController::class, 'save']);
     Route::put('readAdmin/{id}', [InvestigatedCaseController::class, 'updateNotif']);
     Route::get('openNotification', [NotificationController::class, 'openNotif']);
+
+    Route::get('exportpdf', [ComplaintController::class, 'exportpdf'])->name('exportpdf');
 });

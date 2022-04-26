@@ -2,19 +2,21 @@
 
 <!-- jQuery -->
 <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
-<script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+{{-- <script src="https://js.pusher.com/7.0/pusher.min.js"></script> --}}
+<script src="{{ asset('plugins/pusher/pusher.min.js') }}"></script>
 <!-- Bootstrap 4 -->
 {{-- <script src="{{ asset('plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script> --}}
 <!-- AdminLTE App -->
 <script src="{{ asset('dist/js/adminlte.min.js') }}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.js"></script>
+<script src="{{ asset('dist/js/select2.js') }}"></script>
 
 
 <!-- DataTables  & Plugins -->
 <!-- <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script> -->
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
-<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="{{ asset('plugins/customize/bootstrap.min.js') }}"></script>
+<script src="{{ asset('plugins/customize/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('plugins/customize/sweetalert2@11.js') }}"></script>
+<script src="{{ asset('plugins/customize/dataTables.responsive.min.js') }}"></script>
 {{-- sweet alert success --}}
 @if (session('success'))
     <script>
@@ -670,7 +672,7 @@
             'class="form-control lastname" placeholder="Last Name">' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">' +
-            '<select class="form-select" name="addMoreComplainant[' + complainantIndex +
+            '<select class="form-select forMobile" name="addMoreComplainant[' + complainantIndex +
             '][sex]" id="floatingSelect"' +
             'aria-label="Floating label select example" style="width:101px;">' +
             '<option value="" selected hidden>Sex</option>' +
@@ -679,7 +681,7 @@
             '</select>' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-1"> <input type="text"' +
-            'name="addMoreComplainant[' + complainantIndex + '][age]" class="form-control ml-3"' +
+            'name="addMoreComplainant[' + complainantIndex + '][age]" class="form-control ageGrid forMobile"' +
             'placeholder="Age" style="width:72px;">' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3"> <input type="text"' +
@@ -734,7 +736,7 @@
             'class="form-control" placeholder="Last Name">' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">' +
-            '<select class="form-select" name="addMoreRespondent[' + respondentIndex +
+            '<select class="form-select forMobile" name="addMoreRespondent[' + respondentIndex +
             '][sex]" id="floatingSelect"' +
             'aria-label="Floating label select example" style="width:101px;">' +
             '<option value="" selected hidden>Sex</option>' +
@@ -743,7 +745,7 @@
             '</select>' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-1"> <input type="text"' +
-            'name="addMoreRespondent[' + respondentIndex + '][age]" class="form-control ml-3"' +
+            'name="addMoreRespondent[' + respondentIndex + '][age]" class="form-control ageGrid forMobile"' +
             'placeholder="Age" style="width:72px;">' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3"> <input type="text"' +
@@ -755,7 +757,7 @@
             'placeholder="Address" hidden>' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">' +
-            '<button type="button" data-bs-toggle="tooltip" title="Remove" class="btn btn-danger btn-sm remove-data">-</button>' +
+            '<button type="button" title="Remove" class="btn btn-danger btn-sm remove-data">-</button>' +
             '</div>' +
             '</div>');
         $('[data-bs-toggle="tooltip"]').tooltip();
@@ -779,7 +781,7 @@
             'class="form-control" placeholder="Last Name">' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">' +
-            '<select class="form-select" name="addMoreWitness[' + witnessIndex +
+            '<select class="form-select forMobile" name="addMoreWitness[' + witnessIndex +
             '][sex]" id="floatingSelect"' +
             'aria-label="Floating label select example" style="width:101px;">' +
             '<option value="" selected hidden>Sex</option>' +
@@ -788,7 +790,7 @@
             '</select>' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-1"> <input type="text"' +
-            'name="addMoreWitness[' + witnessIndex + '][age]" class="form-control ml-3"' +
+            'name="addMoreWitness[' + witnessIndex + '][age]" class="form-control ageGrid forMobile"' +
             'placeholder="Age" style="width:72px;">' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3"> <input type="text"' +
@@ -799,7 +801,7 @@
             'placeholder="Address" hidden>' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">' +
-            '<button type="button" data-bs-toggle="tooltip" title="Remove" class="btn btn-danger btn-sm remove-data">-</button>' +
+            '<button type="button" title="Remove" class="btn btn-danger btn-sm remove-data">-</button>' +
             '</div>' +
             '</div>');
         $('[data-bs-toggle="tooltip"]').tooltip();

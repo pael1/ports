@@ -22,6 +22,7 @@
                 <div class="col-lg-12 margin-tb">
                     <div class="float-end p-2 mr-5">
                         @can('product-create')
+                        <a href="{{ route('exportpdf') }}" class="btn btn-success">export pdf</a>
                             <a class="btn btn-success btn-sm" href="{{ route('complaints.create') }}">Create New Complaint</a>
                         @endcan
                     </div>
@@ -36,7 +37,7 @@
                 @endif --}}
 
 
-                <table id="generalTable" class="table">
+                <table id="generalTable" class="display nowrap" style="width:100%">
                     <thead>
                         <tr>
                             <th>Recieved By</th>
@@ -60,6 +61,7 @@
                 var complaintTable = $("#generalTable").DataTable({
                     serverSide: true,
                     processing: true,
+                    responsive: true,
                     ajax: "{{ route('complaints.index') }}",
                     columns: [{
                             data: 'receivedBy',
@@ -109,7 +111,6 @@
 
                 //delete complaint
                 $("body").on('click', '.deleteComplaint', function() {
-                    document.getElementById('audio').play();
                     var id = $(this).data("id");
                     var token = $("meta[name='csrf-token']").attr("content");
                     Swal.fire({

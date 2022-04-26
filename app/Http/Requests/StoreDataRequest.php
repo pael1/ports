@@ -24,13 +24,13 @@ class StoreDataRequest extends FormRequest
     public function rules()
     {
         return [
-            'formtype' => 'required',
+            // 'formtype' => 'required',
             'assignedto' => 'required',
             'placeofcommission' => 'required',
             'similar' => 'required',
             'counterchargedetails' => 'required',
-            'relateddetails' => 'required',
-            'files.*' => 'mimes:pdf|max:2000'
+            'relateddetails' => 'required'
+            // 'files.*' => 'mimes:pdf|max:2000'
         ];
     }
 }

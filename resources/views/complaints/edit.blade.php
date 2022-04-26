@@ -84,7 +84,7 @@
                                 aria-labelledby="panelsStayOpen-headingOne">
                                 <div class="accordion-body">
                                     <div class="" id="dynamicComplainant">
-                                        <div class="row mt-1">
+                                        {{-- <div class="row mt-1">
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2 d-flex justify-content-center">
                                                 <b>FIRST NAME</b>
                                             </div>
@@ -108,11 +108,19 @@
                                                     data-bs-toggle="tooltip" title="Add complainant"
                                                     class="btn btn-success btn-sm add float-right">+</button>
                                             </div>
+                                        </div> --}}
+                                        <div class="row">
+                                            <div class="col-xs-12 float-right">
+                                                <button type="button" name="addRespondent" id="addComplainant"
+                                                    data-bs-toggle="tooltip" title="Add Witness"
+                                                    class="btn btn-success btn-sm add float-right">+</button>
+                                            </div>
                                         </div>
                                         @if ($complainants->count())
                                             @foreach ($complainants as $value)
                                                 <div class="row mt-2" id="{{ $value->id }}">
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2" data-bs-toggle="tooltip"
+                                                    title="FIRST NAME">
                                                         <input type="text"
                                                             name="addMoreComplainant[{{ $value->id }}][complaint_id]"
                                                             value="{{ $value->complaint_id }}" hidden>
@@ -127,20 +135,22 @@
                                                             class="form-control" placeholder="First Name"
                                                             value="{{ $value->firstName }}">
                                                     </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2" data-bs-toggle="tooltip"
+                                                    title="MIDDLE NAME">
                                                         <input type="text"
                                                             name="addMoreComplainant[{{ $value->id }}][middlename]"
                                                             class="form-control" placeholder="Middle Name"
                                                             value="{{ $value->middleName }}">
                                                     </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2" data-bs-toggle="tooltip"
+                                                    title="LAST NAME">
                                                         <input type="text"
                                                             name="addMoreComplainant[{{ $value->id }}][lastname]"
                                                             class="form-control" placeholder="Last Name"
                                                             value="{{ $value->lastName }}">
                                                     </div>
                                                     <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">
-                                                        <select class="form-select"
+                                                        <select class="form-select forMobile"
                                                             name="addMoreComplainant[{{ $value->id }}][sex]"
                                                             id="floatingSelect" aria-label="Floating label select example"
                                                             style="width:101px;">
@@ -153,12 +163,14 @@
                                                             </option>
                                                         </select>
                                                     </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1"> <input type="text"
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1" data-bs-toggle="tooltip"
+                                                    title="AGE"> <input type="text"
                                                             name="addMoreComplainant[{{ $value->id }}][age]"
-                                                            class="form-control ml-3" placeholder="Age" style="width:72px;"
+                                                            class="form-control ageGrid forMobile" placeholder="Age" style="width:72px;"
                                                             value="{{ $value->age }}">
                                                     </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3"> <input type="text"
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" data-bs-toggle="tooltip"
+                                                    title="ADDRESS"> <input type="text"
                                                             name="addMoreComplainant[{{ $value->id }}][address]"
                                                             class="form-control" placeholder="Address"
                                                             value="{{ $value->address }}">
@@ -192,7 +204,7 @@
                                 aria-labelledby="panelsStayOpen-headingTwo">
                                 <div class="accordion-body">
                                     <div class="" id="dynamicRespondent">
-                                        <div class="row mt-1">
+                                        {{-- <div class="row mt-1">
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2 d-flex justify-content-center">
                                                 <b>FIRST NAME</b>
                                             </div>
@@ -216,11 +228,19 @@
                                                     data-bs-toggle="tooltip" title="Add Respondent"
                                                     class="btn btn-success btn-sm add float-right">+</button>
                                             </div>
+                                        </div> --}}
+                                        <div class="row">
+                                            <div class="col-xs-12 float-right">
+                                                <button type="button" name="addRespondent" id="addRespondent"
+                                                    data-bs-toggle="tooltip" title="Add Witness"
+                                                    class="btn btn-success btn-sm add float-right">+</button>
+                                            </div>
                                         </div>
                                         @if ($respondents->count())
                                             @foreach ($respondents as $value)
                                                 <div class="row mt-2" id="{{ $value->id }}">
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2" data-bs-toggle="tooltip"
+                                                    title="FIRST NAME">
                                                         <input type="text"
                                                             name="addMoreRespondent[{{ $value->id }}][complaint_id]"
                                                             value="{{ $value->complaint_id }}" hidden>
@@ -235,20 +255,22 @@
                                                             class="form-control" placeholder="First Name"
                                                             value="{{ $value->firstName }}">
                                                     </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2" data-bs-toggle="tooltip"
+                                                    title="MIDDLE NAME">
                                                         <input type="text"
                                                             name="addMoreRespondent[{{ $value->id }}][middlename]"
                                                             class="form-control" placeholder="Middle Name"
                                                             value="{{ $value->middleName }}">
                                                     </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2" data-bs-toggle="tooltip"
+                                                    title="LAST NAME">
                                                         <input type="text"
                                                             name="addMoreRespondent[{{ $value->id }}][lastname]"
                                                             class="form-control" placeholder="Last Name"
                                                             value="{{ $value->lastName }}">
                                                     </div>
                                                     <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">
-                                                        <select class="form-select"
+                                                        <select class="form-select forMobile"
                                                             name="addMoreRespondent[{{ $value->id }}][sex]"
                                                             id="floatingSelect" aria-label="Floating label select example"
                                                             style="width:101px;">
@@ -261,12 +283,14 @@
                                                             </option>
                                                         </select>
                                                     </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1"> <input type="text"
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1" data-bs-toggle="tooltip"
+                                                    title="AGE"> <input type="text"
                                                             name="addMoreRespondent[{{ $value->id }}][age]"
-                                                            class="form-control ml-3" placeholder="Age" style="width:72px;"
+                                                            class="form-control ageGrid forMobile" placeholder="Age" style="width:72px;"
                                                             value="{{ $value->age }}">
                                                     </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3"> <input type="text"
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" data-bs-toggle="tooltip"
+                                                    title="ADDRESS"> <input type="text"
                                                             name="addMoreRespondent[{{ $value->id }}][address]"
                                                             class="form-control" placeholder="Address"
                                                             value="{{ $value->address }}">
@@ -498,7 +522,7 @@
                                 aria-labelledby="panelsStayOpen-headingThree">
                                 <div class="accordion-body">
                                     <div class="" id="dynamicWitness">
-                                        <div class="row mt-1">
+                                        {{-- <div class="row mt-1">
                                             <div
                                                 class="col-xs-12 col-sm-6 col-md-4 col-lg-2 d-flex justify-content-center">
                                                 <b>FIRST NAME</b>
@@ -529,11 +553,20 @@
                                                     data-bs-toggle="tooltip" title="Add Witness"
                                                     class="btn btn-success btn-sm add float-right">+</button>
                                             </div>
+                                        </div> --}}
+                                        <div class="row">
+                                            <div class="col-xs-12 float-right">
+                                                <button type="button" name="addRespondent" id="addWitness"
+                                                    data-bs-toggle="tooltip" title="Add Witness"
+                                                    class="btn btn-success btn-sm add float-right">+</button>
+                                            </div>
                                         </div>
+                                        
                                         @if ($witnesses->count())
                                             @foreach ($witnesses as $value)
                                                 <div class="row mt-2" id="{{ $value->id }}">
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2" data-bs-toggle="tooltip"
+                                                    title="FIRST NAME">
                                                         <input type="text" name="addMoreWitness[{{ $value->id }}][id]"
                                                             value="{{ $value->id }}" hidden>
                                                         <input type="text"
@@ -547,20 +580,22 @@
                                                             class="form-control" placeholder="First Name"
                                                             value="{{ $value->firstName }}">
                                                     </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2" data-bs-toggle="tooltip"
+                                                    title="MIDDLE NAME">
                                                         <input type="text"
                                                             name="addMoreWitness[{{ $value->id }}][middlename]"
                                                             class="form-control" placeholder="Middle Name"
                                                             value="{{ $value->middleName }}">
                                                     </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2" data-bs-toggle="tooltip"
+                                                    title="LAST NAME">
                                                         <input type="text"
                                                             name="addMoreWitness[{{ $value->id }}][lastname]"
                                                             class="form-control" placeholder="Last Name"
                                                             value="{{ $value->lastName }}">
                                                     </div>
                                                     <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">
-                                                        <select class="form-select"
+                                                        <select class="form-select forMobile"
                                                             name="addMoreWitness[{{ $value->id }}][sex]"
                                                             id="floatingSelect" aria-label="Floating label select example"
                                                             style="width:101px;">
@@ -573,12 +608,14 @@
                                                             </option>
                                                         </select>
                                                     </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1"> <input type="text"
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1" data-bs-toggle="tooltip"
+                                                    title="AGE"> <input type="text"
                                                             name="addMoreWitness[{{ $value->id }}][age]"
-                                                            class="form-control ml-3" placeholder="Age" style="width:72px;"
+                                                            class="form-control ageGrid forMobile" placeholder="Age" style="width:72px;"
                                                             value="{{ $value->age }}">
                                                     </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3"> <input type="text"
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" data-bs-toggle="tooltip"
+                                                    title="ADDRESS"> <input type="text"
                                                             name="addMoreWitness[{{ $value->id }}][address]"
                                                             class="form-control" placeholder="Address"
                                                             value="{{ $value->address }}">

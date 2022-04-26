@@ -30,13 +30,14 @@
     <link rel="stylesheet" href="{{ asset('dist/css/adminlte.min.css') }}">
 
     <!-- DataTables -->
-    <link href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet">
+    {{-- <link href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet"> --}}
+    <link href="{{ asset('dist/dataTables.min.css') }}" rel="stylesheet">
 
     {{-- <link rel="stylesheet" href="../../plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="../../plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
     <link rel="stylesheet" href="../../plugins/datatables-buttons/css/buttons.bootstrap4.min.css"> --}}
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.css" rel="stylesheet"/>
-
+    <link href="{{ asset('dist/css/select2.css') }}" rel="stylesheet"/>
+    <link href="{{ asset('dist/css/responsive.dataTables.min.css') }}" rel="stylesheet">
 
 </head>
 

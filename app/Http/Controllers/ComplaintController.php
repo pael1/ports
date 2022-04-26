@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use PDF;
 use Carbon\Carbon;
 use Pusher\Pusher;
 use App\Models\User;
@@ -10,13 +11,16 @@ use App\Helpers\Helper;
 use App\Models\Complaint;
 use App\Models\Violation;
 use App\Models\Attachment;
-use App\Models\InvestigatedCase;
 use App\Models\ViolatedLaw;
 use App\Models\Notification;
 use Illuminate\Http\Request;
+use App\Models\InvestigatedCase;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\StoreDataRequest;
+use App\Models\Report;
+use Illuminate\Support\Facades\Storage;
 // use DataTables;
 
 class ComplaintController extends Controller
@@ -118,30 +122,31 @@ class ComplaintController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    // public function store(Request $request)
+    public function store(StoreDataRequest $request)
     {
-        request()->validate([
-            // 'NPSDNumber' => 'required',
-            // 'formtype' => 'required',
-            'assignedto' => 'required',
-            'placeofcommission' => 'required',
-            // 'similar' => 'required',
-            // 'counterchargedetails' => 'required',
-            // 'relateddetails' => 'required',
-            'files.*' => 'mimes:pdf|max:2000',
+        // request()->validate([
+        //     // 'NPSDNumber' => 'required',
+        //     // 'formtype' => 'required',
+        //     'assignedto' => 'required',
+        //     'placeofcommission' => 'required',
+        //     // 'similar' => 'required',
+        //     // 'counterchargedetails' => 'required',
+        //     // 'relateddetails' => 'required',
+        //     'files.*' => 'mimes:pdf|max:2000',
 
-            // 'addMoreComplainant.*.name' => 'required',
-            // 'addMoreComplainant.*.qty' => 'required',
-            // 'addMoreComplainant.*.price' => 'required',
+        //     // 'addMoreComplainant.*.name' => 'required',
+        //     // 'addMoreComplainant.*.qty' => 'required',
+        //     // 'addMoreComplainant.*.price' => 'required',
 
-            // 'addMoreRespondent.*.name' => 'required',
-            // 'addMoreRespondent.*.qty' => 'required',
-            // 'addMoreRespondent.*.price' => 'required',
+        //     // 'addMoreRespondent.*.name' => 'required',
+        //     // 'addMoreRespondent.*.qty' => 'required',
+        //     // 'addMoreRespondent.*.price' => 'required',
 
-            // 'addMorewitness.*.name' => 'required',
-            // 'addMorewitness.*.qty' => 'required',
-            // 'addMorewitness.*.price' => 'required',
-        ]);
+        //     // 'addMorewitness.*.name' => 'required',
+        //     // 'addMorewitness.*.qty' => 'required',
+        //     // 'addMorewitness.*.price' => 'required',
+        // ]);
 
         $alphabetC = range('A', 'L');
         $monthNumberC = Carbon::now()->month;
@@ -613,4 +618,31 @@ class ComplaintController extends Controller
     //     // }
     //     return response()->json($complaint, 200);
     // }
+
+    public function exportpdf()
+    {
+        $complaints = DB::table('complaints')
+            ->join('users', 'complaints.assignedTo', '=', 'users.id')
+            ->join('investigated_cases', 'complaints.id', '=', 'investigated_cases.complaint_id')
+            ->select(
+                'complaints.*',
+                'investigated_cases.name',
+                DB::raw("CONCAT(users.firstname, ' ', users.middlename, ' ', users.lastname) as fullname, 
+                DATE_FORMAT(complaints.created_at, '%d-%M-%y') as dateFiled")
+            )->get();
+        //directory
+        $pdf = PDF::loadView('pdf.users', [
+            'complaints' => $complaints
+        ]);
+        $filename = time() . '_' . 'test.pdf';
+        $path = 'public/pdf/' . $filename;
+        $complaints = Report::create([
+            'filename' => $filename,
+            'path' => '/storage/' . $path,
+            'type' => 'type'
+        ]);
+        Storage::put('public/pdf/' . $filename, $pdf->output());
+        return $pdf->stream();
+        // return $pdf->stream($filename, array("Attachment" => false));
+    }
 }
