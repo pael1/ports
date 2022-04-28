@@ -63,15 +63,15 @@
             if (data.assignedto == {!! json_encode(Auth::user()->id) !!}) {
                 document.getElementById('audio').play();
                 let pending = parseInt($('#' + data.assignedto).find('.pending')
-                            .html());
-                        if (pending) {
-                            $('#' + data.assignedto).find('.pending').html(pending + 1);
-                        } else {
-                            $('#' + data.assignedto).html(
-                                '<i class="far fa-comments"></i>' +
-                                '<span class="badge badge-danger navbar-badge pending">1</span>' +
-                                '</a>');
-                        }
+                    .html());
+                if (pending) {
+                    $('#' + data.assignedto).find('.pending').html(pending + 1);
+                } else {
+                    $('#' + data.assignedto).html(
+                        '<i class="far fa-comments"></i>' +
+                        '<span class="badge badge-danger navbar-badge pending">1</span>' +
+                        '</a>');
+                }
 
                 Swal.fire({
                     icon: 'info',
@@ -84,38 +84,37 @@
                     },
                     toast: true,
                     position: 'bottom-right'
-                    }).then((result) => {
+                }).then((result) => {
                     if (result.isConfirmed) {
                         var token = $("meta[name='csrf-token']").attr("content");
-                            $.ajax({
-                                url: "{{ url('read') }}" + '/' + data.notifno,
-                                type: 'PUT',
-                                data: {
-                                    "notifno": data.notifno,
-                                    "_token": token,
-                                },
-                                success: function(data) {
-                                    console.log(data);
-                                }
-                            })
-                            //redirect to the complaint details
-                            $.ajax({
-                                url: "{{ url('complaint_id') }}",
-                                type: 'GET',
-                                data: {
-                                    'notifno': data.notifno
-                                },
-                                success: function(data) {
-                                    console.log(data);
-                                    let url =
-                                        "{{ route('complaints.edit', ':id') }}";
-                                    url = url.replace(':id', data[0].complaint_id);
-                                    document.location.href = url;
-                                }
-                            })
-                    }
-                    else{
-                        
+                        $.ajax({
+                            url: "{{ url('read') }}" + '/' + data.notifno,
+                            type: 'PUT',
+                            data: {
+                                "notifno": data.notifno,
+                                "_token": token,
+                            },
+                            success: function(data) {
+                                console.log(data);
+                            }
+                        })
+                        //redirect to the complaint details
+                        $.ajax({
+                            url: "{{ url('complaint_id') }}",
+                            type: 'GET',
+                            data: {
+                                'notifno': data.notifno
+                            },
+                            success: function(data) {
+                                console.log(data);
+                                let url =
+                                    "{{ route('complaints.edit', ':id') }}";
+                                url = url.replace(':id', data[0].complaint_id);
+                                document.location.href = url;
+                            }
+                        })
+                    } else {
+
                     }
                 })
 
@@ -376,16 +375,18 @@
                     let NPSDNumber = data[i].NPSDNumber;
                     let classNotif = (markmsg != 1) ? 'text-secondary' : 'text-danger';
                     let className = (markmsg != 1) ? 'fw-light' : 'fw-bold';
-                    var option = '<a href="#" class="dropdown-item open-notif" data-id="'+data[i].id+'" id="' + NPSDNumber + '">' +
+                    var option = '<a href="#" class="dropdown-item open-notif" data-id="' + data[i].id +
+                        '" id="' + NPSDNumber + '">' +
                         '<div class="media openNotification">' +
                         '<div class="media-body">' +
-                        '<h3 class="dropdown-item-title '+className+'">' +
+                        '<h3 class="dropdown-item-title ' + className + '">' +
                         '' + data[i].name + '' +
                         '<span class="float-right text-sm ' + classNotif +
                         '"><i class="fas fa-bell"></i></span>' +
                         '</h3>' +
                         //   '<p class="text-sm">'+email+'</p>'+
-                        '<p class="text-sm text-muted '+className+'"><i class="far fa-clock mr-1"></i> ' + dateFiled +
+                        '<p class="text-sm text-muted ' + className +
+                        '"><i class="far fa-clock mr-1"></i> ' + dateFiled +
                         '</p>' +
                         '</div>' +
                         '</div>' +
@@ -395,8 +396,11 @@
                 }
                 var offsetHeight = document.getElementById('notificationBox').offsetHeight;
                 console.log(offsetHeight);
-                if(offsetHeight > 287){
-                    $('#notificationBox').css({"overflow": "scroll", "height": "288px"});
+                if (offsetHeight > 287) {
+                    $('#notificationBox').css({
+                        "overflow": "scroll",
+                        "height": "288px"
+                    });
                 }
             }
         });
@@ -425,10 +429,16 @@
     //     })
     // });
 
+    //array for complaint_id every complainant inputed
+    const complaints_id = [];
+    //validate every name encoded
+    //complainant
     $(document).on('keyup', '.lastname', function() {
         const firstname = $(this).closest('div.row').find('.firstname').val();
         const middlename = $(this).closest('div.row').find('.middlename').val();
         const lastname = $(this).closest('div.row').find('.lastname').val();
+        console.log(firstname);
+        console.log(middlename);
         console.log(lastname);
         $.ajax({
             url: "{{ url('search') }}",
@@ -436,29 +446,69 @@
             data: {
                 'firstname': firstname,
                 'middlename': middlename,
-                'lastname': lastname
+                'lastname': lastname,
+                'type': 'complainant'
             },
             success: function(data) {
                 console.log(data);
                 if (data != '') {
-                    Swal.fire({
-                        html: '<b style="font-size:17px;">This complainant was related to...</b>',
-                        icon: 'error',
-                        showCancelButton: true,
-                        allowOutsideClick: false,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: 'rgb(211 71 71)',
-                        confirmButtonText: 'OK',
-                        cancelButtonText: 'CANCEL'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            console.log(data[0].complaint_id);
-                            $('#assignedToId option[value=' + data[0].assignedTo + ']')
-                                .attr('selected', 'selected');
-                        } else {
+                    //save to complaints_id array if exist in tbl
+                    if (complaints_id.indexOf(data[0].complaint_id)) {
+                        complaints_id.push(data[0].complaint_id);
+                    }
+                    console.log(complaints_id);
+                }
+            }
+        })
+    });
 
+    //validate every name encoded
+    //respondent
+    $(document).on('keyup', '.lastnameR', function() {
+        const firstname = $(this).closest('div.row').find('.firstnameR').val();
+        const middlename = $(this).closest('div.row').find('.middlenameR').val();
+        const lastname = $(this).closest('div.row').find('.lastnameR').val();
+        console.log(complaints_id);
+        console.log(firstname);
+        console.log(middlename);
+        console.log(lastname);
+
+        $.ajax({
+            url: "{{ url('search') }}",
+            type: 'GET',
+            data: {
+                'firstname': firstname,
+                'middlename': middlename,
+                'lastname': lastname,
+                'type': 'respondent'
+            },
+            success: function(data) {
+                console.log(data);
+                if (data != '') {
+                    complaints_id.forEach((complaint_id, i) => {
+                        if (data[0].complaint_id === complaint_id) {
+                            Swal.fire({
+                                html: '<b style="font-size:17px;">This complainant was related to...</b>',
+                                icon: 'error',
+                                showCancelButton: true,
+                                allowOutsideClick: false,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: 'rgb(211 71 71)',
+                                confirmButtonText: 'OK',
+                                cancelButtonText: 'CANCEL'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    console.log(data[0].complaint_id);
+                                    $('#assignedToId option[value=' + data[0]
+                                            .assignedTo + ']')
+                                        .attr('selected', 'selected');
+                                } else {
+
+                                }
+                            })
                         }
-                    })
+                    });
+
                 }
             }
         })
@@ -681,7 +731,8 @@
             '</select>' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-1"> <input type="text"' +
-            'name="addMoreComplainant[' + complainantIndex + '][age]" class="form-control ageGrid forMobile"' +
+            'name="addMoreComplainant[' + complainantIndex +
+            '][age]" class="form-control ageGrid forMobile"' +
             'placeholder="Age" style="width:72px;">' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3"> <input type="text"' +
@@ -725,15 +776,15 @@
         $("#dynamicRespondent").append('<div class="row mt-2">' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">' +
             '<input type="text" name="addMoreRespondent[' + respondentIndex + '][firstname]"' +
-            'class="form-control" placeholder="First Name">' +
+            'class="form-control firstnameR" placeholder="First Name">' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">' +
             '<input type="text" name="addMoreRespondent[' + respondentIndex + '][middlename]"' +
-            'class="form-control" placeholder="Middle Name">' +
+            'class="form-control middlenameR" placeholder="Middle Name">' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">' +
             '<input type="text" name="addMoreRespondent[' + respondentIndex + '][lastname]"' +
-            'class="form-control" placeholder="Last Name">' +
+            'class="form-control lastnameR" placeholder="Last Name">' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">' +
             '<select class="form-select forMobile" name="addMoreRespondent[' + respondentIndex +
@@ -745,7 +796,8 @@
             '</select>' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-1"> <input type="text"' +
-            'name="addMoreRespondent[' + respondentIndex + '][age]" class="form-control ageGrid forMobile"' +
+            'name="addMoreRespondent[' + respondentIndex +
+            '][age]" class="form-control ageGrid forMobile"' +
             'placeholder="Age" style="width:72px;">' +
             '</div>' +
             '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3"> <input type="text"' +
@@ -833,32 +885,32 @@
         //     url = url.replace(':id', $(this).attr("data-id"));
         //     document.location.href = url;
         // } else {
-            var token = $("meta[name='csrf-token']").attr("content");
-            $.ajax({
-                url: "{{ url('read') }}" + '/' + this.id,
-                type: 'PUT',
-                data: {
-                    "notifno": this.id,
-                    "_token": token,
-                },
-                success: function(data) {
-                    console.log(data);
-                }
-            })
-            //redirect to the complaint details
-            $.ajax({
-                url: "{{ url('complaint_id') }}",
-                type: 'GET',
-                data: {
-                    'notifno': this.id
-                },
-                success: function(data) {
-                    console.log(data);
-                    let url = "{{ route('complaints.edit', ':id') }}";
-                    url = url.replace(':id', data[0].complaint_id);
-                    document.location.href = url;
-                }
-            })
+        var token = $("meta[name='csrf-token']").attr("content");
+        $.ajax({
+            url: "{{ url('read') }}" + '/' + this.id,
+            type: 'PUT',
+            data: {
+                "notifno": this.id,
+                "_token": token,
+            },
+            success: function(data) {
+                console.log(data);
+            }
+        })
+        //redirect to the complaint details
+        $.ajax({
+            url: "{{ url('complaint_id') }}",
+            type: 'GET',
+            data: {
+                'notifno': this.id
+            },
+            success: function(data) {
+                console.log(data);
+                let url = "{{ route('complaints.edit', ':id') }}";
+                url = url.replace(':id', data[0].complaint_id);
+                document.location.href = url;
+            }
+        })
         // }
     });
 </script>

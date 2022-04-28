@@ -28,9 +28,9 @@ class StoreDataRequest extends FormRequest
             'assignedto' => 'required',
             'placeofcommission' => 'required',
             'similar' => 'required',
-            'counterchargedetails' => 'required',
-            'relateddetails' => 'required'
-            // 'files.*' => 'mimes:pdf|max:2000'
+            // 'counterchargedetails' => 'required',
+            // 'relateddetails' => 'required'
+            'files.*' => 'mimes:pdf|max:2000'
         ];
     }
 }

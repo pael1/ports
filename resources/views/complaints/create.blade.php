@@ -96,15 +96,15 @@
                                         <div class="row">
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
                                                 <input type="text" name="addMoreRespondent[0][firstname]"
-                                                    class="form-control" placeholder="First Name">
+                                                    class="form-control firstnameR" placeholder="First Name">
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
                                                 <input type="text" name="addMoreRespondent[0][middlename]"
-                                                    class="form-control" placeholder="Middle Name">
+                                                    class="form-control middlenameR" placeholder="Middle Name">
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
                                                 <input type="text" name="addMoreRespondent[0][lastname]"
-                                                    class="form-control" placeholder="Last Name">
+                                                    class="form-control lastnameR" placeholder="Last Name">
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1">
                                                 <select class="form-select forMobile" name="addMoreRespondent[0][sex]"
@@ -174,7 +174,7 @@
                                         <div class="form-group">
                                             <div class="form-floating">
                                                 <input type="text" name="NPSDNumber" class="form-control"
-                                                    placeholder="NPS DOCKET NO" value="{{ $NPSDOCKETNO }}"
+                                                    placeholder="NPS DOCKET NO" value=""
                                                     readonly="readonly">
                                                 <label for="floatingNPSDNumber">NPS DOCKET NO</label>
                                             </div>
