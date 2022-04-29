@@ -349,7 +349,7 @@
                                                             <input type="text"
                                                                 name="addMoreLawViolated[{{ $value->id }}][lawviolated]"
                                                                 class="form-control" placeholder="Law Violated"
-                                                                value="{{ $value->details . ' (' . $value->docketNo . ')' }}"
+                                                                value="{{ $value->law . ' (' . $value->docketNo . ')' }}"
                                                                 readonly>
                                                         </div>
                                                     </div>
@@ -371,7 +371,7 @@
                                                 <select id="select2multiple" class="selectMultiple" name="violations[]"
                                                     multiple="multiple">
                                                     @foreach ($violations as $violation)
-                                                        <option value="{{ $violation->law }}">
+                                                        <option value="{{ $violation->id }}">
                                                             {{ $violation->law }}
                                                         </option>
                                                     @endforeach

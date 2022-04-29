@@ -39,6 +39,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::delete('violation/{id}', [ComplaintController::class, 'deleteViolation']);
     Route::delete('deleteComplaint/{id}', [ComplaintController::class, 'deleteComplaint']);
     Route::get('search', [ComplaintController::class, 'autosearch']);
+    Route::get('searchViolatedLaws', [ComplaintController::class, 'autosearchViolatedLaws']);
     Route::get('notifications', [NotificationController::class, 'getNewMessages']);
     Route::get('complaint_id', [ComplaintController::class, 'getComplaint_id']);
     Route::put('read/{id}', [NotificationController::class, 'updateMarkMsg']);

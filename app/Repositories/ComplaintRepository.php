@@ -12,6 +12,7 @@ use App\Models\Attachment;
 use App\Models\ViolatedLaw;
 use App\Models\Notification;
 use App\Models\InvestigatedCase;
+use App\Models\Office;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -96,7 +97,8 @@ class ComplaintRepository implements IComplaint
             'counterChargeDetails' => ($request['counterchargedetails'] != "") ? $request['counterchargedetails'] : $request['chargeNo'],
             'relatedComplaint' => 'static',
             'relatedDetails' => ($request['relateddetails'] != "") ? $request['relateddetails'] : $request['complaintNo'],
-            'NPSDNumber' => $notifNo
+            'NPSDNumber' => $notifNo,
+            'office' => $request['office']
         ]);
 
         if ($request['addMoreComplainant'] != "") {
@@ -229,6 +231,13 @@ class ComplaintRepository implements IComplaint
         return $prosecutors;
     }
 
+    //get all fiscals in table
+    public function getOffices()
+    {
+        $getOffices = Office::select("*")->get();
+        return $getOffices;
+    }
+
     //get users
     public function getUsers($designation)
     {
@@ -248,7 +257,12 @@ class ComplaintRepository implements IComplaint
     //get violated laws
     public function getViolatedLaws($id)
     {
-        $lawviolated = DB::table('violated_laws')->where(['complaint_id' => $id])->get();
+        // $lawviolated = DB::table('violated_laws')->where(['complaint_id' => $id])->get();
+        $lawviolated = DB::table('violated_laws')
+            ->join('violations', 'violated_laws.details', '=', 'violations.id')
+            ->select('violations.*', 'violated_laws.*')->where([
+                ['violated_laws.complaint_id', '=', $id]
+            ])->get();
         return $lawviolated;
     }
 
@@ -309,16 +323,18 @@ class ComplaintRepository implements IComplaint
                         ['complaint_id', '=', $id]
                     ])->update($complainants);
                 } else {
-                    $complainants = new Party([
-                        'lastName' => $complainant['lastname'],
-                        'firstName' => $complainant['firstname'],
-                        'middleName' => $complainant['middlename'],
-                        'sex' => $complainant['sex'],
-                        'age' => $complainant['age'],
-                        'address' => $complainant['address'],
-                        'belongsTo' => $complainant['belongsTo']
-                    ]);
-                    $complaints->party()->save($complainants);
+                    if ($complainant['lastname'] != "" || $complainant['firstname'] != "") {
+                        $complainants = new Party([
+                            'lastName' => $complainant['lastname'],
+                            'firstName' => $complainant['firstname'],
+                            'middleName' => $complainant['middlename'],
+                            'sex' => $complainant['sex'],
+                            'age' => $complainant['age'],
+                            'address' => $complainant['address'],
+                            'belongsTo' => $complainant['belongsTo']
+                        ]);
+                        $complaints->party()->save($complainants);
+                    }
                 }
             }
         }
@@ -358,16 +374,18 @@ class ComplaintRepository implements IComplaint
                         ['complaint_id', '=', $id]
                     ])->update($respondents);
                 } else {
-                    $respondents = new Party([
-                        'lastName' => $respondent['lastname'],
-                        'firstName' => $respondent['firstname'],
-                        'middleName' => $respondent['middlename'],
-                        'sex' => $respondent['sex'],
-                        'age' => $respondent['age'],
-                        'address' => $respondent['address'],
-                        'belongsTo' => $respondent['belongsTo']
-                    ]);
-                    $complaints->party()->save($respondents);
+                    if ($respondent['lastname'] != "" || $respondent['firstname'] != "") {
+                        $respondents = new Party([
+                            'lastName' => $respondent['lastname'],
+                            'firstName' => $respondent['firstname'],
+                            'middleName' => $respondent['middlename'],
+                            'sex' => $respondent['sex'],
+                            'age' => $respondent['age'],
+                            'address' => $respondent['address'],
+                            'belongsTo' => $respondent['belongsTo']
+                        ]);
+                        $complaints->party()->save($respondents);
+                    }
                 }
             }
         }
@@ -390,16 +408,18 @@ class ComplaintRepository implements IComplaint
                         ['complaint_id', '=', $id]
                     ])->update($witnesses);
                 } else {
-                    $witnesses = new Party([
-                        'lastName' => $witness['lastname'],
-                        'firstName' => $witness['firstname'],
-                        'middleName' => $witness['middlename'],
-                        'sex' => $witness['sex'],
-                        'age' => $witness['age'],
-                        'address' => $witness['address'],
-                        'belongsTo' => $witness['belongsTo']
-                    ]);
-                    $complaints->party()->save($witnesses);
+                    if ($witness['lastname'] != "" || $witness['firstname'] != "") {
+                        $witnesses = new Party([
+                            'lastName' => $witness['lastname'],
+                            'firstName' => $witness['firstname'],
+                            'middleName' => $witness['middlename'],
+                            'sex' => $witness['sex'],
+                            'age' => $witness['age'],
+                            'address' => $witness['address'],
+                            'belongsTo' => $witness['belongsTo']
+                        ]);
+                        $complaints->party()->save($witnesses);
+                    }
                 }
             }
         }
@@ -436,6 +456,16 @@ class ComplaintRepository implements IComplaint
                 ['firstName', '=', $request['firstname']],
                 ['middleName', '=', $request['middlename']],
                 ['belongsTo', '=', $request['type']]
+            ])->get();
+        return $data;
+    }
+
+    public function checkViolatedLaw(array $request)
+    {
+        $data = DB::table('violated_laws')
+            ->join('complaints', 'violated_laws.complaint_id', '=', 'complaints.id')
+            ->select('violated_laws.*', 'complaints.assignedTo')->where([
+                ['details', '=', $request['details']]
             ])->get();
         return $data;
     }

@@ -10,6 +10,8 @@ interface IComplaint
 
    public function getProsecutors();
 
+   public function getOffices();
+
    public function getUsers($designation);
 
    public function getParties($party, $id);
@@ -21,6 +23,8 @@ interface IComplaint
    public function getCases($id);
 
    public function checkRelatedParty(array $data);
+
+   public function checkViolatedLaw(array $data);
 
    public function getComplaintId(array $data);
 

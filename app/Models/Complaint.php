@@ -20,7 +20,8 @@ class Complaint extends Model
         'counterChargeDetails',
         'relatedComplaint',
         'relatedDetails',
-        'placeofCommission'
+        'placeofCommission',
+        'office'
     ];
     
     public function party()

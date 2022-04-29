@@ -117,6 +117,8 @@ class ComplaintController extends Controller
         //     ->get();
         $prosecutors = $this->complaintRepository->getProsecutors();
 
+        $offices = $this->complaintRepository->getOffices();
+
         $violations = Violation::all();
 
 
@@ -131,7 +133,7 @@ class ComplaintController extends Controller
         // }
 
         // return view('complaints.create', compact('NPSDOCKETNO', 'FType', 'prosecutors', 'violations'));
-        return view('complaints.create', compact('FType', 'prosecutors', 'violations'));
+        return view('complaints.create', compact('FType', 'prosecutors', 'violations', 'offices'));
     }
 
     /**
@@ -657,6 +659,15 @@ class ComplaintController extends Controller
             return $data;
         }
         return view('autosearch');
+    }
+
+    public function autosearchViolatedLaws(Request $request)
+    {
+        if ($request->ajax()) {
+            $data = $this->complaintRepository->checkViolatedLaw($request->all());
+            return $data;
+        }
+        return view('autosearchViolatedLaws');
     }
 
     public function getComplaint_id(Request $request)

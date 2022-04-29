@@ -429,90 +429,106 @@
     //     })
     // });
 
+    // //checking if not typing for 3secs
+    // let typingTimer;                //timer identifier
+    // let doneTypingInterval = 5000;  //time in ms (5 seconds)
+
+    // $(document).on('keyup', '.lastname', function() {
+    //     clearTimeout(typingTimer);
+    //     if ($('.lastname').val()) {
+    //         typingTimer = setTimeout(doneTyping, doneTypingInterval);
+    //     }
+    // });
+    // //user is "finished typing," do something
+    // function doneTyping () {
+    //     console.log('test');
+    // }
+    // //end checking
+
     //array for complaint_id every complainant inputed
-    const complaints_id = [];
-    //validate every name encoded
-    //complainant
-    $(document).on('keyup', '.lastname', function() {
-        const firstname = $(this).closest('div.row').find('.firstname').val();
-        const middlename = $(this).closest('div.row').find('.middlename').val();
-        const lastname = $(this).closest('div.row').find('.lastname').val();
-        console.log(firstname);
-        console.log(middlename);
-        console.log(lastname);
-        $.ajax({
-            url: "{{ url('search') }}",
-            type: 'GET',
-            data: {
-                'firstname': firstname,
-                'middlename': middlename,
-                'lastname': lastname,
-                'type': 'complainant'
-            },
-            success: function(data) {
-                console.log(data);
-                if (data != '') {
-                    //save to complaints_id array if exist in tbl
-                    if (complaints_id.indexOf(data[0].complaint_id)) {
-                        complaints_id.push(data[0].complaint_id);
-                    }
-                    console.log(complaints_id);
-                }
-            }
-        })
-    });
+    // const complaints_id = [];
+    // //validate every name encoded
+    // //complainant
+    // $(document).on('keyup', '.lastname', function() {
+    //     const firstname = $(this).closest('div.row').find('.firstname').val();
+    //     const middlename = $(this).closest('div.row').find('.middlename').val();
+    //     const lastname = $(this).closest('div.row').find('.lastname').val();
+    //     console.log(firstname);
+    //     console.log(middlename);
+    //     console.log(lastname);
+    //     $.ajax({
+    //         url: "{{ url('search') }}",
+    //         type: 'GET',
+    //         data: {
+    //             'firstname': firstname,
+    //             'middlename': middlename,
+    //             'lastname': lastname,
+    //             'type': 'complainant'
+    //         },
+    //         success: function(data) {
+    //             console.log(data);
+    //             if (data != '') {
+    //                 //save to complaints_id array if exist in tbl
+    //                 if (complaints_id.indexOf(data[0].complaint_id)) {
+    //                     complaints_id.push(data[0].complaint_id);
+    //                 }
+    //                 console.log(complaints_id);
+    //             }
+    //         }
+    //     })
+    // });
 
-    //validate every name encoded
-    //respondent
-    $(document).on('keyup', '.lastnameR', function() {
-        const firstname = $(this).closest('div.row').find('.firstnameR').val();
-        const middlename = $(this).closest('div.row').find('.middlenameR').val();
-        const lastname = $(this).closest('div.row').find('.lastnameR').val();
-        console.log(complaints_id);
-        console.log(firstname);
-        console.log(middlename);
-        console.log(lastname);
+    // //validate every name encoded
+    // //respondent
+    // $(document).on('keyup', '.lastnameR', function() {
+    //     const firstname = $(this).closest('div.row').find('.firstnameR').val();
+    //     const middlename = $(this).closest('div.row').find('.middlenameR').val();
+    //     const lastname = $(this).closest('div.row').find('.lastnameR').val();
+    //     console.log(complaints_id);
+    //     console.log(firstname);
+    //     console.log(middlename);
+    //     console.log(lastname);
 
-        $.ajax({
-            url: "{{ url('search') }}",
-            type: 'GET',
-            data: {
-                'firstname': firstname,
-                'middlename': middlename,
-                'lastname': lastname,
-                'type': 'respondent'
-            },
-            success: function(data) {
-                console.log(data);
-                if (data != '') {
-                    complaints_id.forEach((complaint_id, i) => {
-                        if (data[0].complaint_id === complaint_id) {
-                            Swal.fire({
-                                html: '<b style="font-size:17px;">This complainant was related to...</b>',
-                                icon: 'error',
-                                showCancelButton: true,
-                                allowOutsideClick: false,
-                                confirmButtonColor: '#3085d6',
-                                cancelButtonColor: 'rgb(211 71 71)',
-                                confirmButtonText: 'OK',
-                                cancelButtonText: 'CANCEL'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    console.log(data[0].complaint_id);
-                                    $('#assignedToId option[value=' + data[0]
-                                            .assignedTo + ']')
-                                        .attr('selected', 'selected');
-                                } else {
+    //     $.ajax({
+    //         url: "{{ url('search') }}",
+    //         type: 'GET',
+    //         data: {
+    //             'firstname': firstname,
+    //             'middlename': middlename,
+    //             'lastname': lastname,
+    //             'type': 'respondent'
+    //         },
+    //         success: function(data) {
+    //             console.log(data);
+    //             if (data != '') {
+    //                 complaints_id.forEach((complaint_id, i) => {
+    //                     if (data[0].complaint_id === complaint_id) {
+    //                         Swal.fire({
+    //                             html: '<b style="font-size:17px;">This complainant was related to...</b>',
+    //                             icon: 'error',
+    //                             showCancelButton: true,
+    //                             allowOutsideClick: false,
+    //                             confirmButtonColor: '#3085d6',
+    //                             cancelButtonColor: 'rgb(211 71 71)',
+    //                             confirmButtonText: 'OK',
+    //                             cancelButtonText: 'CANCEL'
+    //                         }).then((result) => {
+    //                             if (result.isConfirmed) {
+    //                                 console.log(data[0].complaint_id);
+    //                                 $('#assignedToId option[value=' + data[0]
+    //                                         .assignedTo + ']')
+    //                                     .attr('selected', 'selected');
+    //                             } else {
 
-                                }
-                            })
-                        }
-                    });
+    //                             }
+    //                         })
+    //                     }
+    //                 });
 
-                }
-            }
-        })
-    });
+    //             }
+    //         }
+    //     })
+    // });
 
     // $('.lastname').on('keyup', function() {
     //     console.log('');
