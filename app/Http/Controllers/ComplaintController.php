@@ -346,7 +346,15 @@ class ComplaintController extends Controller
      */
     public function edit($id)
     {
+        $notifications = $this->complaintRepository->getNotification(Auth::user()->id, $id);
+        if($notifications->isEmpty()){
+            abort(404, 'not found');
+        }
         $complaint = Complaint::find($id);
+
+        // if(!$complaint){
+        //     abort(404, 'not found');
+        // }
 
         // $prosecutors = User::select(DB::raw("CONCAT(firstname,' ',middlename,' ',lastname) AS name"), 'id')
         //     ->where("designation", "=", "Fiscal")

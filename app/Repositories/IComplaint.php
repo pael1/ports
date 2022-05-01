@@ -30,6 +30,8 @@ interface IComplaint
 
    public function get($id);
 
+   public function getNotification($userId, $complaint_id);
+
    public function store(array $data);
 
    public function update($id, array $data); 

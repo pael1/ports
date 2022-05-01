@@ -148,9 +148,9 @@
                                         <div class="row">
                                             <div class="col-11 col-sm-11 col-md-11 col-lg-11">
                                                 <!-- <div class="form-group">
-                                                                        <input type="text" name="addMoreLawViolated[0][lawviolated]"
-                                                                            class="form-control" placeholder="Law Violated">
-                                                                    </div> -->
+                                                                                                                                <input type="text" name="addMoreLawViolated[0][lawviolated]"
+                                                                                                                                    class="form-control" placeholder="Law Violated">
+                                                                                                                            </div> -->
                                                 <select id="select2multipleCreate" class="selectMultiple"
                                                     name="violations[]" multiple="multiple">
                                                     @foreach ($violations as $violation)
@@ -170,17 +170,17 @@
                         <div class="card mt-3">
                             <div class="card-boy mt-2">
                                 <!-- <div class="row pr-2 pl-2 pt-2">
-                                                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
-                                                    <div class="form-group">
-                                                        <div class="form-floating">
-                                                            <input type="text" name="NPSDNumber" class="form-control"
-                                                                placeholder="NPS DOCKET NO" value=""
-                                                                readonly="readonly">
-                                                            <label for="floatingNPSDNumber">NPS DOCKET NO</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div> -->
+                                                                                                        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2">
+                                                                                                            <div class="form-group">
+                                                                                                                <div class="form-floating">
+                                                                                                                    <input type="text" name="NPSDNumber" class="form-control"
+                                                                                                                        placeholder="NPS DOCKET NO" value=""
+                                                                                                                        readonly="readonly">
+                                                                                                                    <label for="floatingNPSDNumber">NPS DOCKET NO</label>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div> -->
                                 <input type="text" name="FType" value="{{ $FType }}" hidden>
                                 {{-- <input type="text" name="FType" value="{{ $FType }}" hidden> --}}
                                 <div class="row pr-2 pl-2">
@@ -399,15 +399,53 @@
             });
 
             const complaints_id = [];
+            const complaints_id_of_violated_laws = [];
+            let data_array = [];
+
+            // //checking if not typing for 3secs
+            // let typingTimer; //timer identifier
+            // let doneTypingInterval = 5000; //time in ms (5 seconds)
+
+            // $(document).on('keyup', '.lastname', function() {
+            //     console.log($('.lastname').val());
+            //     clearTimeout(typingTimer);
+            //     if ($('.lastname').val()) {
+            //         const firstname = $(this).closest('div.row').find('.firstname').val();
+            //         const middlename = $(this).closest('div.row').find('.middlename').val();
+            //         const lastname = $(this).closest('div.row').find('.lastname').val();
+            //         typingTimer = setTimeout(doneTyping(firstname, middlename, lastname), doneTypingInterval);
+            //     }
+            // });
+            // //user is "finished typing," do something
+            // function doneTyping(firstname, middlename, lastname) {
+            //     console.log('test');
+
+            //     console.log(firstname);
+            //     console.log(middlename);
+            //     console.log(lastname);
+
+
+
+            //     // our object
+            //     let my_object = {};
+
+            //     // load data into object
+
+            //     my_object.firstname = firstname;
+            //     my_object.middlename = middlename;
+            //     my_object.lastname = lastname;
+
+            //     // push the object to Array
+            //     data_array.push(my_object);
+            // }
+            // //end checking
+
             //validate every name encoded
             //complainant
             $(document).on('keyup', '.lastname', function() {
                 const firstname = $(this).closest('div.row').find('.firstname').val();
                 const middlename = $(this).closest('div.row').find('.middlename').val();
                 const lastname = $(this).closest('div.row').find('.lastname').val();
-                console.log(firstname);
-                console.log(middlename);
-                console.log(lastname);
                 $.ajax({
                     url: "{{ url('search') }}",
                     type: 'GET',
@@ -421,8 +459,12 @@
                         console.log(data);
                         if (data != '') {
                             //save to complaints_id array if exist in tbl
-                            if (complaints_id.indexOf(data[0].complaint_id)) {
-                                complaints_id.push(data[0].complaint_id);
+                            len = data.length;
+                            console.log(len);
+                            for (var i = 0; i < len; i++) {
+                                if (!complaints_id.includes(data[i].complaint_id)) {
+                                    complaints_id.push(data[i].complaint_id);
+                                }
                             }
                             console.log(complaints_id);
                         }
@@ -430,44 +472,150 @@
                 })
             });
 
-            $('#select2multipleCreate').on('change', function() {
-                console.log($(this).val());
-                $.ajax({
-                    url: "{{ url('searchViolatedLaws') }}",
-                    type: 'GET',
-                    data: {
-                        'details': $(this).val()
-                    },
-                    success: function(data) {
-                        console.log(data);
-                        // if (data != '') {
-                        //     complaints_id.forEach((complaint_id, i) => {
-                        //         if (data[0].complaint_id === complaint_id) {
-                        //             Swal.fire({
-                        //                 html: '<b style="font-size:17px;">This complainant was related to...</b>',
-                        //                 icon: 'error',
-                        //                 showCancelButton: true,
-                        //                 allowOutsideClick: false,
-                        //                 confirmButtonColor: '#3085d6',
-                        //                 cancelButtonColor: 'rgb(211 71 71)',
-                        //                 confirmButtonText: 'OK',
-                        //                 cancelButtonText: 'CANCEL'
-                        //             }).then((result) => {
-                        //                 if (result.isConfirmed) {
-                        //                     console.log(data[0].complaint_id);
-                        //                     $('#assignedToId option[value=' + data[0]
-                        //                             .assignedTo + ']')
-                        //                         .attr('selected', 'selected');
-                        //                 } else {
+            $('#assignedToId').on('change', function() {
+                var selected = $('#select2multipleCreate').select2("val");
+                for (var i = 0; i <= selected.length - 1; i++) {
+                    console.log(selected[i]);
+                    $.ajax({
+                        url: "{{ url('searchViolatedLaws') }}",
+                        type: 'GET',
+                        data: {
+                            'details': selected[i]
+                        },
+                        success: function(data) {
+                            console.log(data);
+                            console.log(data[0].assignedTo);
+                            len = data.length;
+                            console.log(len);
+                            for (var i = 0; i < len; i++) {
+                                if (complaints_id.includes(data[i].complaint_id)) {
+                                    Swal.fire({
+                                        // html: '<b style="font-size:17px;">This complainant was related to...</b>',
+                                        // icon: 'question',
+                                        title: 'Related Complaint.',
+                                        text: "Do you want to assign it to assigned Fiscal?", //go to link
+                                        icon: 'warning',
+                                        showCancelButton: true,
+                                        allowOutsideClick: false,
+                                        confirmButtonColor: '#3085d6',
+                                        cancelButtonColor: 'rgb(211 71 71)',
+                                        confirmButtonText: 'OK',
+                                        cancelButtonText: 'CANCEL'
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            console.log(data[0].complaint_id);
+                                            //assigned who handled this complaint
+                                            $('#assignedToId option[value=' + data[0]
+                                                    .assignedTo + ']')
+                                                .attr('selected', 'selected');
+                                            $('#yesCheckBoxRC').prop('checked', true);
+                                            $("#related-complaint").show();
+                                        } else {
 
-                        //                 }
-                        //             })
-                        //         }
-                        //     });
-                        // }
-                    }
-                })
+                                        }
+                                    })
+                                }
+                            }
+                        }
+                    })
+                }
             });
+
+            // $('#select2multipleCreate').on('change', function() {
+            //     console.log($('#select2multipleCreate').val(), ' selected');
+
+            //     const index = $('#select2multipleCreate').val().length;
+            //     // console.log($('#select2multipleCreate').val()[index - 1]);
+
+            //     // console.log($(this).select2('data')[index - 1].id);
+            //     len = $('#select2multipleCreate').val().length;
+            //     var selected = $('#select2multipleCreate').select2("data");
+            //     for (var i = 0; i <= selected.length - 1; i++) {
+            //         console.log(selected[i].id);
+            //         if (!complaints_id_of_violated_laws.includes(selected[i].id)) {
+            //             complaints_id_of_violated_laws.push(selected[i].id);
+            //         }
+            //     }
+            //     // console.log(len, ' len');
+            //     // for (var i = 0; i < len; i++) {
+            //     //     if (!complaints_id_of_violated_laws.includes($('#select2multipleCreate').val()[i])) {
+            //     //         complaints_id_of_violated_laws.push($('#select2multipleCreate').val()[i]);
+            //     //     } else {
+            //     //         const index = complaints_id_of_violated_laws.indexOf($('#select2multipleCreate').val()[i]);
+            //     //         complaints_id_of_violated_laws.splice(index, 1);
+            //     //     }
+            //     // }
+            //     console.log(complaints_id_of_violated_laws);
+            //     // console.log(data_array);
+            //     // $.ajax({
+            //     //     url: "{{ url('searchViolatedLaws') }}",
+            //     //     type: 'GET',
+            //     //     data: {
+            //     //         'details': $(this).val()
+            //     //     },
+            //     //     success: function(data) {
+            //     //         // console.log(data[0].complaint_id);
+            //     //         // len = data.length;
+            //     //         // // console.log(len);
+            //     //         // for (var i = 0; i < len; i++) {
+            //     //         //     if (!complaints_id.includes(data[i].complaint_id)) {
+            //     //         //         complaints_id.push(data[i].complaint_id);
+            //     //         //     }
+            //     //         // }
+            //     //         if (complaints_id.includes(data[0].complaint_id)) {
+            //     //             Swal.fire({
+            //     //                 // html: '<b style="font-size:17px;">This complainant was related to...</b>',
+            //     //                 // icon: 'question',
+            //     //                 title: 'Related Complaint.',
+            //     //                 text: "Do you want to review the related complaint?", //go to link
+            //     //                 icon: 'warning',
+            //     //                 showCancelButton: true,
+            //     //                 allowOutsideClick: false,
+            //     //                 confirmButtonColor: '#3085d6',
+            //     //                 cancelButtonColor: 'rgb(211 71 71)',
+            //     //                 confirmButtonText: 'OK',
+            //     //                 cancelButtonText: 'CANCEL'
+            //     //             }).then((result) => {
+            //     //                 if (result.isConfirmed) {
+            //     //                     console.log(data[0].complaint_id);
+            //     //                     //assigned who handled this complaint
+            //     //                     $('#assignedToId option[value=' + data[0]
+            //     //                             .assignedTo + ']')
+            //     //                         .attr('selected', 'selected');
+            //     //                 } else {
+
+            //     //                 }
+            //     //             })
+            //     //         }
+            //     //         // console.log(complaints_id);
+            //     //         // if (data != '') {
+            //     //         //     complaints_id.forEach((complaint_id, i) => {
+            //     //         //         if (data[0].complaint_id === complaint_id) {
+            //     //         //             Swal.fire({
+            //     //         //                 html: '<b style="font-size:17px;">This complainant was related to...</b>',
+            //     //         //                 icon: 'error',
+            //     //         //                 showCancelButton: true,
+            //     //         //                 allowOutsideClick: false,
+            //     //         //                 confirmButtonColor: '#3085d6',
+            //     //         //                 cancelButtonColor: 'rgb(211 71 71)',
+            //     //         //                 confirmButtonText: 'OK',
+            //     //         //                 cancelButtonText: 'CANCEL'
+            //     //         //             }).then((result) => {
+            //     //         //                 if (result.isConfirmed) {
+            //     //         //                     console.log(data[0].complaint_id);
+            //     //         //                     $('#assignedToId option[value=' + data[0]
+            //     //         //                             .assignedTo + ']')
+            //     //         //                         .attr('selected', 'selected');
+            //     //         //                 } else {
+
+            //     //         //                 }
+            //     //         //             })
+            //     //         //         }
+            //     //         //     });
+            //     //         // }
+            //     //     }
+            //     // })
+            // });
         </script>
     @endpush
 @endsection

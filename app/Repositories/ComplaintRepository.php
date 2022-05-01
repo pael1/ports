@@ -254,6 +254,13 @@ class ComplaintRepository implements IComplaint
         return $parties;
     }
 
+    //get notifications
+    public function getNotification($userId, $complaint_id)
+    {
+        $notifications = DB::table('notifications')->where(['assignedto' => $userId, 'complaint_id' => $complaint_id])->get();
+        return $notifications;
+    }
+
     //get violated laws
     public function getViolatedLaws($id)
     {
