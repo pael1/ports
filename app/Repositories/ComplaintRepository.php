@@ -20,31 +20,57 @@ use Illuminate\Support\Facades\Auth;
 class ComplaintRepository implements IComplaint
 {
     //To view all the data
-    public function all()
+    public function all($filter)
     {
         //reviewer = maam ivy monitoring and aging
         if (Auth::user()->designation == "Receiving") {
-            $complaints = DB::table('complaints')
-                ->join('users', 'complaints.assignedTo', '=', 'users.id')
-                ->join('investigated_cases', 'complaints.id', '=', 'investigated_cases.complaint_id')
-                ->select(
-                    'complaints.*',
-                    'investigated_cases.name',
-                    DB::raw("CONCAT(users.firstname, ' ', users.middlename, ' ', users.lastname) as fullname, 
+            if ($filter != null) {
+                $complaints = DB::table('complaints')
+                    ->join('users', 'complaints.assignedTo', '=', 'users.id')
+                    ->join('investigated_cases', 'complaints.id', '=', 'investigated_cases.complaint_id')
+                    ->select(
+                        'complaints.*',
+                        'investigated_cases.name',
+                        DB::raw("CONCAT(users.firstname, ' ', users.middlename, ' ', users.lastname) as fullname, 
                 DATE_FORMAT(complaints.created_at, '%d-%M-%y') as dateFiled")
-                )->get();
+                    )->where('complaints.office', '=', $filter)->orderBy('complaints.id', 'desc')->get();
+            } else {
+                $complaints = DB::table('complaints')
+                    ->join('users', 'complaints.assignedTo', '=', 'users.id')
+                    ->join('investigated_cases', 'complaints.id', '=', 'investigated_cases.complaint_id')
+                    ->select(
+                        'complaints.*',
+                        'investigated_cases.name',
+                        DB::raw("CONCAT(users.firstname, ' ', users.middlename, ' ', users.lastname) as fullname, 
+                DATE_FORMAT(complaints.created_at, '%d-%M-%y') as dateFiled")
+                    )->orderBy('complaints.id', 'desc')->get();
+            }
         } else {
-            $complaints = DB::table('complaints')
-                ->join('users', 'complaints.assignedTo', '=', 'users.id')
-                ->join('investigated_cases', 'complaints.id', '=', 'investigated_cases.complaint_id')
-                ->join('notifications', 'complaints.id', '=', 'notifications.complaint_id')
-                ->select(
-                    'complaints.*',
-                    'investigated_cases.name',
-                    DB::raw("CONCAT(users.firstname, ' ', users.middlename, ' ', users.lastname) as fullname, 
+            if ($filter != null) {
+                $complaints = DB::table('complaints')
+                    ->join('users', 'complaints.assignedTo', '=', 'users.id')
+                    ->join('investigated_cases', 'complaints.id', '=', 'investigated_cases.complaint_id')
+                    ->join('notifications', 'complaints.id', '=', 'notifications.complaint_id')
+                    ->select(
+                        'complaints.*',
+                        'investigated_cases.name',
+                        DB::raw("CONCAT(users.firstname, ' ', users.middlename, ' ', users.lastname) as fullname, 
                 DATE_FORMAT(complaints.created_at, '%d-%M-%y') as dateFiled")
-                    // )->where('complaints.assignedTo', '=', Auth::user()->id)->get();
-                )->where('notifications.assignedto', '=', Auth::user()->id)->orderBy('complaints.id', 'desc')->get();
+                        // )->where('complaints.assignedTo', '=', Auth::user()->id)->get();
+                    )->where(['office' => $filter, 'notifications.assignedto' => Auth::user()->id])->orderBy('complaints.id', 'desc')->get();
+            } else {
+                $complaints = DB::table('complaints')
+                    ->join('users', 'complaints.assignedTo', '=', 'users.id')
+                    ->join('investigated_cases', 'complaints.id', '=', 'investigated_cases.complaint_id')
+                    ->join('notifications', 'complaints.id', '=', 'notifications.complaint_id')
+                    ->select(
+                        'complaints.*',
+                        'investigated_cases.name',
+                        DB::raw("CONCAT(users.firstname, ' ', users.middlename, ' ', users.lastname) as fullname, 
+                DATE_FORMAT(complaints.created_at, '%d-%M-%y') as dateFiled")
+                        // )->where('complaints.assignedTo', '=', Auth::user()->id)->get();
+                    )->where('notifications.assignedto', '=', Auth::user()->id)->orderBy('complaints.id', 'desc')->get();
+            }
         }
 
         return $complaints;

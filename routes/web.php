@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\File;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -44,6 +45,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('complaint_id', [ComplaintController::class, 'getComplaint_id']);
     Route::put('read/{id}', [NotificationController::class, 'updateMarkMsg']);
     Route::post('caseSaved', [InvestigatedCaseController::class, 'save']);
+    Route::post('comment', [CommentController::class, 'save']);
     Route::put('readAdmin/{id}', [InvestigatedCaseController::class, 'updateNotif']);
     Route::get('openNotification', [NotificationController::class, 'openNotif']);
 

@@ -22,7 +22,7 @@
                 <div class="col-lg-12 margin-tb">
                     <div class="float-end p-2 mr-5">
                         @can('product-create')
-                        <a href="{{ route('exportpdf') }}" class="btn btn-secondary btn-sm">export pdf</a>
+                            <a href="{{ route('exportpdf') }}" class="btn btn-secondary btn-sm">export pdf</a>
                             <a class="btn btn-success btn-sm" href="{{ route('complaints.create') }}">Create New Complaint</a>
                         @endcan
                     </div>
@@ -36,7 +36,15 @@
                     </div>
                 @endif --}}
 
-
+                <select class="form-select col-md-2 float-right mb-3" name="assignedto" id="cases"
+                    aria-label="Floating label select example">
+                    <option value="" disabled selected>Select Office</option>
+                    @foreach ($offices as $office)
+                    <option value="{{ $office->id }}">
+                        {{ $office->name }}
+                    </option>
+                @endforeach
+                </select>
                 <table id="generalTable" class="display nowrap" style="width:100%">
                     <thead>
                         <tr>
@@ -58,35 +66,48 @@
     @push('scripts')
         <script>
             $(function() {
-                var complaintTable = $("#generalTable").DataTable({
-                    serverSide: true,
-                    processing: true,
-                    responsive: true,
-                    ajax: "{{ route('complaints.index') }}",
-                    columns: [{
-                            data: 'receivedBy',
-                            name: 'receivedBy'
+                DataTable();
+                function DataTable(filter = "") {
+                    var complaintTable = $("#generalTable").DataTable({
+                        serverSide: true,
+                        processing: true,
+                        responsive: true,
+                        pageLength : 6,
+                        ajax: {
+                            url: "{{ route('complaints.index') }}",
+                            data: {
+                                filter: filter
+                            }
                         },
-                        {
-                            data: 'fullname',
-                            name: 'fullname'
-                        },
-                        {
-                            data: 'dateFiled',
-                            name: 'dateFiled'
-                        },
-                        {
-                            data: 'name',
-                            name: 'name'
-                        },
-                        {
-                            data: 'action',
-                            name: 'action'
-                        },
-                    ]
+                        columns: [{
+                                data: 'receivedBy',
+                                name: 'receivedBy'
+                            },
+                            {
+                                data: 'fullname',
+                                name: 'fullname'
+                            },
+                            {
+                                data: 'dateFiled',
+                                name: 'dateFiled'
+                            },
+                            {
+                                data: 'name',
+                                name: 'name'
+                            },
+                            {
+                                data: 'action',
+                                name: 'action'
+                            },
+                        ]
+                    });
+                }
+                
+                $('#cases').on('change', function() {
+                    $("#generalTable").DataTable().destroy();
+                    DataTable($('#cases').val());
                 });
 
-                //show complaint/redirect to edit page of the complaint
                 var id = "";
                 $("body").on('click', '.editComplaint', function() {
                     var id = $(this).data("id");

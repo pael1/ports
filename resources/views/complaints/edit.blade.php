@@ -33,8 +33,13 @@
                     <div class="row">
                         <div class="col-6">
                             @if (Auth::user()->designation == 'Fiscal')
-                                <button type="button" id="forwardToMonitoring" class="btn btn-secondary btn-sm"
-                                    data-bs-toggle="tooltip" title="Forward now">Forward to Monitoring</button>
+                                @if ($case[0]->comment == '')
+                                    <button type="button" id="forwardToMonitoring" class="btn btn-secondary btn-sm"
+                                        data-bs-toggle="tooltip" title="Forward now">Forward to Monitoring</button>
+                                @else
+                                    <button type="button" id="forwardToAssignedReviewer" class="btn btn-secondary btn-sm"
+                                        data-bs-toggle="tooltip" title="Forward now">Forward to Assigned Reviewer</button>
+                                @endif
                             @endif
                             @if (Auth::user()->designation == 'Monitoring')
                                 <button type="button" id="forwardToEncoder" class="btn btn-secondary btn-sm"
@@ -45,9 +50,9 @@
                                     data-bs-toggle="tooltip" title="Forward now">Forward to Reviewer</button>
                             @endif
                             @if (Auth::user()->designation == 'MTCC')
-                            <button type="button" id="forwardToAssignedFiscalOrChief" class="btn btn-secondary btn-sm"
-                                data-bs-toggle="tooltip" title="Forward now">Forward to assigned Fiscal/Chief</button>
-                        @endif
+                                <button type="button" id="forwardToAssignedFiscalOrChief" class="btn btn-secondary btn-sm"
+                                    data-bs-toggle="tooltip" title="Forward now">Forward to assigned Fiscal/Chief</button>
+                            @endif
                         </div>
                         <div class="col-6 text-right">
                             <button type="button" id="enabledUpdateBtn" class="btn btn-info btn-sm">Enable Update</button>
@@ -61,14 +66,17 @@
                     </div> --}}
                     <div class="row mt-2">
                         <div class="col-md-2">
-                            <div class="badge p-2 rounded-pill {{($case[0]->name == "Pending") ? 'bg-warning' : 'bg-primary'}} col-md-12">
-                            {{ $case[0]->name }}
+                            <div
+                                class="badge p-2 rounded-pill {{ $case[0]->name == 'Pending' ? 'bg-warning' : 'bg-primary' }} col-md-12">
+                                {{ $case[0]->name }}
                             </div>
                         </div>
                         <div class="col-md-10">
-                            {{-- @if (Auth::user()->designation == 'MTCC')
-                            <textarea class="form-control" name="comment" id="exampleFormControlTextarea1" placeholder="Comment here.." rows="1"></textarea>
-                            @endif --}}
+                            @if ($case[0]->comment != '')
+                                <label for="exampleFormControlTextarea1" class="text-danger">Comment</label>
+                                <textarea class="form-control border border-danger" id="exampleFormControlTextarea1" rows="1"
+                                    disabled>{{ $case[0]->comment }}</textarea>
+                            @endif
                         </div>
                     </div>
                     <div class="accordion mt-1" id="accordionPanelsStayOpenExample">
@@ -119,8 +127,8 @@
                                         @if ($complainants->count())
                                             @foreach ($complainants as $value)
                                                 <div class="row mt-2" id="{{ $value->id }}">
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2" data-bs-toggle="tooltip"
-                                                    title="FIRST NAME">
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2"
+                                                        data-bs-toggle="tooltip" title="FIRST NAME">
                                                         <input type="text"
                                                             name="addMoreComplainant[{{ $value->id }}][complaint_id]"
                                                             value="{{ $value->complaint_id }}" hidden>
@@ -135,15 +143,15 @@
                                                             class="form-control" placeholder="First Name"
                                                             value="{{ $value->firstName }}">
                                                     </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2" data-bs-toggle="tooltip"
-                                                    title="MIDDLE NAME">
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2"
+                                                        data-bs-toggle="tooltip" title="MIDDLE NAME">
                                                         <input type="text"
                                                             name="addMoreComplainant[{{ $value->id }}][middlename]"
                                                             class="form-control" placeholder="Middle Name"
                                                             value="{{ $value->middleName }}">
                                                     </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2" data-bs-toggle="tooltip"
-                                                    title="LAST NAME">
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2"
+                                                        data-bs-toggle="tooltip" title="LAST NAME">
                                                         <input type="text"
                                                             name="addMoreComplainant[{{ $value->id }}][lastname]"
                                                             class="form-control" placeholder="Last Name"
@@ -163,14 +171,14 @@
                                                             </option>
                                                         </select>
                                                     </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1" data-bs-toggle="tooltip"
-                                                    title="AGE"> <input type="text"
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1"
+                                                        data-bs-toggle="tooltip" title="AGE"> <input type="text"
                                                             name="addMoreComplainant[{{ $value->id }}][age]"
-                                                            class="form-control ageGrid forMobile" placeholder="Age" style="width:72px;"
-                                                            value="{{ $value->age }}">
+                                                            class="form-control ageGrid forMobile" placeholder="Age"
+                                                            style="width:72px;" value="{{ $value->age }}">
                                                     </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" data-bs-toggle="tooltip"
-                                                    title="ADDRESS"> <input type="text"
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3"
+                                                        data-bs-toggle="tooltip" title="ADDRESS"> <input type="text"
                                                             name="addMoreComplainant[{{ $value->id }}][address]"
                                                             class="form-control" placeholder="Address"
                                                             value="{{ $value->address }}">
@@ -239,8 +247,8 @@
                                         @if ($respondents->count())
                                             @foreach ($respondents as $value)
                                                 <div class="row mt-2" id="{{ $value->id }}">
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2" data-bs-toggle="tooltip"
-                                                    title="FIRST NAME">
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2"
+                                                        data-bs-toggle="tooltip" title="FIRST NAME">
                                                         <input type="text"
                                                             name="addMoreRespondent[{{ $value->id }}][complaint_id]"
                                                             value="{{ $value->complaint_id }}" hidden>
@@ -255,15 +263,15 @@
                                                             class="form-control" placeholder="First Name"
                                                             value="{{ $value->firstName }}">
                                                     </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2" data-bs-toggle="tooltip"
-                                                    title="MIDDLE NAME">
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2"
+                                                        data-bs-toggle="tooltip" title="MIDDLE NAME">
                                                         <input type="text"
                                                             name="addMoreRespondent[{{ $value->id }}][middlename]"
                                                             class="form-control" placeholder="Middle Name"
                                                             value="{{ $value->middleName }}">
                                                     </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2" data-bs-toggle="tooltip"
-                                                    title="LAST NAME">
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2"
+                                                        data-bs-toggle="tooltip" title="LAST NAME">
                                                         <input type="text"
                                                             name="addMoreRespondent[{{ $value->id }}][lastname]"
                                                             class="form-control" placeholder="Last Name"
@@ -283,14 +291,14 @@
                                                             </option>
                                                         </select>
                                                     </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1" data-bs-toggle="tooltip"
-                                                    title="AGE"> <input type="text"
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1"
+                                                        data-bs-toggle="tooltip" title="AGE"> <input type="text"
                                                             name="addMoreRespondent[{{ $value->id }}][age]"
-                                                            class="form-control ageGrid forMobile" placeholder="Age" style="width:72px;"
-                                                            value="{{ $value->age }}">
+                                                            class="form-control ageGrid forMobile" placeholder="Age"
+                                                            style="width:72px;" value="{{ $value->age }}">
                                                     </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" data-bs-toggle="tooltip"
-                                                    title="ADDRESS"> <input type="text"
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3"
+                                                        data-bs-toggle="tooltip" title="ADDRESS"> <input type="text"
                                                             name="addMoreRespondent[{{ $value->id }}][address]"
                                                             class="form-control" placeholder="Address"
                                                             value="{{ $value->address }}">
@@ -331,8 +339,8 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1 d-flex justify-content-center">
                                                 <!-- <button type="button" name="addRespondent" id="addLawViolated"
-                                                                                                                                                                                                data-bs-toggle="tooltip" title="Add Violation"
-                                                                                                                                                                                                class="btn btn-success btn-sm add float-right">+</button> -->
+                                                                                                                                                                                                            data-bs-toggle="tooltip" title="Add Violation"
+                                                                                                                                                                                                            class="btn btn-success btn-sm add float-right">+</button> -->
                                             </div>
                                         </div>
                                         @if ($lawviolated->count())
@@ -561,12 +569,12 @@
                                                     class="btn btn-success btn-sm add float-right">+</button>
                                             </div>
                                         </div>
-                                        
+
                                         @if ($witnesses->count())
                                             @foreach ($witnesses as $value)
                                                 <div class="row mt-2" id="{{ $value->id }}">
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2" data-bs-toggle="tooltip"
-                                                    title="FIRST NAME">
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2"
+                                                        data-bs-toggle="tooltip" title="FIRST NAME">
                                                         <input type="text" name="addMoreWitness[{{ $value->id }}][id]"
                                                             value="{{ $value->id }}" hidden>
                                                         <input type="text"
@@ -580,15 +588,15 @@
                                                             class="form-control" placeholder="First Name"
                                                             value="{{ $value->firstName }}">
                                                     </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2" data-bs-toggle="tooltip"
-                                                    title="MIDDLE NAME">
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2"
+                                                        data-bs-toggle="tooltip" title="MIDDLE NAME">
                                                         <input type="text"
                                                             name="addMoreWitness[{{ $value->id }}][middlename]"
                                                             class="form-control" placeholder="Middle Name"
                                                             value="{{ $value->middleName }}">
                                                     </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2" data-bs-toggle="tooltip"
-                                                    title="LAST NAME">
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2"
+                                                        data-bs-toggle="tooltip" title="LAST NAME">
                                                         <input type="text"
                                                             name="addMoreWitness[{{ $value->id }}][lastname]"
                                                             class="form-control" placeholder="Last Name"
@@ -608,14 +616,14 @@
                                                             </option>
                                                         </select>
                                                     </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1" data-bs-toggle="tooltip"
-                                                    title="AGE"> <input type="text"
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1"
+                                                        data-bs-toggle="tooltip" title="AGE"> <input type="text"
                                                             name="addMoreWitness[{{ $value->id }}][age]"
-                                                            class="form-control ageGrid forMobile" placeholder="Age" style="width:72px;"
-                                                            value="{{ $value->age }}">
+                                                            class="form-control ageGrid forMobile" placeholder="Age"
+                                                            style="width:72px;" value="{{ $value->age }}">
                                                     </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" data-bs-toggle="tooltip"
-                                                    title="ADDRESS"> <input type="text"
+                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3"
+                                                        data-bs-toggle="tooltip" title="ADDRESS"> <input type="text"
                                                             name="addMoreWitness[{{ $value->id }}][address]"
                                                             class="form-control" placeholder="Address"
                                                             value="{{ $value->address }}">
@@ -708,6 +716,9 @@
 
     @push('scripts')
         <script>
+            $(function() {
+                $("textarea").height($("textarea")[0].scrollHeight);
+            });
             //forward to monitoring
             $("#forwardToMonitoring").click(function() {
                 Swal.fire({
@@ -730,15 +741,23 @@
                                 '<select class="swal2-select" id="personnel"' +
                                 'aria-label="Floating label select example">' +
                                 '<option value="" disabled selected>Select monitoring personnel</option>' +
+                                // '@foreach ($monitoringReviewer as $key => $value)'+
+                                //     '<option value="{{ $key }}"'+
+                                //                                                                                                             '
+                                //         '{{ $key }}>'+
+                                //         '{{ $value }}'+
+                                //         '</option>'+
+                                //     '
+                                // @endforeach ' +
                                 '@foreach ($monitoringReviewer as $key => $value)'+
                                         '<option value="{{ $key }}"'+
                                             '{{ $key }}>'+
                                             '{{ $value }}'+
                                         '</option>'+
                                 '@endforeach'+
-                                // '<option value="Subpoena">Subpoena</option>' +
-                                // '<option value="Summary">Summary</option>' +
-                                '</select>',
+                            // '<option value="Subpoena">Subpoena</option>' +
+                            // '<option value="Summary">Summary</option>' +
+                            '</select>',
                             showCancelButton: true,
                             allowOutsideClick: false,
                             confirmButtonColor: '#3085d6',
@@ -749,7 +768,7 @@
                                 const crime = Swal.getPopup().querySelector('#crime').value
                                 const personnel = Swal.getPopup().querySelector('#personnel').value
                                 if (!crime || !personnel) {
-                                Swal.showValidationMessage(`Please select case or personnel`)
+                                    Swal.showValidationMessage(`Please select case or personnel`)
                                 }
                             }
                         }).then((result) => {
@@ -944,7 +963,7 @@
             //         }
             //     })
             // });
-            
+
             //forward to encoder
             $("#forwardToEncoder").click(function() {
                 Swal.fire({
@@ -1079,14 +1098,14 @@
             //forward to assigned fiscal
             $("#forwardToAssignedFiscalOrChief").click(function() {
                 Swal.fire({
-                title: 'Forward to?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#5e5046',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Assigned Fiscal',
-                cancelButtonText: 'Chief'
+                    title: 'Forward to?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#5e5046',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Assigned Fiscal',
+                    cancelButtonText: 'Chief'
                 }).then((result) => {
                     //forward to assigned fiscal
                     if (result.isConfirmed) {
@@ -1100,43 +1119,48 @@
                             showCancelButton: true,
                             inputValidator: (value) => {
                                 return new Promise((resolve) => {
-                                if (value != "") {
-                                    console.log(value);
-                                    let from = {!! json_encode(Auth::user()->username) !!};
-                                    $.ajax({
-                                        url: "{{ url('caseSaved') }}",
-                                        method: 'POST',
-                                        data: {
-                                            name: {!! json_encode($case[0]->name) !!},
-                                            days: {!! json_encode($case[0]->days) !!},
-                                            complaint_id: {!! json_encode($case[0]->complaint_id) !!},
-                                            assignedto: {!! json_encode($case[0]->receivedby) !!},
-                                            notifno: {!! json_encode($complaint->NPSDNumber) !!},
-                                            from: from,
-                                            comment: value,
-                                        },
-                                        success: function(data) {
-                                            Swal.fire({
-                                                icon: 'success',
-                                                title: 'Successfully forwarded',
-                                                showConfirmButton: false,
-                                                timer: 2000
-                                            })
-                                        },
-                                        error: function(error) {
-                                        console.log(error)
-                                        }
-                                    });
-                                    resolve()
-                                } else {
-                                    resolve('Please enter comment')
-                                }
+                                    if (value != "") {
+                                        console.log(value);
+                                        let from = {!! json_encode(Auth::user()->username) !!};
+                                        $.ajax({
+                                            // url: "{{ url('caseSaved') }}",
+                                            url: "{{ url('comment') }}",
+                                            method: 'POST',
+                                            data: {
+                                                // name: {!! json_encode($case[0]->name) !!},
+                                                // days: {!! json_encode($case[0]->days) !!},
+                                                complaint_id: {!! json_encode($case[0]->complaint_id) !!},
+                                                assignedto: {!! json_encode($case[0]->receivedby) !!},
+                                                notifno: {!! json_encode($complaint->NPSDNumber) !!},
+                                                // from: from,
+                                                // comment: value,
+                                                complaint_id: {!! json_encode($case[0]->complaint_id) !!},
+                                                to: {!! json_encode($case[0]->receivedby) !!},
+                                                from: from,
+                                                comment: value,
+                                            },
+                                            success: function(data) {
+                                                Swal.fire({
+                                                    icon: 'success',
+                                                    title: 'Successfully forwarded',
+                                                    showConfirmButton: false,
+                                                    timer: 2000
+                                                })
+                                            },
+                                            error: function(error) {
+                                                console.log(error)
+                                            }
+                                        });
+                                        resolve()
+                                    } else {
+                                        resolve('Please enter comment')
+                                    }
                                 })
                             }
                         })
                     }
                     //forward to chief
-                    else{
+                    else {
                         Swal.fire({
                             title: 'Select Chief',
                             input: 'select',
@@ -1145,39 +1169,109 @@
                             showCancelButton: true,
                             inputValidator: (value) => {
                                 return new Promise((resolve) => {
-                                if (value != "") {
-                                    let complain_id = {!! json_encode($complaint->id) !!}
-                                    let assignedto = value;
-                                    let from = {!! json_encode(Auth::user()->username) !!};
-                                    $.ajax({
-                                    url: "{{ url('caseSaved') }}",
-                                    method: 'POST',
-                                    data: {
-                                        complaint_id: complain_id,
-                                        assignedto: assignedto,
-                                        notifno: {!! json_encode($complaint->NPSDNumber) !!},
-                                        from: from,
-                                        notifyOnly: "true"
-                                    },
-                                    success: function(data) {
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'Successfully forwarded',
-                                        showConfirmButton: false,
-                                        timer: 2000
-                                    })
-                                        },
-                                        error: function(error) {
-                                        console.log(error)
-                                        }
-                                    });
-                                    resolve()
-                                } else {
-                                    resolve('Please select Chief')
-                                }
+                                    if (value != "") {
+                                        let complain_id = {!! json_encode($complaint->id) !!}
+                                        let assignedto = value;
+                                        let from = {!! json_encode(Auth::user()->username) !!};
+                                        $.ajax({
+                                            url: "{{ url('caseSaved') }}",
+                                            method: 'POST',
+                                            data: {
+                                                complaint_id: complain_id,
+                                                assignedto: assignedto,
+                                                notifno: {!! json_encode($complaint->NPSDNumber) !!},
+                                                from: from,
+                                                notifyOnly: "true"
+                                            },
+                                            success: function(data) {
+                                                Swal.fire({
+                                                    icon: 'success',
+                                                    title: 'Successfully forwarded',
+                                                    showConfirmButton: false,
+                                                    timer: 2000
+                                                })
+                                            },
+                                            error: function(error) {
+                                                console.log(error)
+                                            }
+                                        });
+                                        resolve()
+                                    } else {
+                                        resolve('Please select Chief')
+                                    }
                                 })
                             }
                         })
+                    }
+                })
+            });
+
+            $("#forwardToAssignedReviewer").click(function() {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, proceed'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+
+                        // Swal.fire({
+                        //     title: 'Select Reviewer',
+                        //     input: 'select',
+                        //     inputOptions: {
+                        //         'MTCC Reviewer': {!! $reviewerMTCC !!},
+                        //         'RTC Reviewer': {!! $reviewerRTC !!},
+                        //     },
+                        //     inputPlaceholder: 'Select a reviewer',
+                        //     showCancelButton: true,
+                        //     inputValidator: (value) => {
+                        //         return new Promise((resolve) => {
+                        //             if (value != '') {
+                        //                 console.log(value);
+                        //                 // let dt = new Date();
+                        //                 // dt.setDate(dt.getDate() + 10);
+                        //                 let complain_id = {!! json_encode($complaint->id) !!}
+                        //                 // let name = $('#crime').val();
+                        //                 // let days = dt.toLocaleDateString('en-ZA');
+                        //                 let assignedto = value;
+                        //                 let from = {!! json_encode(Auth::user()->username) !!};
+                        //                 $.ajax({
+                        //                     url: "{{ url('caseSaved') }}",
+                        //                     method: 'POST',
+                        //                     data: {
+                        //                         // name: name,
+                        //                         // days: days,
+                        //                         // receivedby: recievedby,
+                        //                         complaint_id: complain_id,
+                        //                         assignedto: assignedto,
+                        //                         notifno: {!! json_encode($complaint->NPSDNumber) !!},
+                        //                         from: from,
+                        //                         notifyOnly: "true"
+                        //                         // is_read: is_read
+                        //                     },
+                        //                     success: function(data) {
+                        //                         Swal.fire({
+                        //                             icon: 'success',
+                        //                             title: 'Successfully forwarded',
+                        //                             showConfirmButton: false,
+                        //                             timer: 2000
+                        //                         })
+                        //                     },
+                        //                     error: function(error) {
+                        //                         console.log(error)
+                        //                     }
+                        //                 });
+
+                        //                 resolve()
+                        //             } else {
+                        //                 resolve('Please select reviewer')
+                        //             }
+                        //         })
+                        //     }
+                        // });
                     }
                 })
             });

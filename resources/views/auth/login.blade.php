@@ -69,12 +69,12 @@
 
     <div class="container-fluid h-custom">
         <div class="row">
-            <div class="col-lg-4 float-left">
-                <img src="{{ asset('dist/img/logo.png') }}" class="img-fluid" alt="Sample image" width="170px"
-                    height="170px">
+            <div class="col-lg-2 float-left">
+                <img src="{{ asset('dist/img/logo.png') }}" class="img-fluid" alt="Sample image" width="250px"
+                    height="150px">
             </div>
-            <div class="col-lg-8">
-                PORTS
+            <div class="col-lg-10 mt-5">
+                <img src="{{ asset('dist/img/test.png') }}" class="img-fluid" alt="Sample image">
             </div>
         </div>
         <div class="row d-flex justify-content-center align-items-center h-50">
@@ -92,10 +92,10 @@
                             aria-label="Slide 3"></button>
                     </div> --}}
                     <div class="carousel-inner">
-                        <div class="carousel-item active">
+                        {{-- <div class="carousel-item active">
                             <img src="{{ asset('dist/img/logo.png') }}" class="d-block w-100 h-100" alt="...">
-                        </div>
-                        <div class="carousel-item">
+                        </div> --}}
+                        <div class="carousel-item active">
                             <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp" class="d-block w-100 h-100" alt="...">
                         </div>
                         <div class="carousel-item">

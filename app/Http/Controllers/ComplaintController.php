@@ -82,7 +82,8 @@ class ComplaintController extends Controller
         //         DATE_FORMAT(complaints.created_at, '%d-%M-%y') as dateFiled")
         //         )->where('investigated_cases.assignedTo', '=', Auth::user()->id)->get();
         // }
-        $complaints = $this->complaintRepository->all();
+        $offices = $this->complaintRepository->getOffices();
+        $complaints = $this->complaintRepository->all($request->filter);
         if ($request->ajax()) {
             // $allData = DataTables::of($complaints)
             //     ->addIndexColumn()
@@ -102,7 +103,7 @@ class ComplaintController extends Controller
             $allData = $this->complaintRepository->fetchDataDataTables($complaints->all());
             return $allData;
         }
-        return view('complaints.index', compact('complaints'));
+        return view('complaints.index', compact('complaints', 'offices'));
     }
 
     /**

@@ -57,7 +57,7 @@
     background-color: black !important;
 }
 
-.ageGrid{
+.ageGrid {
     margin-left: 1rem;
 }
 
@@ -72,4 +72,19 @@
         width: 100% !important;
         margin-left: 0 !important;
     }
+}
+
+/* login style */
+.bg {
+    /* The image used */
+    background: linear-gradient(rgba(2, 2, 2, 0.818),
+            rgba(0, 0, 0, 0.818)), url("../dist/img/bg.jpg");
+
+    /* Full height */
+    height: 100%;
+
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }

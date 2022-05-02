@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 interface IComplaint
 {
-   public function all();
+   public function all($filter);
 
    public function fetchDataDataTables(array $complaints);
 
