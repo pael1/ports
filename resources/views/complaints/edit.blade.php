@@ -33,12 +33,12 @@
                     <div class="row">
                         <div class="col-6">
                             @if (Auth::user()->designation == 'Fiscal')
-                                @if ($case[0]->comment == '')
-                                    <button type="button" id="forwardToMonitoring" class="btn btn-secondary btn-sm"
-                                        data-bs-toggle="tooltip" title="Forward now">Forward to Monitoring</button>
-                                @else
+                                @if ($comments->count())
                                     <button type="button" id="forwardToAssignedReviewer" class="btn btn-secondary btn-sm"
                                         data-bs-toggle="tooltip" title="Forward now">Forward to Assigned Reviewer</button>
+                                @else
+                                    <button type="button" id="forwardToMonitoring" class="btn btn-secondary btn-sm"
+                                        data-bs-toggle="tooltip" title="Forward now">Forward to Monitoring</button>
                                 @endif
                             @endif
                             @if (Auth::user()->designation == 'Monitoring')
@@ -71,11 +71,12 @@
                                 {{ $case[0]->name }}
                             </div>
                         </div>
-                        <div class="col-md-10">
-                            @if ($case[0]->comment != '')
-                                <label for="exampleFormControlTextarea1" class="text-danger">Comment</label>
-                                <textarea class="form-control border border-danger" id="exampleFormControlTextarea1" rows="1"
-                                    disabled>{{ $case[0]->comment }}</textarea>
+                        <div class="col-md-10 text-right">
+                            @if ($comments->count())
+                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#commentModal">
+                                    Comment/s <span class="badge badge-light">{{ $comments->count() }}</span>
+                                </button>
                             @endif
                         </div>
                     </div>
@@ -164,7 +165,8 @@
                                                             style="width:101px;">
                                                             <option value="" selected hidden>Sex</option>
                                                             <option value="Male"
-                                                                {{ $value->sex == 'Male' ? 'selected' : '' }}>Male
+                                                                {{ $value->sex == 'Male' ? 'selected' : '' }}>
+                                                                Male
                                                             </option>
                                                             <option value="Female"
                                                                 {{ $value->sex == 'Female' ? 'selected' : '' }}>Female
@@ -284,7 +286,8 @@
                                                             style="width:101px;">
                                                             <option value="" selected hidden>Sex</option>
                                                             <option value="Male"
-                                                                {{ $value->sex == 'Male' ? 'selected' : '' }}>Male
+                                                                {{ $value->sex == 'Male' ? 'selected' : '' }}>
+                                                                Male
                                                             </option>
                                                             <option value="Female"
                                                                 {{ $value->sex == 'Female' ? 'selected' : '' }}>Female
@@ -339,8 +342,8 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-1 d-flex justify-content-center">
                                                 <!-- <button type="button" name="addRespondent" id="addLawViolated"
-                                                                                                                                                                                                            data-bs-toggle="tooltip" title="Add Violation"
-                                                                                                                                                                                                            class="btn btn-success btn-sm add float-right">+</button> -->
+                                                                                                                                                                                                                                                                                data-bs-toggle="tooltip" title="Add Violation"
+                                                                                                                                                                                                                                                                                class="btn btn-success btn-sm add float-right">+</button> -->
                                             </div>
                                         </div>
                                         @if ($lawviolated->count())
@@ -609,7 +612,8 @@
                                                             style="width:101px;">
                                                             <option value="" selected hidden>Sex</option>
                                                             <option value="Male"
-                                                                {{ $value->sex == 'Male' ? 'selected' : '' }}>Male
+                                                                {{ $value->sex == 'Male' ? 'selected' : '' }}>
+                                                                Male
                                                             </option>
                                                             <option value="Female"
                                                                 {{ $value->sex == 'Female' ? 'selected' : '' }}>Female
@@ -712,13 +716,48 @@
             </div>
         </div>
 
+        <!-- Modal -->
+        <div class="modal fade" id="commentModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="commentModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="card shadow-0 border" style="background-color: #f0f2f5;">
+                            <div class="card-header">
+                                Comment/s
+                            </div>
+                            <div class="card-body p-4">
+                                @if ($comments->count())
+                                    @foreach ($comments as $comment)
+                                        <div class="card mb-4">
+                                            <div class="card-body">
+                                                <p>{{ $comment->comment }}</p>
+
+                                                <div class="d-flex justify-content-between">
+                                                    <div class="d-flex flex-row align-items-center">
+                                                        <p class="small mb-0 ms-2">{{ $comment->from }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     @push('scripts')
         <script>
-            $(function() {
-                $("textarea").height($("textarea")[0].scrollHeight);
-            });
+            // $(function() {
+            //     $("textarea").height($("textarea")[0].scrollHeight);
+            // });
             //forward to monitoring
             $("#forwardToMonitoring").click(function() {
                 Swal.fire({
@@ -741,23 +780,10 @@
                                 '<select class="swal2-select" id="personnel"' +
                                 'aria-label="Floating label select example">' +
                                 '<option value="" disabled selected>Select monitoring personnel</option>' +
-                                // '@foreach ($monitoringReviewer as $key => $value)'+
-                                //     '<option value="{{ $key }}"'+
-                                //                                                                                                             '
-                                //         '{{ $key }}>'+
-                                //         '{{ $value }}'+
-                                //         '</option>'+
-                                //     '
-                                // @endforeach ' +
-                                '@foreach ($monitoringReviewer as $key => $value)'+
-                                        '<option value="{{ $key }}"'+
-                                            '{{ $key }}>'+
-                                            '{{ $value }}'+
-                                        '</option>'+
-                                '@endforeach'+
-                            // '<option value="Subpoena">Subpoena</option>' +
-                            // '<option value="Summary">Summary</option>' +
-                            '</select>',
+                                '@foreach ($monitoringReviewer as $key => $value)' +
+                                    '<option value="{{ $key }}" {{ $key }}>{{ $value }}</option>'+
+                                '@endforeach' +
+                                '</select>',
                             showCancelButton: true,
                             allowOutsideClick: false,
                             confirmButtonColor: '#3085d6',
@@ -1121,7 +1147,7 @@
                                 return new Promise((resolve) => {
                                     if (value != "") {
                                         console.log(value);
-                                        let from = {!! json_encode(Auth::user()->username) !!};
+                                        let from = {!! json_encode(Auth::user()->id) !!};
                                         $.ajax({
                                             // url: "{{ url('caseSaved') }}",
                                             url: "{{ url('comment') }}",
@@ -1217,61 +1243,55 @@
                     confirmButtonText: 'Yes, proceed'
                 }).then((result) => {
                     if (result.isConfirmed) {
-
-                        // Swal.fire({
-                        //     title: 'Select Reviewer',
-                        //     input: 'select',
-                        //     inputOptions: {
-                        //         'MTCC Reviewer': {!! $reviewerMTCC !!},
-                        //         'RTC Reviewer': {!! $reviewerRTC !!},
-                        //     },
-                        //     inputPlaceholder: 'Select a reviewer',
-                        //     showCancelButton: true,
-                        //     inputValidator: (value) => {
-                        //         return new Promise((resolve) => {
-                        //             if (value != '') {
-                        //                 console.log(value);
-                        //                 // let dt = new Date();
-                        //                 // dt.setDate(dt.getDate() + 10);
-                        //                 let complain_id = {!! json_encode($complaint->id) !!}
-                        //                 // let name = $('#crime').val();
-                        //                 // let days = dt.toLocaleDateString('en-ZA');
-                        //                 let assignedto = value;
-                        //                 let from = {!! json_encode(Auth::user()->username) !!};
-                        //                 $.ajax({
-                        //                     url: "{{ url('caseSaved') }}",
-                        //                     method: 'POST',
-                        //                     data: {
-                        //                         // name: name,
-                        //                         // days: days,
-                        //                         // receivedby: recievedby,
-                        //                         complaint_id: complain_id,
-                        //                         assignedto: assignedto,
-                        //                         notifno: {!! json_encode($complaint->NPSDNumber) !!},
-                        //                         from: from,
-                        //                         notifyOnly: "true"
-                        //                         // is_read: is_read
-                        //                     },
-                        //                     success: function(data) {
-                        //                         Swal.fire({
-                        //                             icon: 'success',
-                        //                             title: 'Successfully forwarded',
-                        //                             showConfirmButton: false,
-                        //                             timer: 2000
-                        //                         })
-                        //                     },
-                        //                     error: function(error) {
-                        //                         console.log(error)
-                        //                     }
-                        //                 });
-
-                        //                 resolve()
-                        //             } else {
-                        //                 resolve('Please select reviewer')
-                        //             }
-                        //         })
-                        //     }
-                        // });
+                        Swal.fire({
+                            input: 'textarea',
+                            inputLabel: 'Comment',
+                            inputPlaceholder: 'Type your comment here...',
+                            inputAttributes: {
+                                'aria-label': 'Type your comment here'
+                            },
+                            showCancelButton: true,
+                            inputValidator: (value) => {
+                                return new Promise((resolve) => {
+                                    if (value != "") {
+                                        console.log(value);
+                                        let from = {!! json_encode(Auth::user()->id) !!};
+                                        $.ajax({
+                                            // url: "{{ url('caseSaved') }}",
+                                            url: "{{ url('comment') }}",
+                                            method: 'POST',
+                                            data: {
+                                                // name: {!! json_encode($case[0]->name) !!},
+                                                // days: {!! json_encode($case[0]->days) !!},
+                                                complaint_id: {!! json_encode($case[0]->complaint_id) !!},
+                                                assignedto: {!! json_encode($case[0]->receivedby) !!},
+                                                notifno: {!! json_encode($complaint->NPSDNumber) !!},
+                                                // from: from,
+                                                // comment: value,
+                                                complaint_id: {!! json_encode($case[0]->complaint_id) !!},
+                                                to: {!! json_encode($comments[0]->from) !!},
+                                                from: from,
+                                                comment: value,
+                                            },
+                                            success: function(data) {
+                                                Swal.fire({
+                                                    icon: 'success',
+                                                    title: 'Successfully forwarded',
+                                                    showConfirmButton: false,
+                                                    timer: 2000
+                                                })
+                                            },
+                                            error: function(error) {
+                                                console.log(error)
+                                            }
+                                        });
+                                        resolve()
+                                    } else {
+                                        resolve('Please enter comment')
+                                    }
+                                })
+                            }
+                        })
                     }
                 })
             });

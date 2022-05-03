@@ -14,18 +14,21 @@ class CommentController extends Controller
     {
         Comment::create([
             'complaint_id' => $request->complaint_id,
-            'from' => Auth::user()->username,
-            'to' => $request->complaint_id,
+            'from' => $request->from,
+            // 'to' => $request->assignedto,
+            'to' => $request->to,
             'comment' => $request->comment
         ]);
 
         Notification::updateOrCreate(
             [
                 'complaint_id' => $request->complaint_id,
-                'assignedto' => $request->assignedto,
+                // 'assignedto' => $request->assignedto,
+                'assignedto' => $request->to,
             ],
             [
-                'assignedto' => $request->assignedto,
+                // 'assignedto' => $request->assignedto,
+                'assignedto' => $request->to,
                 'complaint_id' => $request->complaint_id,
                 //1 means unread
                 'markmsg' => 1,
@@ -53,7 +56,7 @@ class CommentController extends Controller
         //     'admin' => 'yes'
         // ];
         $data = [
-            'assignedto' => $request->assignedto,
+            'assignedto' => $request->to,
             'notifno' => $request->notifno
         ];
 

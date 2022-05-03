@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreDataRequest;
 use App\Models\Report;
 use App\Repositories\ComplaintRepository;
+use App\Repositories\ICommentRepository;
 use App\Repositories\IComplaint;
 use Illuminate\Support\Facades\Storage;
 // use DataTables;
@@ -35,13 +36,15 @@ class ComplaintController extends Controller
 
      //list of Repo variables
     protected $complaintRepository;
+    protected $CommentRepository;
 
     //example of multiple __construct
     // public function __construct(IComplaint $complaintRepository, IComplaint1 $complaintRepository1)
-    public function __construct(IComplaint $complaintRepository)
+    public function __construct(IComplaint $complaintRepository, ICommentRepository $CommentRepository)
     {
         //list of Repo global names
         $this->complaintRepository = $complaintRepository;
+        $this->CommentRepository = $CommentRepository;
     }
 
     // public function index()
@@ -411,8 +414,9 @@ class ComplaintController extends Controller
 
         // $case = DB::table('investigated_cases')->where(['complaint_id' => $id])->get();
         $case = $this->complaintRepository->getCases($id);
+        $comments = $this->CommentRepository->getComment($id);
 
-        return view('complaints.edit', compact('complaint', 'complainants', 'respondents', 'witnesses', 'lawviolated', 'attachments', 'prosecutors', 'prosecutorId', 'violations', 'case', 'reviewerMTCC', 'reviewerRTC', 'monitoringReviewer', 'chief', 'encoder'));
+        return view('complaints.edit', compact('complaint', 'complainants', 'respondents', 'witnesses', 'lawviolated', 'attachments', 'prosecutors', 'prosecutorId', 'violations', 'case', 'reviewerMTCC', 'reviewerRTC', 'monitoringReviewer', 'chief', 'encoder', 'comments'));
     }
 
     /**

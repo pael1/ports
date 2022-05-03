@@ -13,12 +13,16 @@ class RepositoryServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        //complainant
         $this->app->bind(
             'App\Repositories\IComplaint',
             'App\Repositories\ComplaintRepository'
-
-            //dria ibutang if mag dungag kog new repo.
-          );
+        );
+        //comments
+        $this->app->bind(
+            'App\Repositories\ICommentRepository',
+            'App\Repositories\CommentRepository'
+        );
     }
 
     /**
