@@ -15,7 +15,6 @@ class CommentController extends Controller
         Comment::create([
             'complaint_id' => $request->complaint_id,
             'from' => $request->from,
-            // 'to' => $request->assignedto,
             'to' => $request->to,
             'comment' => $request->comment
         ]);
@@ -23,11 +22,9 @@ class CommentController extends Controller
         Notification::updateOrCreate(
             [
                 'complaint_id' => $request->complaint_id,
-                // 'assignedto' => $request->assignedto,
                 'assignedto' => $request->to,
             ],
             [
-                // 'assignedto' => $request->assignedto,
                 'assignedto' => $request->to,
                 'complaint_id' => $request->complaint_id,
                 //1 means unread

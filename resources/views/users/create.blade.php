@@ -52,6 +52,7 @@
                                                     <option value="RTC">RTC</option>
                                                     <option value="Receiving">Receiving</option>
                                                     <option value="Chief">Chief</option>
+                                                    <option value="Admin">Admin</option>
                                                 </select>
                                                 <label for="floatingSelect">Designation</label>
                                             </div>

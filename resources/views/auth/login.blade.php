@@ -96,10 +96,10 @@
                             <img src="{{ asset('dist/img/logo.png') }}" class="d-block w-100 h-100" alt="...">
                         </div> --}}
                         <div class="carousel-item active">
-                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp" class="d-block w-100 h-100" alt="...">
+                            <img src="{{ asset('dist/img/draw2.jpeg') }}" class="d-block w-100 h-100" alt="...">
                         </div>
                         <div class="carousel-item">
-                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp" class="d-block w-100 h-100" alt="...">
+                            <img src="{{ asset('dist/img/draw2.jpeg') }}" class="d-block w-100 h-100" alt="...">
                         </div>
                     </div>
                     {{-- <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Permission;
 // use DB;
     
@@ -31,6 +32,9 @@ class RoleController extends Controller
      */
     public function index(Request $request)
     {
+        if(Auth::user()->designation != "Admin"){
+            abort(404, 'not found');
+        }
         $roles = Role::orderBy('id','DESC')->paginate(5);
         return view('roles.index',compact('roles'))
             ->with('i', ($request->input('page', 1) - 1) * 5);

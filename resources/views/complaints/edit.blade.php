@@ -36,6 +36,7 @@
                                 @if ($comments->count())
                                     <button type="button" id="forwardToAssignedReviewer" class="btn btn-secondary btn-sm"
                                         data-bs-toggle="tooltip" title="Forward now">Forward to Assigned Reviewer</button>
+                                        <input type="text" id="to" value="{{$comments[0]->from}}" hidden>
                                 @else
                                     <button type="button" id="forwardToMonitoring" class="btn btn-secondary btn-sm"
                                         data-bs-toggle="tooltip" title="Forward now">Forward to Monitoring</button>
@@ -49,7 +50,7 @@
                                 <button type="button" id="forwardToReviewer" class="btn btn-secondary btn-sm"
                                     data-bs-toggle="tooltip" title="Forward now">Forward to Reviewer</button>
                             @endif
-                            @if (Auth::user()->designation == 'MTCC')
+                            @if (Auth::user()->designation == 'MTCC' || Auth::user()->designation == 'RTC')
                                 <button type="button" id="forwardToAssignedFiscalOrChief" class="btn btn-secondary btn-sm"
                                     data-bs-toggle="tooltip" title="Forward now">Forward to assigned Fiscal/Chief</button>
                             @endif
@@ -719,7 +720,7 @@
         <!-- Modal -->
         <div class="modal fade" id="commentModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
             aria-labelledby="commentModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-body">
                         <div class="card shadow-0 border" style="background-color: #f0f2f5;">
@@ -735,7 +736,7 @@
 
                                                 <div class="d-flex justify-content-between">
                                                     <div class="d-flex flex-row align-items-center">
-                                                        <p class="small mb-0 ms-2">{{ $comment->from }}</p>
+                                                        <p class="small mb-0 ms-2">{{ $comment->fullname }}</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1269,7 +1270,7 @@
                                                 // from: from,
                                                 // comment: value,
                                                 complaint_id: {!! json_encode($case[0]->complaint_id) !!},
-                                                to: {!! json_encode($comments[0]->from) !!},
+                                                to: $('#to').val(),
                                                 from: from,
                                                 comment: value,
                                             },
