@@ -3,7 +3,7 @@
     <div class="content-wrapper">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Create Complaint</h3>
+                <i class="card-title">Create Complaint</i>
             </div>
             <div class="row">
                 <div class="col-lg-12 margin-tb">

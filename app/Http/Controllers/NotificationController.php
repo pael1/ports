@@ -29,7 +29,7 @@ class NotificationController extends Controller
             $complaint = DB::table('complaints')
                 ->join('investigated_cases', 'complaints.id', '=', 'investigated_cases.complaint_id')
                 ->join('notifications', 'complaints.id', '=', 'notifications.complaint_id')
-                ->join('users', 'notifications.from', '=', 'users.username')
+                ->join('users', 'notifications.from', '=', 'users.id')
                 ->select(
                     'complaints.*',
                     'notifications.*',

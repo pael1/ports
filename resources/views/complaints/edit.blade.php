@@ -5,7 +5,7 @@
     <div class="content-wrapper">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Edit/View Complaint</h3>
+                <i class="card-title">Edit/View Complaint</i>
             </div>
             <div class="row">
                 <div class="col-lg-12 margin-tb">
@@ -66,13 +66,12 @@
                         <button type="button" id="disabledUpdateBtn" class="btn btn-danger btn-sm">Disable Update</button>
                     </div> --}}
                     <div class="row mt-2">
-                        <div class="col-md-2">
-                            <div
-                                class="badge p-2 rounded-pill {{ $case[0]->name == 'Pending' ? 'bg-warning' : 'bg-primary' }} col-md-12">
+                        <div class="col-3">
+                            <div class="badge p-2 rounded-pill {{ $case[0]->name == 'Pending' ? 'bg-warning' : 'bg-primary' }} col-md-11">
                                 {{ $case[0]->name }}
                             </div>
                         </div>
-                        <div class="col-md-10 text-right">
+                        <div class="col-9 text-right">
                             @if ($comments->count())
                                 <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#commentModal">
@@ -809,7 +808,7 @@
                                 let name = $('#crime').val();
                                 let days = dt.toLocaleDateString('en-ZA');
                                 let assignedto = $('#personnel').val();
-                                let from = {!! json_encode(Auth::user()->username) !!};
+                                let from = {!! json_encode(Auth::user()->id) !!};
                                 $.ajax({
                                     url: "{{ url('caseSaved') }}",
                                     method: 'POST',
@@ -1016,7 +1015,7 @@
                                         console.log(value);
                                         let complain_id = {!! json_encode($complaint->id) !!}
                                         let assignedto = value;
-                                        let from = {!! json_encode(Auth::user()->username) !!};
+                                        let from = {!! json_encode(Auth::user()->id) !!};
                                         $.ajax({
                                             url: "{{ url('caseSaved') }}",
                                             method: 'POST',
@@ -1083,7 +1082,7 @@
                                         // let name = $('#crime').val();
                                         // let days = dt.toLocaleDateString('en-ZA');
                                         let assignedto = value;
-                                        let from = {!! json_encode(Auth::user()->username) !!};
+                                        let from = {!! json_encode(Auth::user()->id) !!};
                                         $.ajax({
                                             url: "{{ url('caseSaved') }}",
                                             method: 'POST',
@@ -1199,7 +1198,7 @@
                                     if (value != "") {
                                         let complain_id = {!! json_encode($complaint->id) !!}
                                         let assignedto = value;
-                                        let from = {!! json_encode(Auth::user()->username) !!};
+                                        let from = {!! json_encode(Auth::user()->id) !!};
                                         $.ajax({
                                             url: "{{ url('caseSaved') }}",
                                             method: 'POST',

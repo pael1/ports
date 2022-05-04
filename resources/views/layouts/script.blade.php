@@ -363,45 +363,51 @@
             url: "{{ url('openNotification') }}",
             success: function(data) {
                 console.log(data);
-                len = data.length;
+                if (data != "") {
+                    len = data.length;
 
-                for (var i = 0; i < len; i++) {
-                    var id = data[i].id;
-                    var receivedBy = data[i].receivedBy;
-                    var email = data[i].email;
-                    var dateFiled = data[i].dateFiled;
-                    var markmsg = data[i].markmsg;
-                    var is_read = data[i].is_read;
-                    let NPSDNumber = data[i].NPSDNumber;
-                    let classNotif = (markmsg != 1) ? 'text-secondary' : 'text-danger';
-                    let className = (markmsg != 1) ? 'fw-light' : 'fw-bold';
-                    var option = '<a href="#" class="dropdown-item open-notif" data-id="' + data[i].id +
-                        '" id="' + NPSDNumber + '">' +
-                        '<div class="media openNotification">' +
-                        '<div class="media-body">' +
-                        '<h3 class="dropdown-item-title ' + className + '">' +
-                        '' + data[i].name + '' +
-                        '<span class="float-right text-sm ' + classNotif +
-                        '"><i class="fas fa-bell"></i></span>' +
-                        '</h3>' +
-                        //   '<p class="text-sm">'+email+'</p>'+
-                        '<p class="text-sm text-muted ' + className +
-                        '"><i class="far fa-clock mr-1"></i> ' + dateFiled +
-                        '</p>' +
-                        '</div>' +
-                        '</div>' +
-                        '</a>' +
-                        '<div class="dropdown-divider"></div>'
+                    for (var i = 0; i < len; i++) {
+                        var id = data[i].id;
+                        var receivedBy = data[i].receivedBy;
+                        var email = data[i].email;
+                        var dateFiled = data[i].dateFiled;
+                        var markmsg = data[i].markmsg;
+                        var is_read = data[i].is_read;
+                        let NPSDNumber = data[i].NPSDNumber;
+                        let classNotif = (markmsg != 1) ? 'text-secondary' : 'text-danger';
+                        let className = (markmsg != 1) ? 'fw-light' : 'fw-bold';
+                        var option = '<a href="#" class="dropdown-item open-notif" data-id="' + data[i].id +
+                            '" id="' + NPSDNumber + '">' +
+                            '<div class="media openNotification">' +
+                            '<div class="media-body">' +
+                            '<h3 class="dropdown-item-title ' + className + '">' +
+                            '' + data[i].name + '' +
+                            '<span class="float-right text-sm ' + classNotif +
+                            '"><i class="fas fa-bell"></i></span>' +
+                            '</h3>' +
+                            //   '<p class="text-sm">'+email+'</p>'+
+                            '<p class="text-sm text-muted ' + className +
+                            '"><i class="far fa-clock mr-1"></i> ' + dateFiled +
+                            '</p>' +
+                            '</div>' +
+                            '</div>' +
+                            '</a>' +
+                            '<div class="dropdown-divider"></div>'
+                        $(".notif").append(option);
+                    }
+                    var offsetHeight = document.getElementById('notificationBox').offsetHeight;
+                    console.log(offsetHeight);
+                    if (offsetHeight > 287) {
+                        $('#notificationBox').css({
+                            "overflow": "scroll",
+                            "height": "288px"
+                        });
+                    }
+                } else {
+                    var option = '<div class="text-center"><i>No message found</i></div>'
                     $(".notif").append(option);
                 }
-                var offsetHeight = document.getElementById('notificationBox').offsetHeight;
-                console.log(offsetHeight);
-                if (offsetHeight > 287) {
-                    $('#notificationBox').css({
-                        "overflow": "scroll",
-                        "height": "288px"
-                    });
-                }
+
             }
         });
     }

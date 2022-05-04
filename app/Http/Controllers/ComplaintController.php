@@ -574,6 +574,23 @@ class ComplaintController extends Controller
         //         $complaints->attachment()->save($fm);
         //     }
         // }
+        if ($request['addMoreComplainant'] != "") {
+            $request['addMoreComplainant'] = $request['addMoreComplainant'];
+        } else {
+            $request['addMoreComplainant'] = "";
+        }
+
+        if ($request['addMoreRespondent'] != "") {
+            $request['addMoreRespondent'] = $request['addMoreRespondent'];
+        } else {
+            $request['addMoreRespondent'] = "";
+        }
+
+        if ($request['addMoreWitness'] != "") {
+            $request['addMoreWitness'] = $request['addMoreWitness'];
+        } else {
+            $request['addMoreWitness'] = "";
+        }
 
         if ($request['violations'] != "") {
             $request['violations'] = $request['violations'];

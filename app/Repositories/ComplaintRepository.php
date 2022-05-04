@@ -216,7 +216,7 @@ class ComplaintRepository implements IComplaint
             //1 means unread
             'markmsg' => 1,
             'notifno' => $notifNo,
-            'from' => Auth::user()->username
+            'from' => Auth::user()->id
         ]);
         $complaints->notification()->save($notifications);
 

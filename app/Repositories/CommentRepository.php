@@ -12,7 +12,8 @@ class CommentRepository implements ICommentRepository
 
         $case = DB::table('comments')
         ->join('users', 'users.id', '=', 'comments.from')
-        ->select('comments.*', DB::raw("CONCAT(users.firstname, ' ', users.middlename, ' ', users.lastname) as fullname"))->where(['comments.complaint_id' => $complain_id])->get();
+        ->select('comments.*', DB::raw("CONCAT(users.firstname, ' ', users.middlename, ' ', users.lastname) as fullname"))->where(['comments.complaint_id' => $complain_id])
+        ->orderBy('comments.id', 'desc')->get();
         return $case;
     }
 }

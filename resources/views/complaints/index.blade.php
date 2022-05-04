@@ -5,7 +5,7 @@
     <div class="content-wrapper">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Complaints</h3>
+                <i class="card-title">Complaint/s</i>
             </div>
             {{-- <div class="row margin-tb">
                 <div class="col-lg-12 margin-tb">
@@ -153,7 +153,8 @@
                                     "_token": token,
                                 },
                                 success: function() {
-                                    complaintTable.draw();
+                                    // complaintTable.draw();
+                                    $('#generalTable').DataTable().ajax.reload();
                                     Swal.fire({
                                         icon: 'success',
                                         title: 'Successfully deleted',
