@@ -5,5 +5,7 @@ namespace App\Repositories;
 interface ICommentRepository
 {
     public function getComment($complain_id);
+
+    public function save(array $request);
  
 }
