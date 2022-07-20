@@ -14,7 +14,7 @@
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
           <li class="nav-item">
-            <a href="{{ route('users.index') }}" class="nav-link {{ Request::is('users') ? 'active' : Request::is('users/*') ? 'active' : '' }}">
+            <a href="{{ route('users.index') }}" class="nav-link {{ (Request::is('users') ? 'active' : Request::is('users/*')) ? 'active' : '' }}">
               <i class="nav-icon fas fa-user"></i>
               <p>
                 Users
@@ -22,7 +22,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="{{ route('complaints.index') }}" class="nav-link {{ Request::is('complaints') ? 'active' : Request::is('complaints/*') ? 'active' : '' }}">
+            <a href="{{ route('complaints.index') }}" class="nav-link {{ (Request::is('complaints') ? 'active' : Request::is('complaints/*')) ? 'active' : '' }}">
               <i class="nav-icon fas fa-file-alt"></i>
               <p>
                 Complaints
@@ -30,7 +30,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="{{ route('roles.index') }}" class="nav-link {{ Request::is('roles') ? 'active' : Request::is('roles/*') ? 'active' : '' }}">
+            <a href="{{ route('roles.index') }}" class="nav-link {{ (Request::is('roles') ? 'active' : Request::is('roles/*')) ? 'active' : '' }}">
               <i class="nav-icon fas fa-user-cog"></i>
               <p>
                 Roles
